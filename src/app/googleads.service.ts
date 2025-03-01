@@ -8,9 +8,6 @@ import { environment } from 'src/environments/environment';
 export class GoogleadsService {
 
   constructor() { 
-    this.loadBannerAds()
-    this.loadInterstitialAd().then().catch(err => { alert(err) })
-    this.loadRewardedVideoAd().then().catch(err => { alert(err) })
   }
 
   async loadBannerAds(): Promise<boolean> {

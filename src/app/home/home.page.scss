@@ -6,7 +6,7 @@
           padding: 0;
           display: flex;
           justify-content: center;
-          align-items: center;
+          height: 100vh;
       }
 
       .card {
@@ -30,8 +30,9 @@
           font-size: 25px;
           font-weight: 700;
           color: #654321;
-          margin-bottom: 20px;
-          line-height: 20px;
+          margin-bottom: 30px;
+          line-height: 26px;
+
       }
 
       .welcome-message .subtext {

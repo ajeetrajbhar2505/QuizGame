@@ -11,8 +11,8 @@ const routes: Routes = [
     loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizModule)
   },
   {
-    path: '',
-    redirectTo: 'quiz',
+    path: '**',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
 ];

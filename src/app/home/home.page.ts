@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GoogleadsService } from '../googleads.service';
 import { Router } from '@angular/router';
 
@@ -8,23 +8,37 @@ import { Router } from '@angular/router';
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage  {
+export class HomePage implements OnInit {
 
   constructor(
-    private readonly googleAds: GoogleadsService, 
-    private router: Router) 
-    { }
+    private readonly googleAds: GoogleadsService,
+    private router: Router) {
+  }
+
+ngOnInit(): void {
+  this.googleAds.loadBannerAds().then(data=>{
+       if (data) {
+        
+       }
+  }).catch(err=>{
+    alert(err)
+  })
+}
 
 
   playQuiz() {
-    this.googleAds.showloadRewardedVideoAds().then(loaded => {
-      if (loaded) {
-        this.googleAds
-        this.router.navigate(['/quiz'])
-      }
-    }).catch(err => {
-      alert(err)
-    })
+    this.googleAds.loadRewardedVideoAd().then(result => {
+      this.googleAds.showloadRewardedVideoAds().then(loaded => {
+        if (loaded) {
+          this.googleAds
+          this.router.navigate(['/quiz'])
+        }
+      }).catch(err => {
+        alert(err)
+      })
+    }).catch(err => { alert(err) })
+
+
   }
 
 }

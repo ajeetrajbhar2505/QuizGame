@@ -11,20 +11,6 @@ export class QuizComponent  implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    // this.showBannerAds()
-  }
-
-  showBannerAds() {
-    AdmobAds.showBannerAd({
-      adId: 'ca-app-pub-4874253778737753/3116134419', 
-      isTesting: true,
-      adSize: BannerSize.BANNER,
-      adPosition: BannerPosition.BOTTOM
-    }).then(() => {
-      alert('Banner is shown')
-    }).catch((err) => {
-     alert('Error' + err)
-    })
   }
 
 
