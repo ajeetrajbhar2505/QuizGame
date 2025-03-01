@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AdmobAds, BannerPosition, BannerSize } from 'capacitor-admob-ads'
+import { GoogleadsService } from '../googleads.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,24 +8,23 @@ import { AdmobAds, BannerPosition, BannerSize } from 'capacitor-admob-ads'
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage {
+export class HomePage  {
 
-  constructor() {
-  }
+  constructor(
+    private readonly googleAds: GoogleadsService, 
+    private router: Router) 
+    { }
 
 
-  showBannerAds() {
-    AdmobAds.showBannerAd({
-      adId: 'ca-app-pub-4874253778737753/3116134419', 
-      isTesting: true,
-      adSize: BannerSize.BANNER,
-      adPosition: BannerPosition.BOTTOM
-    }).then(() => {
-      alert('Banner is shown')
-    }).catch((err) => {
-     alert('Error' + err)
+  playQuiz() {
+    this.googleAds.showloadRewardedVideoAds().then(loaded => {
+      if (loaded) {
+        this.googleAds
+        this.router.navigate(['/quiz'])
+      }
+    }).catch(err => {
+      alert(err)
     })
   }
-
 
 }

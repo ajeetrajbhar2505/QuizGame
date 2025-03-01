@@ -27,14 +27,16 @@
       }
 
       .welcome-message {
-          font-size: 18px;
-          font-weight: 500;
+          font-size: 25px;
+          font-weight: 700;
           color: #654321;
           margin-bottom: 20px;
+          line-height: 20px;
       }
 
       .welcome-message .subtext {
           font-size: 15px;
+          font-weight: 500;
       }
 
       .stats-card {

@@ -7,7 +7,7 @@
 
         <!-- Welcome Message -->
         <div class="welcome-message">
-            Hi Pamela,<br>
+            👋 Hi Pamela,<br>
             <span class="subtext">Great to see you again!</span>
         </div>
 
@@ -33,7 +33,7 @@
 
 
         <!-- Daily Quiz Section -->
-        <div class="daily-quiz" routerLink="/quiz">
+        <div class="daily-quiz" (click)="playQuiz()">
             <!-- Circular Progress Bar -->
             <div class="progress-circle">
                 <div class="progress-text"></div>
@@ -55,7 +55,7 @@
 
         <!-- Class Progress Section -->
         <div class="class-progress">
-            <div class="class" routerLink="/quiz">
+            <div class="class" (click)="playQuiz()">
                 <div class="details">
                     <i class="fas fa-calculator icon"></i>
                     <div>
@@ -65,7 +65,7 @@
                 </div>
                 <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div class="class" routerLink="/quiz">
+            <div class="class" (click)="playQuiz()">
                 <div class="details">
                     <i class="fas fa-history icon"></i>
                     <div>
@@ -75,7 +75,7 @@
                 </div>
                 <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div class="class" routerLink="/quiz">
+            <div class="class" (click)="playQuiz()">
                 <div class="details">
                     <i class="fas fa-microscope icon"></i>
                     <div>
