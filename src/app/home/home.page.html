@@ -1,20 +1,90 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="main">
+    <div class="card">
+        <!-- Profile Icon -->
+        <div class="profile-icon">
+            <i class="fas fa-user-circle"></i>
+        </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            Hi Pamela,<br>
+            <span class="subtext">Great to see you again!</span>
+        </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a (click)="showBannerAds()">UI Components</a></p>
-  </div>
-</ion-content>
+        <!-- Stats Card -->
+        <div class="stats-card">
+            <div class="stat-item">
+                <i class="fas fa-star icon"></i>
+                <div>
+                    <div class="value">2300</div>
+                    <div class="label">Exp. Points</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-trophy icon"></i>
+                <div>
+                    <div class="value">32</div>
+                    <div class="label">Ranking</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Button -->
+
+
+        <!-- Daily Quiz Section -->
+        <div class="daily-quiz" routerLink="/quiz">
+            <!-- Circular Progress Bar -->
+            <div class="progress-circle">
+                <div class="progress-text"></div>
+            </div>
+            <!-- Content -->
+            <div class="content">
+                <div class="title">Daily Quiz</div>
+                <div class="questions">20 mixed questions</div>
+            </div>
+            <!-- Participants with Icon -->
+            <div class="participants">
+                120 participated <i class="fas fa-users icon"></i>
+            </div>
+
+        </div>
+
+        <!-- Continue Studying Section -->
+        <div class="continue-studying practice-button"><i class="fas fa-microscope icon"></i> Continue Studying</div>
+
+        <!-- Class Progress Section -->
+        <div class="class-progress">
+            <div class="class" routerLink="/quiz">
+                <div class="details">
+                    <i class="fas fa-calculator icon"></i>
+                    <div>
+                        <div class="subject">Math</div>
+                        <div class="questions-left">12 questions left</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+            <div class="class" routerLink="/quiz">
+                <div class="details">
+                    <i class="fas fa-history icon"></i>
+                    <div>
+                        <div class="subject">History</div>
+                        <div class="questions-left">6 questions left</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+            <div class="class" routerLink="/quiz">
+                <div class="details">
+                    <i class="fas fa-microscope icon"></i>
+                    <div>
+                        <div class="subject">Biology</div>
+                        <div class="questions-left">20 questions left</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+        </div>
+    </div>
+</div>

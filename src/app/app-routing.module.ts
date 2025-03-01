@@ -7,8 +7,12 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
+    path: 'quiz',
+    loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizModule)
+  },
+  {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'quiz',
     pathMatch: 'full'
   },
 ];
