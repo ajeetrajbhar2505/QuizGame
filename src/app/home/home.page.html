@@ -2,7 +2,7 @@
     <div class="card">
         <!-- Profile Icon -->
         <div class="profile-icon">
-            <i class="fas fa-user-circle"></i>
+            <i class="fas fa-user-circle"></i> <!-- User profile icon -->
         </div>
 
         <!-- Welcome Message -->
@@ -13,15 +13,17 @@
 
         <!-- Stats Card -->
         <div class="stats-card">
+            <!-- Experience Points -->
             <div class="stat-item">
-                <i class="fas fa-star icon"></i>
+                <i class="fas fa-star icon"></i> <!-- Star icon for experience points -->
                 <div>
                     <div class="value">2300</div>
                     <div class="label">Exp. Points</div>
                 </div>
             </div>
+            <!-- Ranking -->
             <div class="stat-item">
-                <i class="fas fa-trophy icon"></i>
+                <i class="fas fa-trophy icon"></i> <!-- Trophy icon for ranking -->
                 <div>
                     <div class="value">32</div>
                     <div class="label">Ranking</div>
@@ -29,11 +31,8 @@
             </div>
         </div>
 
-        <!-- Practice Button -->
-
-
         <!-- Daily Quiz Section -->
-        <div class="daily-quiz" (click)="playQuiz()">
+        <div class="daily-quiz">
             <!-- Circular Progress Bar -->
             <div class="progress-circle">
                 <div class="progress-text"></div>
@@ -45,42 +44,84 @@
             </div>
             <!-- Participants with Icon -->
             <div class="participants">
-                120 participated <i class="fas fa-users icon"></i>
+                120 participated <i class="fas fa-users icon"></i> <!-- Users icon for participants -->
             </div>
-
         </div>
 
         <!-- Continue Studying Section -->
-        <div class="continue-studying practice-button"><i class="fas fa-microscope icon"></i> Continue Studying</div>
+        <div class="continue-studying practice-button">
+            <i class="fas fa-book-open icon"></i> Continue Studying <!-- Book icon for studying -->
+        </div>
 
         <!-- Class Progress Section -->
         <div class="class-progress">
-            <div class="class" (click)="playQuiz()">
+            <!-- General Knowledge -->
+            <div class="class" (click)="playQuiz('General Knowledge')">
                 <div class="details">
-                    <i class="fas fa-calculator icon"></i>
+                    <i class="fas fa-brain icon"></i> <!-- Brain icon for general knowledge -->
                     <div>
-                        <div class="subject">Math</div>
-                        <div class="questions-left">12 questions left</div>
+                        <div class="subject">General Knowledge</div>
+                        <div class="questions-left">10 questions</div>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div class="class" (click)="playQuiz()">
+
+            <!-- Mathematics -->
+            <div class="class" (click)="playQuiz('Mathematics')">
                 <div class="details">
-                    <i class="fas fa-history icon"></i>
+                    <i class="fas fa-calculator icon"></i> <!-- Calculator icon for mathematics -->
+                    <div>
+                        <div class="subject">Mathematics</div>
+                        <div class="questions-left">10 questions</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- English -->
+            <div class="class" (click)="playQuiz('English')">
+                <div class="details">
+                    <i class="fas fa-book icon"></i> <!-- Book icon for English -->
+                    <div>
+                        <div class="subject">English</div>
+                        <div class="questions-left">10 questions</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- Science -->
+            <div class="class" (click)="playQuiz('Science')">
+                <div class="details">
+                    <i class="fas fa-flask icon"></i> <!-- Flask icon for science -->
+                    <div>
+                        <div class="subject">Science</div>
+                        <div class="questions-left">10 questions</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- History -->
+            <div class="class" (click)="playQuiz('History')">
+                <div class="details">
+                    <i class="fas fa-landmark icon"></i> <!-- Landmark icon for history -->
                     <div>
                         <div class="subject">History</div>
-                        <div class="questions-left">6 questions left</div>
+                        <div class="questions-left">10 questions</div>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right arrow"></i>
             </div>
-            <div class="class" (click)="playQuiz()">
+
+            <!-- Geography -->
+            <div class="class" (click)="playQuiz('Geography')">
                 <div class="details">
-                    <i class="fas fa-microscope icon"></i>
+                    <i class="fas fa-globe icon"></i> <!-- Globe icon for geography -->
                     <div>
-                        <div class="subject">Biology</div>
-                        <div class="questions-left">20 questions left</div>
+                        <div class="subject">Geography</div>
+                        <div class="questions-left">10 questions</div>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right arrow"></i>

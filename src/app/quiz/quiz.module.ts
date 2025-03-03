@@ -5,6 +5,7 @@ import { QuizRoutingModule } from './quiz-routing.module';
 import { QuizComponent } from './quiz.component';
 import { IonicModule } from '@ionic/angular';
 import { GoogleadsService } from '../googleads.service';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { GoogleadsService } from '../googleads.service';
   imports: [
     CommonModule,
     QuizRoutingModule,
-    IonicModule
+    IonicModule,
+    HttpClientModule
   ],
   providers : [GoogleadsService]
 })

@@ -26,12 +26,12 @@ ngOnInit(): void {
 }
 
 
-  playQuiz() {
+  playQuiz(suject:string) {
     this.googleAds.loadRewardedVideoAd().then(result => {
       this.googleAds.showloadRewardedVideoAds().then(loaded => {
         if (loaded) {
           this.googleAds
-          this.router.navigate(['/quiz'])
+          this.router.navigate(['/quiz/' + suject])
         }
       }).catch(err => {
         alert(err)

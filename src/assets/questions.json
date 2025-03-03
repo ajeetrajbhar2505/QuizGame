@@ -1,0 +1,75 @@
+{
+      "General_Knowledge": [
+        { "question": "Who was the first President of India?", "options": ["Dr. Rajendra Prasad", "Jawaharlal Nehru", "Sardar Patel", "Dr. B.R. Ambedkar"], "answer": "Dr. Rajendra Prasad" },
+        { "question": "Which is the largest continent in the world?", "options": ["Asia", "Africa", "Europe", "Antarctica"], "answer": "Asia" },
+        { "question": "Which is the longest river in the world?", "options": ["Amazon", "Nile", "Ganges", "Mississippi"], "answer": "Nile" },
+        { "question": "Who wrote the national anthem of India?", "options": ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Subhash Chandra Bose", "Sarojini Naidu"], "answer": "Rabindranath Tagore" },
+        { "question": "What is the capital of Japan?", "options": ["Seoul", "Beijing", "Tokyo", "Bangkok"], "answer": "Tokyo" },
+        { "question": "Which planet is known as the Red Planet?", "options": ["Earth", "Venus", "Mars", "Jupiter"], "answer": "Mars" },
+        { "question": "Who invented the telephone?", "options": ["Alexander Graham Bell", "Thomas Edison", "Nikola Tesla", "James Watt"], "answer": "Alexander Graham Bell" },
+        { "question": "Which gas do plants absorb from the atmosphere?", "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], "answer": "Carbon Dioxide" },
+        { "question": "What is the smallest country in the world?", "options": ["Vatican City", "Monaco", "San Marino", "Liechtenstein"], "answer": "Vatican City" },
+        { "question": "Which is the national bird of India?", "options": ["Peacock", "Sparrow", "Eagle", "Parrot"], "answer": "Peacock" }
+      ],
+      "Mathematics": [
+        { "question": "What is 15 + 8?", "options": ["21", "23", "24", "25"], "answer": "23" },
+        { "question": "Solve: 12 × 7", "options": ["72", "84", "92", "96"], "answer": "84" },
+        { "question": "Find the square root of 144", "options": ["10", "12", "14", "16"], "answer": "12" },
+        { "question": "What is 20% of 250?", "options": ["50", "45", "60", "55"], "answer": "50" },
+        { "question": "If a triangle has angles 40° and 90°, what is the third angle?", "options": ["40°", "50°", "60°", "70°"], "answer": "50°" },
+        { "question": "Solve: 9²", "options": ["72", "81", "90", "99"], "answer": "81" },
+        { "question": "What is the value of π (pi) up to two decimal places?", "options": ["3.14", "3.16", "3.18", "3.12"], "answer": "3.14" },
+        { "question": "Find the LCM of 8 and 12", "options": ["16", "24", "32", "36"], "answer": "24" },
+        { "question": "What is 3/4 as a decimal?", "options": ["0.25", "0.50", "0.75", "1.00"], "answer": "0.75" },
+        { "question": "Find the area of a rectangle with length 10 and width 5", "options": ["40", "50", "60", "70"], "answer": "50" }
+      ],
+      "English": [
+        { "question": "Choose the correct spelling:", "options": ["Accommodate", "Acommodate", "Acommodatte", "Acomodatte"], "answer": "Accommodate" },
+        { "question": "What is the plural of 'child'?", "options": ["Childs", "Childes", "Children", "Childrens"], "answer": "Children" },
+        { "question": "Which word is an antonym of 'happy'?", "options": ["Sad", "Joyful", "Cheerful", "Excited"], "answer": "Sad" },
+        { "question": "Fill in the blank: He ___ to the market yesterday.", "options": ["Go", "Went", "Gone", "Going"], "answer": "Went" },
+        { "question": "Identify the noun in the sentence: The sun shines brightly.", "options": ["Sun", "Shines", "Brightly", "The"], "answer": "Sun" },
+        { "question": "Which of these is a verb?", "options": ["Run", "Happy", "Blue", "Chair"], "answer": "Run" },
+        { "question": "Which word is a synonym for 'beautiful'?", "options": ["Pretty", "Ugly", "Dull", "Weak"], "answer": "Pretty" },
+        { "question": "Which of the following is a pronoun?", "options": ["She", "Run", "House", "Big"], "answer": "She" },
+        { "question": "What is the opposite of 'hot'?", "options": ["Cold", "Warm", "Cool", "Heat"], "answer": "Cold" },
+        { "question": "What is the past tense of 'write'?", "options": ["Writes", "Wrote", "Writing", "Write"], "answer": "Wrote" }
+      ],
+      "Science": [
+        { "question": "What is the chemical symbol for water?", "options": ["H2O", "O2", "CO2", "H2O2"], "answer": "H2O" },
+        { "question": "What is the powerhouse of the cell?", "options": ["Nucleus", "Mitochondria", "Ribosome", "Endoplasmic Reticulum"], "answer": "Mitochondria" },
+        { "question": "What gas do plants release during photosynthesis?", "options": ["Carbon Dioxide", "Oxygen", "Nitrogen", "Hydrogen"], "answer": "Oxygen" },
+        { "question": "What planet is known as the 'Blue Planet'?", "options": ["Mars", "Venus", "Earth", "Neptune"], "answer": "Earth" },
+        { "question": "Which vitamin is produced in the human body when exposed to sunlight?", "options": ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin B12"], "answer": "Vitamin D" },
+        { "question": "What is the heaviest naturally occurring element?", "options": ["Uranium", "Lead", "Gold", "Plutonium"], "answer": "Uranium" },
+        { "question": "What part of the plant conducts photosynthesis?", "options": ["Root", "Stem", "Leaf", "Flower"], "answer": "Leaf" },
+        { "question": "What is the chemical formula for table salt?", "options": ["NaCl", "KCl", "CaCl2", "MgCl2"], "answer": "NaCl" },
+        { "question": "What gas do humans exhale?", "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], "answer": "Carbon Dioxide" },
+        { "question": "What is the speed of light?", "options": ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"], "answer": "300,000 km/s" }
+      ],
+      "History": [
+        { "question": "Who was the first Emperor of India?", "options": ["Akbar", "Chandragupta Maurya", "Ashoka", "Babur"], "answer": "Chandragupta Maurya" },
+        { "question": "When did India gain independence?", "options": ["1945", "1947", "1950", "1962"], "answer": "1947" },
+        { "question": "Who discovered America?", "options": ["Christopher Columbus", "Vasco da Gama", "Marco Polo", "Ferdinand Magellan"], "answer": "Christopher Columbus" },
+        { "question": "What was the main cause of World War I?", "options": ["Assassination of Archduke Franz Ferdinand", "Rise of Hitler", "Cold War", "Fall of the Berlin Wall"], "answer": "Assassination of Archduke Franz Ferdinand" },
+        { "question": "Who was the first President of the United States?", "options": ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"], "answer": "George Washington" },
+        { "question": "Who was the founder of the Maurya Empire?", "options": ["Ashoka", "Chandragupta Maurya", "Harsha", "Kanishka"], "answer": "Chandragupta Maurya" },
+        { "question": "What year did World War II end?", "options": ["1943", "1945", "1947", "1950"], "answer": "1945" },
+        { "question": "Which country built the Great Wall?", "options": ["Japan", "China", "India", "Mongolia"], "answer": "China" },
+        { "question": "Who wrote the Indian National Anthem?", "options": ["Bankim Chandra Chattopadhyay", "Rabindranath Tagore", "Subhash Chandra Bose", "Mahatma Gandhi"], "answer": "Rabindranath Tagore" },
+        { "question": "What year did the French Revolution begin?", "options": ["1776", "1789", "1804", "1815"], "answer": "1789" }
+      ],
+      "Geography": [
+        { "question": "Which is the largest ocean in the world?", "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"], "answer": "Pacific Ocean" },
+        { "question": "Which is the longest river in the world?", "options": ["Amazon", "Nile", "Yangtze", "Mississippi"], "answer": "Nile" },
+        { "question": "What is the capital of France?", "options": ["Berlin", "Madrid", "Paris", "Rome"], "answer": "Paris" },
+        { "question": "Which is the largest desert in the world?", "options": ["Sahara", "Arctic", "Gobi", "Kalahari"], "answer": "Antarctic Desert" },
+        { "question": "What is the smallest country in the world?", "options": ["Vatican City", "Monaco", "Liechtenstein", "San Marino"], "answer": "Vatican City" },
+        { "question": "Which continent has the most countries?", "options": ["Africa", "Asia", "Europe", "South America"], "answer": "Africa" },
+        { "question": "What is the capital of Australia?", "options": ["Sydney", "Melbourne", "Canberra", "Perth"], "answer": "Canberra" },
+        { "question": "What is the deepest ocean trench?", "options": ["Mariana Trench", "Tonga Trench", "Philippine Trench", "Kermadec Trench"], "answer": "Mariana Trench" },
+        { "question": "Which country has the most natural lakes?", "options": ["Canada", "Russia", "USA", "Brazil"], "answer": "Canada" },
+        { "question": "What is the highest mountain in the world?", "options": ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"], "answer": "Mount Everest" }
+      ]
+  }
+  

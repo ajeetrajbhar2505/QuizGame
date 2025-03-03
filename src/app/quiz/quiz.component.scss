@@ -94,6 +94,10 @@
             background: #FFF;
             border-radius: 10px;
             padding: 15px 0;
+            width: 330px;
+            transition: all 0.3s ease;
+            /* Smooth transition for resizing */
+
         }
 
         .question-box h3 {
@@ -115,7 +119,7 @@
             transition: background 0.3s ease;
         }
 
-        .option:hover {
+        .option.incorrect {
             background: #D34F3D;
         }
 
@@ -186,4 +190,45 @@
             text-decoration: underline;
             text-underline-offset: 4px;
             /* Underline for link-like appearance */
+        }
+
+        /* Popup Overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Popup */
+        .popup {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup h2 {
+            margin-bottom: 10px;
+        }
+
+        .popup p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup .close-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }

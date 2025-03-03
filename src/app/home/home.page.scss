@@ -15,6 +15,11 @@
           border-radius: 20px;
           padding: 20px;
           position: relative;
+          overflow: auto;
+      }
+
+      .card::-webkit-scrollbar{
+        width: 1px;
       }
 
       .profile-icon {

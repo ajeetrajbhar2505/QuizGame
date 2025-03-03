@@ -11,6 +11,7 @@ export class GoogleadsService {
   }
 
   async loadBannerAds(): Promise<boolean> {
+    return true
     try {
       await  AdmobAds.showBannerAd({
         adId: environment.BannerAdId,
@@ -38,6 +39,7 @@ export class GoogleadsService {
   }
 
   async showInterstitialAds(): Promise<boolean> {
+    return true
     try {
       await AdmobAds.showInterstitialAd();
       return true
@@ -47,6 +49,7 @@ export class GoogleadsService {
   }
 
   async loadRewardedVideoAd(): Promise<boolean> {
+    return true
     try {
       await AdmobAds.loadRewardedVideoAd({
         adId: environment.RewardedVideoAddId,
@@ -59,6 +62,7 @@ export class GoogleadsService {
   }
   
   async showloadRewardedVideoAds(): Promise<boolean> {
+    return true
     try {
       await AdmobAds.showRewardedVideoAd();
       return true;
