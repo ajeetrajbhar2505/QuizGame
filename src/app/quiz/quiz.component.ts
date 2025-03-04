@@ -19,10 +19,21 @@ export class QuizComponent implements OnInit {
     private ActivatedRoute: ActivatedRoute,
     private readonly http: HttpClient,
     private router: Router
-  ) { 
-  }
+  ) {}
 
   ngOnInit(): void {
+    // Initialize the quiz when the component loads
+    this.initializeQuiz();
+  }
+
+  // Function to initialize the quiz
+  initializeQuiz(): void {
+    // Reset all state variables
+    this.Questions = [];
+    this.currentQuestionIndex = 0;
+    this.score = 0;
+    this.showPopup = false;
+
     // Get the subject ID from the route parameters
     this.subjectId = this.ActivatedRoute.snapshot.params['id'];
     // Fetch questions from the JSON file
@@ -121,10 +132,15 @@ export class QuizComponent implements OnInit {
     this.showPopup = true; // Show the popup
   }
 
-  // Function to close the popup
+  // Function to close the popup and reset the quiz
   closePopup(): void {
-    this.Questions=[]
+    let data =  sessionStorage.getItem('score')
+    if (data) {
+      this.score += Number(data)
+    }
+    sessionStorage.setItem('score',JSON.stringify(this.score))
     this.showPopup = false;
-    this.router.navigate(['/home']); // Navigate to the home page after closing the popup
+    this.initializeQuiz(); // Reset the quiz state
+    this.router.navigate(['/home']); // Navigate to the home page
   }
 }

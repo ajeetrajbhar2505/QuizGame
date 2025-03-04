@@ -9,10 +9,16 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class HomePage implements OnInit {
-
   constructor(
     private readonly googleAds: GoogleadsService,
     private router: Router) {
+
+
+  }
+
+ get getPoints():number{
+   let data:any =  sessionStorage.getItem('score')
+   return Number(JSON.parse(data)) || 0
   }
 
 ngOnInit(): void {
