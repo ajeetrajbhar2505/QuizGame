@@ -46,8 +46,6 @@
       }
 
       .stats-card {
-          background: #ee8c46;
-          color: white;
           padding: 15px;
           border-radius: 10px;
           margin-bottom: 10px;
@@ -65,7 +63,7 @@
 
       .stats-card .stat-item .icon {
           font-size: 38px;
-          color: #fecf9b;
+          color: #b3dd2a;
       }
 
       .stats-card .stat-item .value {
@@ -128,7 +126,7 @@
           margin-bottom: 5px;
       }
 
-      .daily-quiz .participants {
+      .daily-quiz .participants,.rankings,.ExperiencePoints {
           position: absolute;
           top: 10px;
           right: 15px;
@@ -137,6 +135,12 @@
           display: flex;
           align-items: center;
           gap: 5px;
+      }
+      .rankings{
+        right: 60px;
+      }
+      .ExperiencePoints{
+        right: 90px;
       }
 
       .daily-quiz .participants .icon {
@@ -163,7 +167,6 @@
       }
 
       .class-progress .class {
-          background: #f9e6cd;
           color: #654321;
           padding: 15px;
           border-radius: 10px;
