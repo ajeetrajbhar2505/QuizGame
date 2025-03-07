@@ -14,6 +14,7 @@ export class HomePage implements OnInit {
     private router: Router) {
 
 
+
   }
 
  get getPoints():number{
@@ -22,6 +23,7 @@ export class HomePage implements OnInit {
   }
 
 ngOnInit(): void {
+  
   this.googleAds.loadBannerAds().then(data=>{
        if (data) {
         
