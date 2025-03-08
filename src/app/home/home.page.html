@@ -2,7 +2,7 @@
     <div class="card">
         <!-- Profile Icon -->
         <div class="profile-icon">
-            <i class="fas fa-user-circle"></i> <!-- User profile icon -->
+		<ion-icon [name]="'log-out-outline'"></ion-icon>
         </div>
 
         <!-- Welcome Message -->
@@ -34,6 +34,13 @@
         </div>
 
     
+        <div class="info-note" id="infoNote">
+            <span><ion-icon name="thumbs-up-outline"></ion-icon> Withdrawals are coming next month! Let's aim for the highest rewards so you can redeem a bigger amount. Study hard, earn more!</span>
+            <button class="close-btn" onclick="closeNote()">    <ion-icon name="close-circle-outline"></ion-icon></button>
+        
+        </div>
+        
+          
    <!-- Continue Studying Section -->
    <div class="continue-studying practice-button">
     <i class="fas fa-book-open icon"></i> Continue Studying <!-- Book icon for studying -->
