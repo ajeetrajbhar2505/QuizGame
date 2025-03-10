@@ -1,0 +1,36 @@
+  <div class="login-card">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="assets/AppLogo.png" alt="">
+          <p>QuizGame</p>
+        </div>
+          <span>Enter your email as credentials to access your account</span>
+      </div>
+
+      <div id="loginForm">
+          <div class="form-group">
+              <label for="email">Email</label>
+              <input 
+                  type="email" 
+                  id="email" 
+                  placeholder="name@company.com"
+                  autocomplete="off"
+              >
+              <div class="error" id="emailError"></div>
+          </div>
+
+
+          <button type="submit" class="login-btn" routerLink="/home" id="loginButton">
+              Sign in
+          </button>
+        </div>
+
+      <div class="social-login">
+          <p>Other Sign In Options</p>
+          <div class="social-buttons">
+              <div class="social-btn"><ion-icon name="logo-google"></ion-icon></div>
+              <div class="social-btn"><ion-icon name="logo-facebook"></ion-icon></div>
+              <div class="social-btn"><ion-icon name="logo-github"></ion-icon></div>
+          </div>
+      </div>
+  </div>
