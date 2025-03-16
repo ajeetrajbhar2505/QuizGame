@@ -1,34 +1,36 @@
+<ion-content>
   <div class="login-card">
-      <div class="brand">
-        <div class="brand-logo">
-          <img src="assets/AppLogo.png" alt="">
-          <p>QuizGame</p>
-        </div>
-          <span>Enter your email as credentials to access your account</span>
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="assets/AppLogo.png" alt="">
+        <p>QuizGame</p>
       </div>
+        <span>Enter your email as credentials to access your account</span>
+    </div>
 
-      <div id="loginForm">
-          <div class="form-group">
-              <label for="email">Email</label>
-              <input 
-                  type="email" 
-                  placeholder="name@company.com"
-              >
-              <div class="error" id="emailError"></div>
-          </div>
-
-
-          <button class="login-btn" (click)="login()" id="loginButton">
-              Sign in
-          </button>
+    <div id="loginForm">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+                type="email" 
+                placeholder="name@company.com"
+            >
+            <div class="error" id="emailError"></div>
         </div>
 
-      <div class="social-login">
-          <p>Other Sign In Options</p>
-          <div class="social-buttons">
-              <div class="social-btn"><ion-icon name="logo-google"></ion-icon></div>
-              <div class="social-btn"><ion-icon name="logo-facebook"></ion-icon></div>
-              <div class="social-btn"><ion-icon name="logo-github"></ion-icon></div>
-          </div>
+
+        <button class="login-btn" (click)="login()" id="loginButton">
+            Sign in
+        </button>
       </div>
-  </div>
+
+    <div class="social-login">
+        <p>Other Sign In Options</p>
+        <div class="social-buttons">
+            <div class="social-btn"><ion-icon name="logo-google"></ion-icon></div>
+            <div class="social-btn"><ion-icon name="logo-facebook"></ion-icon></div>
+            <div class="social-btn"><ion-icon name="logo-github"></ion-icon></div>
+        </div>
+    </div>
+</div>
+</ion-content>

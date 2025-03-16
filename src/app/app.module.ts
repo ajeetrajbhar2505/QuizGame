@@ -13,10 +13,11 @@ import { QuizPage } from './quiz/quiz.component';
 import { GoogleadsService } from './googleads.service';
 import { FormsModule } from '@angular/forms';
 import { HomePage } from './home/home.page';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent,LoaderComponent,LoginPage,QuizPage,HomePage],
-  imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule],
+  imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [GoogleadsService,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
