@@ -49,4 +49,9 @@ ngOnInit(): void {
 
   }
 
+  logout(){
+   this.router.navigate(['/login'])
+
+  }
+
 }

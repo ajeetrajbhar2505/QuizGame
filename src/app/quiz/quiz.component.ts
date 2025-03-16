@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.scss'],
 })
-export class QuizComponent implements OnInit {
+export class QuizPage implements OnInit {
   Questions: any[] = []; // Array to store filtered questions
   subjectId: string = ''; // Variable to store the subject ID from the route
   currentQuestionIndex: number = 0; // Track the current question index

@@ -1,21 +1,24 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { LoginPage } from './login/login.component';
+import { HomePage } from './home/home.page';
+import { QuizPage } from './quiz/quiz.component';
 
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginModule)
+    component : LoginPage
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    component : HomePage
   },
   {
     path: 'quiz/:id',
-    loadChildren: () => import('./quiz/quiz.module').then( m => m.QuizModule)
+    component : QuizPage
   },
   {
-    path: '**',
+    path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },

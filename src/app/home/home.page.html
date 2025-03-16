@@ -2,7 +2,7 @@
     <div class="card">
         <!-- Profile Icon -->
         <div class="profile-icon">
-		<ion-icon routerLink="/login" [name]="'log-out-outline'"></ion-icon>
+		<ion-icon (click)="logout()" name="log-out-outline"></ion-icon>
         </div>
 
         <!-- Welcome Message -->
