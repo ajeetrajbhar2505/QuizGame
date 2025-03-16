@@ -24,10 +24,12 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            font-size: 32px;
-            /* Bigger profile icon */
+            display: flex;
+            align-items: center;
             color: #654321;
             cursor: pointer;
+            gap: 10px;
+            font-size: 27px;
         }
 
         .welcome-message {
@@ -242,3 +244,5 @@
             margin-left: 10px;
         }
         
+
+   

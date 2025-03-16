@@ -1,0 +1,227 @@
+.main {
+    background-color: #F7F7F7;
+    height: 812px;
+    overflow: hidden;
+    position: relative;
+    transform-origin: top center;
+  }
+  
+  .header {
+    height: 30%;
+    background-color: #4C8F6F;
+    border-bottom-right-radius: 40px;
+    border-bottom-left-radius: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .header::before {
+    content: "";
+    height: 200px;
+    width: 200px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: -118px;
+    left: -100px;
+    z-index: 2;
+  }
+  
+  .header::after {
+    content: "";
+    height: 100px;
+    width: 100px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    z-index: 2;
+  }
+  
+  .header-summary {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    z-index: 3;
+  }
+  
+  .summary-text {
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+  
+  .summary-balance {
+    font-size: 2rem;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.8rem;
+  }
+  
+  .summary-text-2 {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+  
+  .user-profile {
+    margin-top: 4rem;
+    height: 70px;
+    width: 70px;
+    align-self: flex-start;
+  }
+  
+  .user-photo {
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: 1px solid white;
+  }
+  
+  .content {
+    z-index: 4;
+    position: absolute;
+    top: 210px;
+    margin-left: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+  }
+  
+  .card {
+    font-family: 'Montserrat', sans-serif;
+    align-self: stretch;
+    background-color: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .upper-row {
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 10px;
+  }
+  
+  .card-item {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-item span:first-child {
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .card-item span:last-child {
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+  
+  .dollar {
+    color: #FFC168;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 20px;
+  }
+  
+  .action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45%;
+    padding: 15px;
+    border: none;
+    gap: 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .action-button.withdraw {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  }
+  
+  .action-button.send {
+    background: linear-gradient(135deg, #4ECDC4, #556270);
+  }
+  
+  .action-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .transactions {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    position: relative;
+    margin-top: 1.5rem;
+    flex-direction: column;
+  }
+  
+  .t-desc {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding-bottom: 10px;
+  }
+  
+  .transaction {
+    cursor: default;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .t-details {
+    width: 55%;
+  }
+  
+  .t-icon-container {
+   color: #654321;
+  }
+  
+  .t-icon {
+    width: 100%;
+    border-radius: 50%;
+    box-shadow: 5px 5px 25px 0px rgba(0, 0, 0, 0.2);
+  }
+  
+  .t-title {
+    text-align: left;
+    flex-grow: 1;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .t-time {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+  
+  .t-amount {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    font-weight: 400;
+    color: #06D778;
+  }
+  
+  .red {
+    color: #F4532D;
+  }

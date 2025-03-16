@@ -51,7 +51,10 @@ ngOnInit(): void {
 
   logout(){
    this.router.navigate(['/login'])
+  }
 
+  wallet(){
+   this.router.navigate(['/wallet'])
   }
 
 }

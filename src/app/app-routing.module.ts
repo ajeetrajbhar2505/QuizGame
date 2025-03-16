@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './login/login.component';
 import { HomePage } from './home/home.page';
 import { QuizPage } from './quiz/quiz.component';
+import { WalletPage } from './wallet/wallet.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,10 @@ const routes: Routes = [
   {
     path: 'home',
     component : HomePage
+  },
+  {
+    path: 'wallet',
+    component : WalletPage
   },
   {
     path: 'quiz/:id',
