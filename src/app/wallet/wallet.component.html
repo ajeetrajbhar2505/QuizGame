@@ -1,18 +1,5 @@
 <ion-content>
   <div class="main">
-    <div class="header">
-      <div class="header-summary">
-        <div class="summary-text">
-          My Balance
-        </div>
-        <div class="summary-balance">
-          &#8377; 293.00
-        </div>
-      </div>
-      <div class="user-profile">
-        <img src="https://pbs.twimg.com/profile_images/1089189690773712897/bCJr7IzK_400x400.jpg" class="user-photo">
-      </div>
-    </div>
     <div class="content">
       <div class="card">
         <div class="upper-row">
@@ -36,42 +23,53 @@
           </button>
         </div>
       </div>
-      <div class="transactions">
-        <span class="t-desc">Recent Transactions</span>
-        <div class="transaction">
-          <div class="t-icon-container">
-            <i  class="fas fa-wallet icon"></i> 
-            <!-- Icon can be added here -->
-          </div>
-          <div class="t-details">
+
+      <div class="info-note" id="infoNote">
+        <span>
+          <ion-icon name="alert-outline"></ion-icon> 
+          Withdrawals will be available starting next month! Keep playing and earning rewards, so you can withdraw a larger amount. Study hard, earn more, and get ready to redeem your rewards!
+        </span>
+    </div>
+
+    <div class="transactions">
+      <span class="t-desc">Recent Transactions</span>
+      <div class="transaction">
+        <div class="status-container">
+          <i class="fas fa-wallet icon"></i>
+          <div class="status-details">
             <div class="t-title">Withdraw</div>
             <div class="t-time">03.45PM</div>
           </div>
-          <div class="t-amount pending">Pending</div>
         </div>
-        <div class="transaction">
-          <div class="t-icon-container">
-            <i  class="fas fa-wallet icon"></i> 
-            <!-- Icon can be added here -->
-          </div>
-          <div class="t-details">
+        <div class="amount-details">
+          <div class="t-amount pending">200 points</div>
+        </div>
+      </div>
+      <div class="transaction">
+        <div class="status-container">
+          <i class="fas fa-wallet icon"></i>
+          <div class="status-details">
             <div class="t-title">Points Shared</div>
             <div class="t-time">03.45 AM</div>
           </div>
-          <div class="t-amount">+&nbsp;200 points</div>
         </div>
-        <div class="transaction">
-          <div class="t-icon-container">
-            <i  class="fas fa-wallet icon"></i> 
-            <!-- Icon can be added here -->
-          </div>
-          <div class="t-details">
+        <div class="amount-details">
+          <div class="t-amount">+ 200 points</div>
+        </div>
+      </div>
+      <div class="transaction">
+        <div class="status-container">
+          <i class="fas fa-wallet icon"></i>
+          <div class="status-details">
             <div class="t-title">Withdraw</div>
             <div class="t-time">08.00PM</div>
           </div>
-          <div class="t-amount red">-&nbsp;120&#8377;</div>
+        </div>
+        <div class="amount-details">
+          <div class="t-amount red">- 120&#8377;</div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </ion-content>

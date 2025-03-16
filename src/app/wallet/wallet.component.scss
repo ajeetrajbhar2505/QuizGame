@@ -6,86 +6,12 @@
     transform-origin: top center;
   }
   
-  .header {
-    height: 30%;
-    background-color: #4C8F6F;
-    border-bottom-right-radius: 40px;
-    border-bottom-left-radius: 40px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-  }
-  
-  .header::before {
-    content: "";
-    height: 200px;
-    width: 200px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: -118px;
-    left: -100px;
-    z-index: 2;
-  }
-  
-  .header::after {
-    content: "";
-    height: 100px;
-    width: 100px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    right: -20px;
-    bottom: -30px;
-    z-index: 2;
-  }
-  
-  .header-summary {
-    display: flex;
-    flex-direction: column;
-    font-family: 'Montserrat', sans-serif;
-    color: white;
-    z-index: 3;
-  }
-  
-  .summary-text {
-    font-size: 1.2rem;
-    font-weight: 300;
-  }
-  
-  .summary-balance {
-    font-size: 2rem;
-    letter-spacing: 1.5px;
-    margin-bottom: 0.8rem;
-  }
-  
-  .summary-text-2 {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-  }
-  
-  .user-profile {
-    margin-top: 4rem;
-    height: 70px;
-    width: 70px;
-    align-self: flex-start;
-  }
-  
-  .user-photo {
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-    border: 1px solid white;
-  }
-  
+
   .content {
     z-index: 4;
-    position: absolute;
     top: 210px;
     margin-left: 30px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     width: 85%;
@@ -94,7 +20,6 @@
   .card {
     font-family: 'Montserrat', sans-serif;
     align-self: stretch;
-    background-color: white;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -110,6 +35,7 @@
     margin: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
   
   .card-item span:first-child {
@@ -185,6 +111,12 @@
     border-radius: 12px;
     margin-bottom: 10px;
   }
+
+  .status-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
   
   .t-details {
     width: 55%;
@@ -225,3 +157,18 @@
   .red {
     color: #F4532D;
   }
+
+
+  .info-note {
+    padding: 10px 15px;
+    border-left: 4px solid #ffb12f;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: fit-content;
+    margin-bottom: 20px;
+    position: relative;
+}
