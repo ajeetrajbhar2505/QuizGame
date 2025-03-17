@@ -7,12 +7,29 @@ import { Router } from '@angular/router';
   styleUrls: ['./wallet.component.scss'],
 })
 export class WalletPage  implements OnInit {
-
+  sendPointsDialog:boolean = false
+  WithdrawOpen:boolean = false
   constructor(private router:Router) { }
 
   ngOnInit() {}
 
   goBack(){
     this.router.navigate(['/home'])
+  }
+
+  closeWithdraw(){
+    this.WithdrawOpen = false
+  }
+
+  popupWithdraw(){
+    this.WithdrawOpen = true
+  }
+
+  closesendPointsDialog(){
+    this.sendPointsDialog = false
+  }
+
+  popupsendPointsDialog(){
+    this.sendPointsDialog = true
   }
 }

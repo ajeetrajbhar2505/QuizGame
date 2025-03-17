@@ -18,11 +18,11 @@
           </div>
         </div>
         <div class="button-row">
-          <button class="action-button withdraw">
+          <button class="action-button withdraw" (click)="popupWithdraw()">
             <i class="fas fa-money-check-alt"></i>
             <span>Withdraw</span>
           </button>
-          <button class="action-button send">
+          <button class="action-button send" (click)="popupsendPointsDialog()">
             <ion-icon name="send-outline"></ion-icon>
             <span>Send</span>
           </button>
@@ -79,6 +79,44 @@
       </div>
      </div>
     </div>
+    </div>
+  </div>
+  <div class="dialog-overlay" *ngIf="WithdrawOpen">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <h3>Withdraw Funds</h3>
+        <button class="close-btn" (click)="closeWithdraw()">&times;</button>
+      </div>
+      <div class="dialog-body">
+        <form>
+          <div class="input-group">
+            <input type="number" id="amount" placeholder="Enter amount" required>
+          </div>
+          <div class="input-group">
+            <input type="text" id="upi-id" placeholder="Enter UPI ID" required>
+          </div>
+          <button type="submit" class="submit-btn">Withdraw</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="dialog-overlay" *ngIf="sendPointsDialog">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <h3>Share points with friends</h3>
+        <button class="close-btn" (click)="closesendPointsDialog()">&times;</button>
+      </div>
+      <div class="dialog-body">
+        <form>
+          <div class="input-group">
+            <input type="number" id="points" placeholder="Enter points" required>
+          </div>
+          <div class="input-group">
+            <input type="email" id="reference-id" placeholder="Enter referenceId/Email" required>
+          </div>
+          <button type="submit" class="submit-btn">Send</button>
+        </form>
+      </div>
     </div>
   </div>
 </ion-content>
