@@ -30,6 +30,10 @@
             cursor: pointer;
             gap: 10px;
             font-size: 27px;
+
+            ion-icon {
+                font-size: 30px;
+            }
         }
 
         .welcome-message {
@@ -235,7 +239,7 @@
             margin-bottom: 20px;
             position: relative;
         }
-        
+
         .close-btn {
             background: none;
             border: none;
@@ -243,6 +247,6 @@
             cursor: pointer;
             margin-left: 10px;
         }
-        
+
 
    

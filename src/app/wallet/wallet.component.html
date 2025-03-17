@@ -1,4 +1,11 @@
-<ion-content>
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar translucent>
+    <ion-icon size="medium" (click)="goBack()" class="ionic-icon" name="arrow-back-outline"></ion-icon>
+      <ion-title> Wallet </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
   <div class="main">
     <div class="content">
       <div class="card">
@@ -26,13 +33,16 @@
 
       <div class="info-note" id="infoNote">
         <span>
-          <ion-icon name="alert-outline"></ion-icon> 
           Withdrawals will be available starting next month! Keep playing and earning rewards, so you can withdraw a larger amount. Study hard, earn more, and get ready to redeem your rewards!
         </span>
     </div>
 
     <div class="transactions">
       <span class="t-desc">Recent Transactions</span>
+      <div class="no-transaction">
+        <img src="assets/no-transactions.png" alt="">
+      </div>
+     <div *ngIf="false">
       <div class="transaction">
         <div class="status-container">
           <i class="fas fa-wallet icon"></i>
@@ -69,6 +79,7 @@
           <div class="t-amount red">- 120&#8377;</div>
         </div>
       </div>
+     </div>
     </div>
     </div>
   </div>
