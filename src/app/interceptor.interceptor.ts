@@ -3,24 +3,26 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { LoaderService } from './loader.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class interceptorInterceptor implements HttpInterceptor {
 
   private loaderCount = 0; // 👉 Track active requests
 
-  constructor(private loaderService: LoaderService) {}
+  constructor(private readonly loaderService: LoaderService,private readonly router:Router) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Show loader when request starts
     this.showLoader();
 
-    const token = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
 
     // Attach token if available
     if (token) {
@@ -33,6 +35,15 @@ export class interceptorInterceptor implements HttpInterceptor {
 
     // Handle request and finalize loader management
     return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          // Token expired or invalid, navigate to login page
+          // localStorage.removeItem('token'); // Optional: Clear token
+          this.router.navigate(['/login']);
+        }
+
+        return throwError(() => error);
+      }),
       finalize(() => {
         this.hideLoader();
       })

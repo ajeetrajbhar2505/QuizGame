@@ -36,8 +36,8 @@ export class WebService {
    // ---------- User APIs ----------
 
   // Get a specific user by ID
-  getUserById(userId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users/${userId}`);
+  getUserById(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users/user`);
   }
 
   // Get all users (maybe admin usage)

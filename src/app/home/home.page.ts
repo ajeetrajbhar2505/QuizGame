@@ -21,7 +21,7 @@ interface Quiz {
 })
 
 export class HomePage implements OnInit {
-  userId: any = ''
+  token: any = ''
   userData: any = {};
   Quizzes: Quiz[] = []
   constructor(
@@ -30,12 +30,12 @@ export class HomePage implements OnInit {
     private readonly webService: WebService
   ) {
     this.route.queryParams.subscribe(params => {
-      this.userId = params['token'];
-        if (this.userId) {
-        localStorage.setItem('userId', this.userId);
+      this.token = params['token'];
+        if (this.token) {
+        localStorage.setItem('token', this.token);
       }
       else {
-        this.userId = localStorage.getItem('userId')
+        this.token = localStorage.getItem('token')
       }
     })
 
@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
 
 
   getUserDetails() {
-    this.webService.getUserById(this.userId).subscribe(
+    this.webService.getUserById().subscribe(
       (res) => {
         this.userData = res;
       },

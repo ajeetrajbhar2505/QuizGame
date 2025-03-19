@@ -135,6 +135,16 @@ export class QuizPage implements OnInit {
   // Function to handle the "Submit" button
   submitQuiz(): void {
     this.showPopup = true; // Show the popup
+    let useranswers = this.Questions.filter(data=> data.isAnswered).map(data=> data.selectedOption)
+    const body = { quizId : this.quizId,answers:useranswers}
+    this.webService.attemptQuiz(body).subscribe(
+      (res) => {
+        
+      },
+      (err) => {
+        console.error('Error attempting Quiz:', err);
+      }
+    );
   }
 
   // Function to close the popup and reset the quiz
