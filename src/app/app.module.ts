@@ -13,13 +13,22 @@ import { QuizPage } from './quiz/quiz.component';
 import { GoogleadsService } from './googleads.service';
 import { FormsModule } from '@angular/forms';
 import { HomePage } from './home/home.page';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { WalletPage } from './wallet/wallet.component';
+import { WebService } from './web.service';
+import { interceptorInterceptor } from './interceptor.interceptor';
+import { LoaderService } from './loader.service';
 
 @NgModule({
   declarations: [AppComponent,LoaderComponent,LoginPage,QuizPage,HomePage,WalletPage],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
-  providers: [GoogleadsService,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    GoogleadsService,
+    LoaderService,
+    WebService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: interceptorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

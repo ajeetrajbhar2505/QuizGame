@@ -3,13 +3,14 @@
         <div class="card">
             <!-- Profile Icon -->
             <div class="profile-icon">
-            <i (click)="wallet()" class="fas fa-wallet icon"></i> 
-            <ion-icon (click)="logout()" name="log-out-outline"></ion-icon>
+                <img [src]="userData.profilePicture" alt="">
+            <!-- <i (click)="wallet()" class="fas fa-wallet icon"></i> 
+            <ion-icon (click)="logout()" name="log-out-outline"></ion-icon> -->
             </div>
     
             <!-- Welcome Message -->
             <div class="welcome-message">
-                👋 Hi Pamela,<br>
+                👋 Hi {{userData.username}},<br>
                 <span class="subtext">Great to see you again!</span>
             </div>
     
@@ -69,78 +70,18 @@
     
             <!-- Class Progress Section -->
             <div class="class-progress">
-                <!-- General Knowledge -->
-                <div class="class" (click)="playQuiz('General Knowledge')">
+                <div class="class" *ngFor="let data of Quizzes;" (click)="playQuiz(data._id)">
                     <div class="details">
                         <i class="fas fa-brain icon"></i> <!-- Brain icon for general knowledge -->
                         <div>
-                            <div class="subject">General Knowledge</div>
-                            <div class="questions-left">10 questions</div>
+                            <div class="subject">{{data.title}}</div>
+                            <div class="questions-left">{{data.questions.length}} questions</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
     
-                <!-- Mathematics -->
-                <div class="class" (click)="playQuiz('Mathematics')">
-                    <div class="details">
-                        <i class="fas fa-calculator icon"></i> <!-- Calculator icon for mathematics -->
-                        <div>
-                            <div class="subject">Mathematics</div>
-                            <div class="questions-left">10 questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
                 </div>
-    
-                <!-- English -->
-                <div class="class" (click)="playQuiz('English')">
-                    <div class="details">
-                        <i class="fas fa-book icon"></i> <!-- Book icon for English -->
-                        <div>
-                            <div class="subject">English</div>
-                            <div class="questions-left">10 questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-    
-                <!-- Science -->
-                <div class="class" (click)="playQuiz('Science')">
-                    <div class="details">
-                        <i class="fas fa-flask icon"></i> <!-- Flask icon for science -->
-                        <div>
-                            <div class="subject">Science</div>
-                            <div class="questions-left">10 questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-    
-                <!-- History -->
-                <div class="class" (click)="playQuiz('History')">
-                    <div class="details">
-                        <i class="fas fa-landmark icon"></i> <!-- Landmark icon for history -->
-                        <div>
-                            <div class="subject">History</div>
-                            <div class="questions-left">10 questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-    
-                <!-- Geography -->
-                <div class="class" (click)="playQuiz('Geography')">
-                    <div class="details">
-                        <i class="fas fa-globe icon"></i> <!-- Globe icon for geography -->
-                        <div>
-                            <div class="subject">Geography</div>
-                            <div class="questions-left">10 questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-            </div>
         </div>
     </div>
 </ion-content>

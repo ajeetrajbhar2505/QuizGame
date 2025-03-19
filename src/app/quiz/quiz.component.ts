@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { WebService } from '../web.service';
 
 @Component({
   selector: 'app-quiz',
@@ -9,7 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class QuizPage implements OnInit {
   Questions: any[] = []; // Array to store filtered questions
-  subjectId: string = ''; // Variable to store the subject ID from the route
+  quizId: string = ''; // Variable to store the subject ID from the route
+  quizDetails:any = {}
   currentQuestionIndex: number = 0; // Track the current question index
   currentQuestion: any = null; // Track the current question object
   score: number = 0; // Track the score
@@ -18,7 +20,8 @@ export class QuizPage implements OnInit {
   constructor(
     private ActivatedRoute: ActivatedRoute,
     private readonly http: HttpClient,
-    private router: Router
+    private router: Router,
+    private readonly webService:WebService
   ) {}
 
   ngOnInit(): void {
@@ -35,15 +38,17 @@ export class QuizPage implements OnInit {
     this.showPopup = false;
 
     // Get the subject ID from the route parameters
-    this.subjectId = this.ActivatedRoute.snapshot.params['id'];
+    this.quizId = this.ActivatedRoute.snapshot.params['id'];
     // Fetch questions from the JSON file
-    this.http.get('assets/questions.json').subscribe((data: any) => {
+    this.webService.getQuizById(this.quizId).subscribe((data: any) => {
       // Filter questions based on the subject ID and add flags
-      this.Questions = this.filterQuestions(data, this.subjectId).map((question) => ({
-        ...question,
-        selectedOption: null, // Initialize selectedOption as null
-        isAnswered: false, // Initialize isAnswered as false
-      }));
+      this.quizDetails = data
+      this.Questions = data.questions.map((question: any) => {
+        question.selectedOption = null;
+        question.isAnswered = false;
+        return question;
+      });
+      
       // Set the current question
       this.setCurrentQuestion();
     });
@@ -87,7 +92,7 @@ export class QuizPage implements OnInit {
       this.currentQuestion.isAnswered = true;
 
       // Check if the selected option is correct
-      if (option === this.currentQuestion.answer) {
+      if (option === this.currentQuestion.correctAnswer) {
         this.score += 5; // Add 5 points for the correct answer
       }
     }

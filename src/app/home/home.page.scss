@@ -23,14 +23,18 @@
         .profile-icon {
             position: absolute;
             top: 20px;
-            right: 20px;
+            right: -25px;
             display: flex;
             align-items: center;
             color: #654321;
             cursor: pointer;
             gap: 20px;
             font-size: 27px;
-
+             img{
+                border-radius: 50%;
+                width: 50%;
+            
+             }
             ion-icon {
                 font-size: 30px;
             }

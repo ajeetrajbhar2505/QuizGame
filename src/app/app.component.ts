@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { LoaderService } from './loader.service';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +7,13 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
-  constructor() {}
+export class AppComponent implements OnInit {
+  showLoader:boolean = false
+  constructor(private LoaderService:LoaderService) {}
+
+  ngOnInit(): void {
+    this.LoaderService.loaderState$.subscribe(showLoader=>{
+      this.showLoader = showLoader
+    })
+  }
 }

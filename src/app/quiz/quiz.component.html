@@ -6,7 +6,7 @@
             <button class="arrow-button" routerLink="/home">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
-            <h2>{{ subjectId }}</h2>
+            <h2>{{ quizDetails.title }}</h2>
             <button class="skip-button" (click)="skipQuestion()">Skip</button>
         </div>
 
@@ -20,7 +20,7 @@
 
         <!-- Quiz Question and Options -->
         <div class="question-box" *ngIf="currentQuestion">
-            <p>{{ currentQuestion.question }}</p>
+            <p>{{ currentQuestion.text }}</p>
             <div *ngFor="let option of currentQuestion.options" class="option"
                 [class.selected]="currentQuestion.selectedOption === option"
                 [class.correct]="currentQuestion.isAnswered && option === currentQuestion.answer"

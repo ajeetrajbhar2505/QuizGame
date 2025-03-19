@@ -1,6 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleadsService } from '../googleads.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { WebService } from '../web.service';
+
+interface Quiz {
+  _id: string;
+  title: string;
+  description: string;
+  questions: [];
+  timeLimit: number;
+  createdAt: string;
+  __v: number;
+}
 
 @Component({
   selector: 'app-home',
@@ -8,33 +19,76 @@ import { Router } from '@angular/router';
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
+
 export class HomePage implements OnInit {
+  userId: any = ''
+  userData: any = {};
+  Quizzes: Quiz[] = []
   constructor(
     private readonly googleAds: GoogleadsService,
-    private router: Router) {
-
-
+    private router: Router, private route: ActivatedRoute,
+    private readonly webService: WebService
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.userId = params['token'];
+        if (this.userId) {
+        localStorage.setItem('userId', this.userId);
+      }
+      else {
+        this.userId = localStorage.getItem('userId')
+      }
+    })
 
   }
 
- get getPoints():number{
-   let data:any =  sessionStorage.getItem('score')
-   return Number(JSON.parse(data)) || 0
+
+
+  get getPoints(): number {
+    let data: any = sessionStorage.getItem('score')
+    return Number(JSON.parse(data)) || 0
   }
 
-ngOnInit(): void {
-  
-  this.googleAds.loadBannerAds().then(data=>{
-       if (data) {
-        
-       }
-  }).catch(err=>{
-    alert(err)
-  })
-}
+  ngOnInit(): void {
+
+    this.googleAds.loadBannerAds().then(data => {
+      if (data) {
+
+      }
+    }).catch(err => {
+      alert(err)
+    })
+    this.getUserDetails();
+    this.getQuizDetails()
+  }
 
 
-  playQuiz(suject:string) {
+  getUserDetails() {
+    this.webService.getUserById(this.userId).subscribe(
+      (res) => {
+        this.userData = res;
+      },
+      (err) => {
+        console.error('Error fetching user:', err);
+      }
+    );
+  }
+
+
+
+  getQuizDetails() {
+    this.webService.getQuizzes().subscribe(
+      (res) => {
+        this.Quizzes = res;
+      },
+      (err) => {
+        console.error('Error fetching user:', err);
+      }
+    );
+  }
+
+
+
+  playQuiz(suject: string) {
     this.googleAds.loadInterstitialAd().then(result => {
       this.googleAds.showInterstitialAds().then(loaded => {
         if (loaded) {
@@ -49,12 +103,12 @@ ngOnInit(): void {
 
   }
 
-  logout(){
-   this.router.navigate(['/login'])
+  logout() {
+    this.router.navigate(['/login'])
   }
 
-  wallet(){
-   this.router.navigate(['/wallet'])
+  wallet() {
+    this.router.navigate(['/wallet'])
   }
 
 }
