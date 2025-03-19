@@ -149,11 +149,6 @@ export class QuizPage implements OnInit {
 
   // Function to close the popup and reset the quiz
   closePopup(): void {
-    let data =  sessionStorage.getItem('score')
-    if (data) {
-      this.score += Number(data)
-    }
-    sessionStorage.setItem('score',JSON.stringify(this.score))
     this.showPopup = false;
     this.initializeQuiz(); // Reset the quiz state
     this.router.navigate(['/home']); // Navigate to the home page

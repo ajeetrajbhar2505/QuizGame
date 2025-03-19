@@ -37,6 +37,7 @@ export class HomePage implements OnInit {
       else {
         this.token = localStorage.getItem('token')
       }
+      this.getUserDetails()
     })
 
   }
