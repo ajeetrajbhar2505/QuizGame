@@ -93,7 +93,7 @@ export class QuizPage implements OnInit {
 
       // Check if the selected option is correct
       if (option === this.currentQuestion.correctAnswer) {
-        this.score += 5; // Add 5 points for the correct answer
+        this.score += 1; // Add 5 points for the correct answer
       }
     }
   }
