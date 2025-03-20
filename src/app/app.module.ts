@@ -19,6 +19,7 @@ import { WebService } from './web.service';
 import { interceptorInterceptor } from './interceptor.interceptor';
 import { LoaderService } from './loader.service';
 import { SocketService } from './socket.service';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent,LoaderComponent,LoginPage,QuizPage,HomePage,WalletPage],
@@ -27,6 +28,7 @@ import { SocketService } from './socket.service';
     GoogleadsService,
     LoaderService,
     WebService,
+    InAppBrowser,
     SocketService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: interceptorInterceptor, multi: true }

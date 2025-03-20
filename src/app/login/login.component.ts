@@ -1,11 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
 import { WebService } from '../web.service';
 import { SocketService } from '../socket.service';
 import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 @Component({
   selector: 'app-login',
@@ -14,14 +13,15 @@ import { ModalController } from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
   loginSub!: Subscription;
-  googleProgress:boolean = false
+  googleProgress: boolean = false
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private webService: WebService,
-    private socketService:SocketService,
-    private modalController: ModalController
-    ) { }
+    private socketService: SocketService,
+    private modalController: ModalController,
+    private inAppBrowser: InAppBrowser
+  ) { }
 
   ngOnInit() {
     this.subscribeToLogin()
@@ -31,10 +31,10 @@ export class LoginPage implements OnInit {
     this.loginSub = this.socketService.loginData$.subscribe(data => {
       if (data) {
         this.googleProgress = false
-         setTimeout(() => {
+        setTimeout(() => {
           this.closeModal();
-          this.router.navigate(['/home'],{queryParams : {token : data.token}})
-         }, 2000);
+          this.router.navigate(['/home'], { queryParams: { token: data.token } })
+        }, 2000);
       }
     });
   }
@@ -55,7 +55,11 @@ export class LoginPage implements OnInit {
     // return
     this.webService.googleLogin().subscribe(
       (res) => {
-        window.open(res['url'], '_blank');
+        this.inAppBrowser.create(res['url'], '_blank', {
+          location: 'yes', // Show or hide the browser location bar
+          toolbar: 'yes', // Show or hide the browser toolbar
+          zoom: 'yes', // Enable or disable zoom controls
+        });
       },
       (err) => {
         console.error('Error fetching user:', err);
