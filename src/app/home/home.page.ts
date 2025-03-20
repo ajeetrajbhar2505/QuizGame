@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GoogleadsService } from '../googleads.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebService } from '../web.service';
+import { SocketService } from '../socket.service';
 
 interface Quiz {
   _id: string;
@@ -27,7 +28,8 @@ export class HomePage implements OnInit {
   constructor(
     private readonly googleAds: GoogleadsService,
     private router: Router, private route: ActivatedRoute,
-    private readonly webService: WebService
+    private readonly webService: WebService,
+    private readonly socketService:SocketService
   ) {
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
@@ -60,6 +62,8 @@ export class HomePage implements OnInit {
     })
     this.getUserDetails();
     this.getQuizDetails()
+
+  
   }
 
 

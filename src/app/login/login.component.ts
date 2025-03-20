@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { WebService } from '../web.service';
+import { SocketService } from '../socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -10,10 +12,27 @@ import { WebService } from '../web.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginPage implements OnInit {
+  loginSub!: Subscription;
 
-  constructor(private router: Router, private webService: WebService) { }
+  constructor(private router: Router, private webService: WebService,private socketService:SocketService) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.subscribeToLogin()
+  }
+
+  subscribeToLogin() {
+    this.loginSub = this.socketService.loginData$.subscribe(data => {
+      if (data) {
+        console.log('🏡 Received login data:', data);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.loginSub) {
+      this.loginSub.unsubscribe();
+    }
+  }
 
   login() {
     this.router.navigate(['/home'])
@@ -23,7 +42,7 @@ export class LoginPage implements OnInit {
   loginWithGoogle() {
     this.webService.googleLogin().subscribe(
       (res) => {
-      window.location.href = res['url']
+        window.open(res['url'], '_blank');
       },
       (err) => {
         console.error('Error fetching user:', err);

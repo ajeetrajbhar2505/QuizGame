@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL : 'http://localhost:3000',
+  apiURL : 'https://quiz-game-backend-rc4g.onrender.com',
   BannerAdId : 'ca-app-pub-4874253778737753/3116134419',
   InterstitialAdsId : 'ca-app-pub-4874253778737753/5853978398',
   RewardedVideoAddId : 'ca-app-pub-4874253778737753/9601651714'

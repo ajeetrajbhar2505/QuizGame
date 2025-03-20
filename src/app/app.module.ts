@@ -18,6 +18,7 @@ import { WalletPage } from './wallet/wallet.component';
 import { WebService } from './web.service';
 import { interceptorInterceptor } from './interceptor.interceptor';
 import { LoaderService } from './loader.service';
+import { SocketService } from './socket.service';
 
 @NgModule({
   declarations: [AppComponent,LoaderComponent,LoginPage,QuizPage,HomePage,WalletPage],
@@ -26,6 +27,7 @@ import { LoaderService } from './loader.service';
     GoogleadsService,
     LoaderService,
     WebService,
+    SocketService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: interceptorInterceptor, multi: true }
   ],

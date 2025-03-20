@@ -1,5 +1,5 @@
 export const environment = {
-  apiURL : 'https://quiz-game-backend-jjms.onrender.com/',
+  apiURL : 'https://quiz-game-backend-rc4g.onrender.com/',
   production: true,
   BannerAdId : 'ca-app-pub-4874253778737753/3116134419',
   InterstitialAdsId : 'ca-app-pub-4874253778737753/5853978398',
