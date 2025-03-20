@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { WebService } from '../web.service';
 import { SocketService } from '../socket.service';
 import { Subscription } from 'rxjs';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +14,14 @@ import { Subscription } from 'rxjs';
 })
 export class LoginPage implements OnInit {
   loginSub!: Subscription;
+  googleProgress:boolean = false
 
-  constructor(private router: Router, private webService: WebService,private socketService:SocketService) { }
+  constructor(
+    private router: Router, 
+    private webService: WebService,
+    private socketService:SocketService,
+    private modalController: ModalController
+    ) { }
 
   ngOnInit() {
     this.subscribeToLogin()
@@ -23,7 +30,11 @@ export class LoginPage implements OnInit {
   subscribeToLogin() {
     this.loginSub = this.socketService.loginData$.subscribe(data => {
       if (data) {
-        console.log('🏡 Received login data:', data);
+        this.googleProgress = false
+         setTimeout(() => {
+          this.closeModal();
+          this.router.navigate(['/home'],{queryParams : {token : data.token}})
+         }, 2000);
       }
     });
   }
@@ -40,6 +51,8 @@ export class LoginPage implements OnInit {
 
 
   loginWithGoogle() {
+    this.googleProgress = true
+    // return
     this.webService.googleLogin().subscribe(
       (res) => {
         window.open(res['url'], '_blank');
@@ -49,5 +62,10 @@ export class LoginPage implements OnInit {
       }
     );
   }
+
+  async closeModal() {
+    await this.modalController.dismiss();
+  }
+
 
 }

@@ -29,7 +29,6 @@ export class HomePage implements OnInit {
     private readonly googleAds: GoogleadsService,
     private router: Router, private route: ActivatedRoute,
     private readonly webService: WebService,
-    private readonly socketService:SocketService
   ) {
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
@@ -40,6 +39,7 @@ export class HomePage implements OnInit {
         this.token = localStorage.getItem('token')
       }
       this.getUserDetails()
+    this.getQuizDetails()
     })
 
   }
@@ -60,9 +60,6 @@ export class HomePage implements OnInit {
     }).catch(err => {
       alert(err)
     })
-    this.getUserDetails();
-    this.getQuizDetails()
-
   
   }
 

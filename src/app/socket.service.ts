@@ -41,6 +41,7 @@ export class SocketService {
 
   private listenForLogin() {
     this.socket.on('receiveLogin', (data) => {
+      localStorage.setItem('token', data.token);
       this.loginDataSource.next(data);
     });
   }
