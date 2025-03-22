@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
-    <div class="main" *ngIf="Questions.length">
+    <div class="main" *ngIf="questions.length">
     <div class="container">
         <!-- Header with Arrow, Title, and Skip Button -->
         <div class="header">
@@ -15,7 +15,7 @@
             <div class="progress" [style.width.%]="getProgressPercentage()"></div>
         </div>
         <div class="question-counter">
-            {{ currentQuestionIndex + 1 }}/{{ Questions.length }}
+            {{ currentQuestionIndex + 1 }}/{{ questions.length }}
         </div>
 
         <!-- Quiz Question and Options -->
