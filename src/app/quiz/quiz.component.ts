@@ -27,12 +27,16 @@ export class QuizPage implements OnInit {
 
   ngOnInit(): void {
     // Show ads before loading the quiz
-    this.showRandomAdBeforeQuiz();
+    this.initializeQuiz();
   }
+
+  
 
   // Show a random ad (Interstitial or Rewarded Video) before the quiz starts
   private showRandomAdBeforeQuiz(): void {
-    const randomAdType = this.getRandomInt(1, 2); // Randomly pick between 1 (Interstitial) and 2 (Rewarded Video)
+    const randomAdType = this.getRandomInt(1, 2);
+    console.log(randomAdType);
+    
     if (randomAdType === 1) {
       this.showInterstitialAd();
     } else {
@@ -138,7 +142,7 @@ export class QuizPage implements OnInit {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
       this.setCurrentQuestion();
-      this.showAdIfRequired();
+      this.showRandomAdBeforeQuiz();
     }
   }
 
@@ -189,29 +193,6 @@ export class QuizPage implements OnInit {
     this.showPopup = false;
     this.resetQuizState();
     this.router.navigate(['/home']);
-  }
-
-  // Show an ad at random intervals
-  private showAdIfRequired(): void {
-    const randomInterval = this.getRandomInt(3, 7);
-    if (this.currentQuestionIndex % randomInterval === 0) {
-      this.showAd();
-    }
-  }
-
-  // Show Google Rewarded Ad
-  private showAd(): void {
-    this.googleAds.loadRewardedVideoAd().then(() => {
-      this.googleAds.showloadRewardedVideoAds().then((loaded) => {
-        if (loaded) {
-          console.log('Ad successfully loaded and displayed.');
-        }
-      }).catch((err) => {
-        console.error('Failed to load or show ad:', err);
-      });
-    }).catch((err) => {
-      console.error('Error loading rewarded ad:', err);
-    });
   }
 
   // Utility function to get a random integer within a given range

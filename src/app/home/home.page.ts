@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
 
   // Show a random ad (either interstitial or rewarded)
   private showRandomAdBeforeQuiz(subject: string): void {
-    const randomAdType = this.getRandomInt(1, 2); // 1 for Interstitial, 2 for Rewarded Video
+    const randomAdType = this.getRandomInt(1, 2);
     if (randomAdType === 1) {
       this.showInterstitialAd(subject);
     } else {
