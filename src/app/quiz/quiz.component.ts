@@ -51,15 +51,12 @@ export class QuizPage implements OnInit {
         if (loaded) {
           console.log('Interstitial Ad successfully loaded and displayed.');
           // Initialize the quiz after ad is shown
-          this.initializeQuiz();
         }
       }).catch((err) => {
         console.error('Failed to load or show interstitial ad:', err);
-        this.initializeQuiz();  // Proceed with quiz initialization if ad fails
       });
     }).catch((err) => {
       console.error('Error loading interstitial ad:', err);
-      this.initializeQuiz();  // Proceed with quiz initialization if ad fails
     });
   }
 
@@ -70,15 +67,12 @@ export class QuizPage implements OnInit {
         if (loaded) {
           console.log('Rewarded Ad successfully loaded and displayed.');
           // Initialize the quiz after ad is shown
-          this.initializeQuiz();
         }
       }).catch((err) => {
         console.error('Failed to load or show rewarded ad:', err);
-        this.initializeQuiz();  // Proceed with quiz initialization if ad fails
       });
     }).catch((err) => {
       console.error('Error loading rewarded ad:', err);
-      this.initializeQuiz();  // Proceed with quiz initialization if ad fails
     });
   }
 
