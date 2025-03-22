@@ -60,7 +60,8 @@ export class HomePage implements OnInit {
     }).catch(err => {
       alert(err)
     })
-  
+    this.getUserDetails()
+    this.getQuizDetails()
   }
 
 
