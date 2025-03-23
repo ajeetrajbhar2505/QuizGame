@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebService } from '../web.service';
 import { SocketService } from '../socket.service';
@@ -11,16 +11,16 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
   loginSub!: Subscription;
   googleProgress: boolean = false
 
   constructor(
-    private router: Router,
-    private webService: WebService,
-    private socketService: SocketService,
-    private modalController: ModalController,
-    private inAppBrowser: InAppBrowser
+    private readonly router: Router,
+    private readonly webService: WebService,
+    private readonly socketService: SocketService,
+    private readonly modalController: ModalController,
+    private readonly inAppBrowser: InAppBrowser
   ) { }
 
   ngOnInit() {

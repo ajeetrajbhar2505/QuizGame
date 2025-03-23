@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,12 +6,12 @@ import { Router } from '@angular/router';
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.scss'],
 })
-export class WalletPage  implements OnInit {
+export class WalletPage   {
   sendPointsDialog:boolean = false
   WithdrawOpen:boolean = false
   constructor(private router:Router) { }
 
-  ngOnInit() {}
+
 
   goBack(){
     this.router.navigate(['/home'])

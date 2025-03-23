@@ -1,87 +1,87 @@
 <ion-content [fullscreen]="true">
-    <div class="main">
-        <div class="card">
-            <!-- Profile Icon -->
-            <div class="profile-icon">
-                <img [src]="userData.profilePicture" alt="">
-            <!-- <i (click)="wallet()" class="fas fa-wallet icon"></i> 
-            <ion-icon (click)="logout()" name="log-out-outline"></ion-icon> -->
-            </div>
-    
-            <!-- Welcome Message -->
-            <div class="welcome-message">
-                👋 Hi {{userData.username}},<br>
-                <span class="subtext">Great to see you again!</span>
-            </div>
-    
-    
-            
-            <!-- Stats Card -->
-            <div class="stats-card">
-                <!-- Experience Points -->
-                <div class="stat-item">
-                    <i class="fas fa-star icon"></i> <!-- Star icon for experience points -->
-                    <div>
-                        <div class="value">{{userData.totalPoints}}</div>
-                        <div class="label">Exp. Points</div>
-                    </div>
-                </div>
-                <!-- Ranking -->
-                <div class="stat-item">
-                    <i class="fas fa-trophy icon"></i> <!-- Trophy icon for ranking -->
-                    <div>
-                        <div class="value">1</div>
-                        <div class="label">Ranking</div>
-                    </div>
-                </div>
-            </div>
-    
-        
-            <div class="info-note" id="infoNote">
-                <span><ion-icon name="alert-outline"></ion-icon> Withdrawals are coming next month! Let's aim for the highest rewards so you can redeem a bigger amount. Study hard, earn more!</span>
-                <!-- <button class="close-btn" onclick="closeNote()">    <ion-icon name="close-circle-outline"></ion-icon></button> -->
-            
-            </div>
-            
-              
-       <!-- Continue Studying Section -->
-       <div class="continue-studying practice-button">
-        <i class="fas fa-book-open icon"></i> Continue Studying <!-- Book icon for studying -->
-    </div>
-            <!-- Daily Quiz Section -->
-            <div class="daily-quiz">
-                <!-- Circular Progress Bar -->
-                <div class="progress-circle">
-                    <div class="progress-text"></div>
-                </div>
-                <!-- Content -->
-                <div class="content">
-                    <div class="title">Daily Quiz</div>
-                    <div class="questions">20 mixed questions</div>
-                </div>
-                <!-- Participants with Icon -->
-                <i class="fas fa-chevron-right arrow"></i>
-    
-                <div class="participants">
-                    <i class="fas fa-users icon"></i> 120 Participated   <!-- Users icon for participants -->
-                </div>
-            </div>
-         
-    
-            <!-- Class Progress Section -->
-            <div class="class-progress">
-                <div class="class" *ngFor="let data of Quizzes;" (click)="playQuiz(data._id)">
-                    <div class="details">
-                        <i class="fas fa-brain icon"></i> <!-- Brain icon for general knowledge -->
-                        <div>
-                            <div class="subject">{{data.title}}</div>
-                            <div class="questions-left">{{data.questions.length}} questions</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-    
-                </div>
+  <div class="main">
+    <div class="card">
+
+      <!-- Welcome Message -->
+      <div class="welcome-message">
+        <div class="profile-icon">
+          <img  [src]="userData.profilePicture" alt="">
         </div>
+        <div>
+          👋 Hi {{userData.username}},<br>
+        <span class="subtext">Great to see you again!</span>
+        </div>
+      </div>
+
+
+
+      <!-- Stats Card -->
+      <div class="stats-card">
+        <!-- Experience Points -->
+        <div class="stat-item">
+          <i class="fas fa-star icon"></i> <!-- Star icon for experience points -->
+          <div>
+            <div class="value">{{userData.totalPoints}}</div>
+            <div class="label">Exp. Points</div>
+          </div>
+        </div>
+        <!-- Ranking -->
+        <div class="stat-item">
+          <i class="fas fa-trophy icon"></i> <!-- Trophy icon for ranking -->
+          <div>
+            <div class="value">1</div>
+            <div class="label">Ranking</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="info-note" id="infoNote">
+        <span><ion-icon name="alert-outline"></ion-icon> Withdrawals are coming next month! Let's aim for the highest
+          rewards so you can redeem a bigger amount. Study hard, earn more!</span>
+        <!-- <button class="close-btn" onclick="closeNote()">    <ion-icon name="close-circle-outline"></ion-icon></button> -->
+
+      </div>
+
+
+      <!-- Continue Studying Section -->
+      <div class="continue-studying practice-button">
+        <i class="fas fa-book-open icon"></i> Continue Studying <!-- Book icon for studying -->
+      </div>
+      <!-- Daily Quiz Section -->
+      <div class="daily-quiz">
+        <!-- Circular Progress Bar -->
+        <div class="progress-circle">
+          <div class="progress-text"></div>
+        </div>
+        <!-- Content -->
+        <div class="content">
+          <div class="title">Daily Quiz</div>
+          <div class="questions">20 mixed questions</div>
+        </div>
+        <!-- Participants with Icon -->
+        <i class="fas fa-chevron-right arrow"></i>
+
+        <div class="participants">
+          <i class="fas fa-users icon"></i> 120 Participated <!-- Users icon for participants -->
+        </div>
+      </div>
+
+
+      <!-- Class Progress Section -->
+      <div class="class-progress">
+        <div class="class" *ngFor="let data of Quizzes;" (click)="playQuiz(data._id)">
+          <div class="details">
+            <i class="fas fa-brain icon"></i> <!-- Brain icon for general knowledge -->
+            <div>
+              <div class="subject">{{data.title}}</div>
+              <div class="questions-left">{{data.questions.length}} questions</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right arrow"></i>
+        </div>
+
+      </div>
     </div>
+  </div>
 </ion-content>

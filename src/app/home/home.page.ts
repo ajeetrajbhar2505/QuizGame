@@ -24,12 +24,12 @@ export class HomePage implements OnInit {
   token: any = '';
   userData: any = {};
   Quizzes: Quiz[] = [];
-  
+
   constructor(
     private readonly googleAds: GoogleadsService,
     private router: Router,
     private route: ActivatedRoute,
-    private readonly webService: WebService,
+    private readonly webService: WebService
   ) {
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];

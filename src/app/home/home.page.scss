@@ -20,27 +20,17 @@
             width: 1px;
         }
 
-        .profile-icon {
-            position: absolute;
-            top: 20px;
-            right: -25px;
-            display: flex;
-            align-items: center;
-            color: #654321;
-            cursor: pointer;
-            gap: 20px;
-            font-size: 27px;
-             img{
-                border-radius: 50%;
-                width: 50%;
-            
-             }
-            ion-icon {
-                font-size: 30px;
-            }
-        }
+        .profile-icon img {
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+      }
 
-        .welcome-message {
+
+        .welcome-message{
+          display: flex;
+          gap: 10px;
+          div {
             font-size: 25px;
             font-weight: 700;
             color: #654321;
@@ -48,8 +38,9 @@
             line-height: 26px;
 
         }
+        }
 
-        .welcome-message .subtext {
+        .welcome-message div .subtext {
             font-size: 15px;
             font-weight: 500;
         }
@@ -253,4 +244,3 @@
         }
 
 
-   
