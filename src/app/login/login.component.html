@@ -28,13 +28,13 @@
         <p>Other Sign In Options</p>
         <div class="social-buttons">
             <div class="social-btn" id="open-modal" expand="block" (click)="loginWithGoogle()"><ion-icon name="logo-google"></ion-icon></div>
-            <div class="social-btn"><ion-icon name="logo-facebook"></ion-icon></div>
+            <div class="social-btn" id="open-modal" expand="block" (click)="loginWithFacebook()"><ion-icon name="logo-facebook"></ion-icon></div>
             <div class="social-btn"><ion-icon name="logo-github"></ion-icon></div>
         </div>
     </div>
 </div>
 
-<ion-modal trigger="open-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+<ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
   <ng-template>
 
     <div class="verification-container">

@@ -67,6 +67,23 @@ export class LoginPage implements OnInit, OnDestroy {
     );
   }
 
+  loginWithFacebook() {
+    this.googleProgress = true
+    // return
+    this.webService.facebookLogin().subscribe(
+      (res) => {
+        this.inAppBrowser.create(res['url'], '_blank', {
+          location: 'yes', // Show or hide the browser location bar
+          toolbar: 'yes', // Show or hide the browser toolbar
+          zoom: 'yes', // Enable or disable zoom controls
+        });
+      },
+      (err) => {
+        console.error('Error fetching user:', err);
+      }
+    );
+  }
+
   async closeModal() {
     await this.modalController.dismiss();
   }

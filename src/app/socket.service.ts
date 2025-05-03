@@ -17,7 +17,7 @@ export class SocketService {
   }
 
   private connectSocket() {
-    this.socket = io('https://quiz-game-backend-rc4g.onrender.com', {
+    this.socket = io('https://quiz-game-backend-nhn2.onrender.com', {
       transports: ['websocket'],  // Optional: force websocket (instead of polling)
       reconnection: true
     });

@@ -33,6 +33,11 @@ export class WebService {
     return this.http.get(`${this.apiUrl}/auth/google-login`);
   }
 
+  facebookLogin(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/auth/facebook-login`);
+  }
+
+
    // ---------- User APIs ----------
 
   // Get a specific user by ID

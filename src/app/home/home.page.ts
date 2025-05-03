@@ -48,6 +48,10 @@ export class HomePage implements OnInit {
     return Number(JSON.parse(data)) || 0;
   }
 
+  redirect(path:string){
+this.router.navigate([path])
+  }
+
   ngOnInit(): void {
     this.googleAds.loadBannerAds().then(data => {
       if (data) {

@@ -36,7 +36,7 @@
       </div>
 
 
-      <div class="info-note" id="infoNote">
+      <div class="info-note" id="infoNote" *ngIf="false">
         <span><ion-icon name="alert-outline"></ion-icon> Withdrawals are coming next month! Let's aim for the highest
           rewards so you can redeem a bigger amount. Study hard, earn more!</span>
         <!-- <button class="close-btn" onclick="closeNote()">    <ion-icon name="close-circle-outline"></ion-icon></button> -->
@@ -85,3 +85,23 @@
     </div>
   </div>
 </ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home" (click)="redirect('home')">
+      <ion-icon name="home"></ion-icon>
+      Home
+    </ion-tab-button>
+    <ion-tab-button tab="radio" (click)="redirect('wallet')">
+      <ion-icon name="wallet"></ion-icon>
+      Wallet
+    </ion-tab-button>
+    <ion-tab-button tab="library">
+      <ion-icon name="person"></ion-icon>
+      Profile
+    </ion-tab-button>
+    <ion-tab-button tab="search" (click)="redirect('login')">
+      <ion-icon name="log-out"></ion-icon>
+      Logout
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
