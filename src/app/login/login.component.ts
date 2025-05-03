@@ -14,6 +14,7 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 export class LoginPage implements OnInit, OnDestroy {
   loginSub!: Subscription;
   googleProgress: boolean = false
+  facebookProgress: boolean = false
 
   constructor(
     private readonly router: Router,
@@ -68,7 +69,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   loginWithFacebook() {
-    this.googleProgress = true
+    this.facebookProgress = true
     // return
     this.webService.facebookLogin().subscribe(
       (res) => {
