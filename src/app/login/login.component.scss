@@ -1,296 +1,251 @@
-.login-card {
-    border-radius: 20px;
-    padding: 0 2rem 0 2rem;
+/* Main Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Login Card */
+  .login-card {
+    background: white;
+    border-radius: 24px;
+    padding: 22px;
     width: 100%;
     max-width: 420px;
-}
-
-.brand-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    p {
-        font-size: 25px;
-        color: #747474;
-        font-weight: 900;
-    }
-
-    img {
-        width: 40px;
-    }
-}
-.brand{
-    margin-bottom: 10px;
-}
-
-.brand h1 {
-    margin: unset;
-    font-size: 1.75rem;
-    color: #1a1a1a;
-    margin-bottom: 0.5rem;
-}
-
-
-.form-group {
-    margin-bottom: 1rem;
-    position: relative;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 2px solid #e1e1e1;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    outline: unset;
-}
-
-
-.remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.remember-me {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.remember-me input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-
-.remember-me label {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.forgot-password {
-    color: #000;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.login-btn {
-    width: 100%;
-    padding: 1rem;
-    background: #666666;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.login-btn:active {
-    transform: translateY(0);
-}
-
-.social-login {
-    margin-top: 2rem;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  /* Branding */
+  .brand {
     text-align: center;
-}
-
-.social-login p {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    position: relative;
-}
-
-.social-login p::before,
-.social-login p::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 22%;
-    height: 1px;
-    background: #e1e1e1;
-}
-
-.social-login p::before {
-    left: 0;
-}
-
-.social-login p::after {
-    right: 0;
-}
-
-.social-buttons {
+    margin-bottom: 32px;
+  }
+  
+  .brand-logo {
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.social-btn {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #e1e1e1;
-    border-radius: 12px;
-    display: flex;
+    justify-content: left;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-
-.signup-link {
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-.signup-link a {
-    color: #000;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.signup-link a:hover {
-    text-decoration: underline;
-}
-
-.error {
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .brand-logo img {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .brand-logo h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3436;
+    margin: 0;
+  }
+  
+  .welcome-text {
+    color: #636e72;
+    font-size: 14px;
+    margin: 0;
+    text-align: left;
+  }
+  
+  /* Form Elements */
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  .input-item {
+    --background: #f8f9fa;
+    --border-radius: 12px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    margin-bottom: 8px;
+    --highlight-color-focused: var(--primary);
+  }
+  
+  .input-item ion-icon {
+    color: #6c5ce7;
+    font-size: 20px;
+  }
+  
+  .error {
+    color: #e84118;
+    font-size: 12px;
+    margin-top: 4px;
+    padding-left: 16px;
     display: none;
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    20%,
-    60% {
-        transform: translateX(-5px);
-    }
-
-    40%,
-    80% {
-        transform: translateX(5px);
-    }
-}
-
-.shake {
-    animation: shake 0.5s ease;
-}
-
-.block {
-    width: 100%;
-    height: 300px;
+  }
+  
+  /* Buttons */
+  .login-btn {
+    --background: #6c5ce7;
+    --background-activated: #5649c0;
+    --background-hover: #5649c0;
+    --box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+    text-transform: none;
+    margin-top: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .login-btn:active {
+    transform: translateY(2px);
+  }
+  
+  /* Divider */
+  .divider {
     display: flex;
     align-items: center;
+    margin: 24px 0;
+    color: #b2bec3;
+    font-size: 12px;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #dfe6e9;
+  }
+  
+  .divider::before {
+    margin-right: 16px;
+  }
+  
+  .divider::after {
+    margin-left: 16px;
+  }
+  
+  /* Social Login */
+  .social-buttons {
+    display: flex;
+    gap: 12px;
     justify-content: center;
   }
   
-
-  .face{
-    background-color: red($color: #000000);
+  .social-btn {
+    --border-radius: 12px;
+    --box-shadow: none;
+    height: 48px;
+    font-weight: 600;
+    text-transform: none;
+    --background: transparent;
+    --color: #2d3436;
+    --border-width: 1px;
+    --border-style: solid;
+    --border-color: #dfe6e9;
+    transition: all 0.3s ease;
   }
-
   
-
-
-/* Verification Container */
-.verification-container {
+  .social-btn:hover {
+    --background: #f8f9fa;
+  }
+  
+  .social-btn.google ion-icon {
+    color: #db4437;
+  }
+  
+  .social-btn.facebook ion-icon {
+    color: #4267b2;
+  }
+  
+  /* Verification Modals */
+  .verification-container {
     text-align: center;
-    background-color: white;
-    padding: 40px;
-    border-radius: 12px;
-    width: 100%;
+    padding: 40px 24px;
+    background: white;
   }
   
-  /* Loader Wrapper */
   .loader {
     position: relative;
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 20px;
-  }
-
-  .success{
-    position: relative;
-    padding-bottom: 60px;
-    margin: 0 auto 20px;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
   }
   
-  /* Spinning Part */
   .loader-spinner {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #4285F4; /* Google Blue */
+    border: 3px solid rgba(108, 92, 231, 0.1);
+    border-top: 3px solid #6c5ce7;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
   
-  /* Static Icon */
   .loader-icon {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #4285F4; /* Google Blue */
   }
   
-    
-  /* Static Icon */
-  .loader-success-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #4285F4; /* Google Blue */
-  }
-
-  /* Spin Animation */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  .success-animation {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px;
   }
   
-  /* Verification Text */
-  .verification-text p {
-    margin: 0;
-    font-size: 1rem;
-    color: #333;
+  .checkmark {
+    width: 100px;
+    height: 100px;
   }
   
-  .verification-text p:first-child {
-    font-weight: bold;
+  .checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #6c5ce7;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+  
+  .checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 3;
+    stroke: #6c5ce7;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+  
+  .verification-text h3 {
+    color: #2d3436;
+    font-size: 20px;
     margin-bottom: 8px;
   }
   
-  .verification-text p:last-child {
-    color: #777;
+  .verification-text p {
+    color: #636e72;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @keyframes stroke {
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  @keyframes scale {
+    0%, 100% { transform: none; }
+    50% { transform: scale3d(1.1, 1.1, 1); }
+  }
+  
+  @keyframes fill {
+    100% { box-shadow: inset 0 0 0 100px #6c5ce7; }
   }

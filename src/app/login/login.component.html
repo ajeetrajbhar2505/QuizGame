@@ -1,75 +1,98 @@
 <ion-content [fullscreen]="true">
-  <div class="login-card">
-    <div class="brand">
-      <div class="brand-logo">
-        <img src="assets/AppLogo.png" alt="">
-        <p>QuizGame</p>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="assets/AppLogo.png" alt="QuizGame Logo">
+          <h1>QuizGame</h1>
+        </div>
+        <p class="welcome-text">Welcome back! Please enter<br> your credentials</p>
       </div>
-        <span>Enter your email as credentials to access your account</span>
-    </div>
 
-    <div id="loginForm">
+      <div id="loginForm">
         <div class="form-group">
-            <label for="email">Email</label>
-            <input 
-                type="email" 
-                placeholder="name@company.com"
-            >
-            <div class="error" id="emailError"></div>
+          <ion-item lines="none" class="input-item">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-input 
+              type="email" 
+              placeholder="name@gmail.com"
+              id="email"
+            ></ion-input>
+          </ion-item>
+          <div class="error" id="emailError"></div>
         </div>
 
-
-        <button class="login-btn" (click)="login()" id="loginButton">
-            Sign in
-        </button>
+        <ion-button expand="block" shape="round" class="login-btn" (click)="login()" id="loginButton">
+          Sign In
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
       </div>
 
-    <div class="social-login">
-        <p>Other Sign In Options</p>
+      <div class="divider">
+        <span>or continue with</span>
+      </div>
+
+      <div class="social-login">
         <div class="social-buttons">
-            <div class="social-btn" id="open-googleModal" expand="block" (click)="loginWithGoogle()"><ion-icon name="logo-google"></ion-icon></div>
-            <div class="social-btn" id="open-facebookModel" expand="block" (click)="loginWithFacebook()"><ion-icon name="logo-facebook"></ion-icon></div>
-            <div class="social-btn"><ion-icon name="logo-github"></ion-icon></div>
+          <ion-button fill="clear" class="social-btn google" (click)="loginWithGoogle()">
+            <ion-icon name="logo-google" slot="start"></ion-icon>
+            Google
+          </ion-button>
+          <ion-button fill="clear" class="social-btn facebook" (click)="loginWithFacebook()">
+            <ion-icon name="logo-facebook" slot="start"></ion-icon>
+            Facebook
+          </ion-button>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<ion-modal #modal trigger="open-googleModal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-  <ng-template>
-
-    <div class="verification-container">
-          <div class="success" *ngIf="!googleProgress">
-            <img src="assets/success.gif" class="loader-success-icon" width="100px" alt="">
+  <!-- Verification Modals -->
+  <ion-modal #modal trigger="open-googleModal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="verification-container">
+        <div class="success" *ngIf="!googleProgress">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
           </div>
-          <div class="loader" *ngIf="googleProgress">
+        </div>
+        <div class="loader" *ngIf="googleProgress">
           <div class="loader-spinner"></div>
           <img src="assets/google.png" class="loader-icon" width="30px" alt="">
         </div>
         <div class="verification-text">
-          <p>{{googleProgress?'Verifying with Google':'Verified'}}</p>
+          <h3>{{googleProgress?'Signing in with Google':'Success!'}}</h3>
           <p *ngIf="googleProgress">Please wait...</p>
+          <p *ngIf="!googleProgress">You're being redirected</p>
         </div> 
       </div>
-  </ng-template>
-</ion-modal>
+    </ng-template>
+  </ion-modal>
 
-<ion-modal #modal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-  <ng-template>
-
-    <div class="verification-container">
-          <div class="success" *ngIf="!facebookProgress">
-            <img src="assets/success.gif" class="loader-success-icon" width="100px" alt="">
+  <ion-modal #modal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="verification-container">
+        <div class="success" *ngIf="!facebookProgress">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
           </div>
-          <div class="loader" *ngIf="facebookProgress">
+        </div>
+        <div class="loader" *ngIf="facebookProgress">
           <div class="loader-spinner"></div>
           <img src="assets/facebook.png" class="loader-icon" width="30px" alt="">
         </div>
         <div class="verification-text">
-          <p>{{facebookProgress?'Verifying with Facebook':'Verified'}}</p>
+          <h3>{{facebookProgress?'Signing in with Facebook':'Success!'}}</h3>
           <p *ngIf="facebookProgress">Please wait...</p>
+          <p *ngIf="!facebookProgress">You're being redirected</p>
         </div> 
       </div>
-  </ng-template>
-</ion-modal>
-
+    </ng-template>
+  </ion-modal>
 </ion-content>
