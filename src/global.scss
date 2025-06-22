@@ -92,7 +92,6 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: 10px;
   }
   
   .homeHeader {
@@ -121,6 +120,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     font-size: 14px;
     opacity: 0.9;
     font-weight: 300;
+    margin: 0;
   }
   
   .user-avatar {
