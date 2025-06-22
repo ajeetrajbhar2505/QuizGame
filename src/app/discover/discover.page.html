@@ -1,0 +1,166 @@
+<ion-content [fullscreen]="true">
+  <div class="phone">
+
+    <div class="header">
+      <a routerLink="/home" class="back-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back
+      </a>
+      <div class="page-title">Discover</div>
+    </div>
+
+
+
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search quizzes, topics...">
+    </div>
+
+
+    <div class="categories animate-in delay-2">
+      <div class="category-chip active">All</div>
+      <div class="category-chip">Math</div>
+      <div class="category-chip">Science</div>
+      <div class="category-chip">Literature</div>
+      <div class="category-chip">History</div>
+      <div class="category-chip">Geography</div>
+      <div class="category-chip">Technology</div>
+    </div>
+
+    <div class="featured-quiz animate-in delay-2">
+      <div class="featured-image"></div>
+      <div class="featured-content">
+        <span class="featured-badge">
+          <i class="fas fa-star"></i>
+          Editor's Pick
+        </span>
+        <h3 class="featured-title">Advanced Algebra Challenge</h3>
+        <p class="featured-description">Test your skills with this 20-question algebra quiz covering quadratic
+          equations, polynomials, and more.</p>
+        <button class="featured-button">
+          <i class="fas fa-play"></i>
+          Start Quiz
+        </button>
+      </div>
+    </div>
+
+    <div class="section-header animate-in delay-3">
+      <h2 class="section-title">
+        <i class="fas fa-layer-group"></i>
+        Popular Categories
+      </h2>
+      <a href="#" class="view-all">
+        View all
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="quiz-grid">
+      <div class="quiz-card animate-in delay-3">
+        <div class="quiz-image">
+          <i class="fas fa-square-root-alt"></i>
+        </div>
+        <h4 class="quiz-title">Mathematics</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-file-alt"></i>
+            120 Quizzes
+          </span>
+        </div>
+      </div>
+
+      <div class="quiz-card animate-in delay-3">
+        <div class="quiz-image" style="background: linear-gradient(45deg, #00B894, #55EFC4);">
+          <i class="fas fa-atom"></i>
+        </div>
+        <h4 class="quiz-title">Science</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-file-alt"></i>
+            85 Quizzes
+          </span>
+        </div>
+      </div>
+
+      <div class="quiz-card animate-in delay-3">
+        <div class="quiz-image" style="background: linear-gradient(45deg, #FF7675, #FDCB6E);">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h4 class="quiz-title">Literature</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-file-alt"></i>
+            62 Quizzes
+          </span>
+        </div>
+      </div>
+
+      <div class="quiz-card animate-in delay-3">
+        <div class="quiz-image" style="background: linear-gradient(45deg, #0984E3, #74B9FF);">
+          <i class="fas fa-landmark"></i>
+        </div>
+        <h4 class="quiz-title">History</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-file-alt"></i>
+            78 Quizzes
+          </span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="section-header animate-in">
+      <h2 class="section-title">
+        <i class="fas fa-fire"></i>
+        Trending Now
+      </h2>
+      <a href="#" class="view-all">
+        View all
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="quiz-grid">
+      <div class="quiz-card animate-in">
+        <div class="quiz-image" style="background: linear-gradient(45deg, #6C5CE7, #A29BFE);">
+          <i class="fas fa-function"></i>
+        </div>
+        <h4 class="quiz-title">Algebra Basics</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-clock"></i>
+            10 min
+          </span>
+          <span class="rating">
+            <i class="fas fa-star"></i>
+            4.8
+          </span>
+        </div>
+      </div>
+
+      <div class="quiz-card animate-in">
+        <div class="quiz-image" style="background: linear-gradient(45deg, #0984E3, #74B9FF);">
+          <i class="fas fa-rocket"></i>
+        </div>
+        <h4 class="quiz-title">Newton's Laws</h4>
+        <div class="quiz-meta">
+          <span>
+            <i class="far fa-clock"></i>
+            15 min
+          </span>
+          <span class="rating">
+            <i class="fas fa-star"></i>
+            4.6
+          </span>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</ion-content>

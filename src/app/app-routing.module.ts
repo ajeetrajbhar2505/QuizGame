@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './login/login.component';
 import { HomePage } from './home/home.page';
 import { CreatePage } from './create/create.page';
+import { DiscoverPage } from './discover/discover.page';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },
+  {
+    path: 'discover',
+    component : DiscoverPage
   }
 ];
 

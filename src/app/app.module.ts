@@ -21,11 +21,12 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { CreatePage } from './create/create.page';
+import { DiscoverPage } from './discover/discover.page';
 
 library.add(fas);
 
 @NgModule({
-  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage],
+  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [
     GoogleadsService,
