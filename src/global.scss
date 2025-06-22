@@ -86,13 +86,6 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
   
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-  
   body {
     background: var(--light);
     display: flex;
