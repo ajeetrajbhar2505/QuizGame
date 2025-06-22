@@ -88,13 +88,14 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   
  
   .phone {
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     position: relative;
+    padding: 10px;
   }
   
-  .header {
+  .homeHeader {
     padding: 32px 24px 24px;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: var(--white);
@@ -104,7 +105,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     border-bottom-right-radius: 30px;
   }
   
-  .header-content {
+  .homeHeader-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -237,8 +238,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 14px 10px;
+    padding-top: 15px;
     border-radius: var(--border-radius-sm);
     background: var(--light);
     transition: var(--transition);
@@ -378,7 +378,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     box-shadow: var(--shadow-sm);
   }
   
-  .progress-header {
+  .progress-homeHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;

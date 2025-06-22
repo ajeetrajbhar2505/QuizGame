@@ -1,7 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, createComponent } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './login/login.component';
 import { HomePage } from './home/home.page';
+import { CreatePage } from './create/create.page';
 
 const routes: Routes = [
   {
@@ -13,10 +14,14 @@ const routes: Routes = [
     component : HomePage
   },
   {
+    path: 'create',
+    component : CreatePage
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
-  },
+  }
 ];
 
 @NgModule({
