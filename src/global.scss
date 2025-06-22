@@ -86,26 +86,12 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
   
-  body {
-    background: var(--light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-  }
-  
+ 
   .phone {
-    background: var(--white);
-    border-radius: 40px;
-    box-shadow: var(--shadow-lg);
-    width: 390px;
-    height: 844px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    border: 12px solid var(--dark);
   }
   
   .header {
