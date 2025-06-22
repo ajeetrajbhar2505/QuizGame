@@ -1,107 +1,207 @@
-<ion-content [fullscreen]="true">
-  <div class="main">
-    <div class="card">
 
-      <!-- Welcome Message -->
-      <div class="welcome-message">
-        <div class="profile-icon">
-          <img  [src]="userData.profilePicture" alt="">
+  <div class="phone">
+    <!-- Header with user greeting and stats -->
+    <div class="header">
+      <div class="header-content">
+        <div class="user-greeting">
+          <h1>Welcome back, User!</h1>
+          <p>Ready to challenge yourself today?</p>
         </div>
-        <div>
-          👋 Hi {{userData.username}},<br>
-        <span class="subtext">Great to see you again!</span>
-        </div>
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
       </div>
-
-
-
-      <!-- Stats Card -->
-      <div class="stats-card">
-        <!-- Experience Points -->
-        <div class="stat-item">
-          <i class="fas fa-star icon"></i> <!-- Star icon for experience points -->
-          <div>
-            <div class="value">{{userData.totalPoints}}</div>
-            <div class="label">Exp. Points</div>
-          </div>
+      
+      <div class="stats-container">
+        <div class="stat-card">
+          <i class="fas fa-trophy"></i>
+          <div class="value">1,250</div>
+          <div class="label">XP Points</div>
         </div>
-        <!-- Ranking -->
-        <div class="stat-item">
-          <i class="fas fa-trophy icon"></i> <!-- Trophy icon for ranking -->
-          <div>
-            <div class="value">1</div>
-            <div class="label">Ranking</div>
-          </div>
+        <div class="stat-card">
+          <i class="fas fa-medal"></i>
+          <div class="value">24</div>
+          <div class="label">Badges</div>
         </div>
-      </div>
-
-
-      <div class="info-note" id="infoNote" *ngIf="false">
-        <span><ion-icon name="alert-outline"></ion-icon> Withdrawals are coming next month! Let's aim for the highest
-          rewards so you can redeem a bigger amount. Study hard, earn more!</span>
-        <!-- <button class="close-btn" onclick="closeNote()">    <ion-icon name="close-circle-outline"></ion-icon></button> -->
-
-      </div>
-
-
-      <!-- Continue Studying Section -->
-      <div class="continue-studying practice-button">
-        <i class="fas fa-book-open icon"></i> Continue Studying <!-- Book icon for studying -->
-      </div>
-      <!-- Daily Quiz Section -->
-      <div class="daily-quiz">
-        <!-- Circular Progress Bar -->
-        <div class="progress-circle">
-          <div class="progress-text"></div>
+        <div class="stat-card">
+          <i class="fas fa-fire"></i>
+          <div class="value">7</div>
+          <div class="label">Streak</div>
         </div>
-        <!-- Content -->
-        <div class="content">
-          <div class="title">Daily Quiz</div>
-          <div class="questions">20 mixed questions</div>
-        </div>
-        <!-- Participants with Icon -->
-        <i class="fas fa-chevron-right arrow"></i>
-
-        <div class="participants">
-          <i class="fas fa-users icon"></i> 120 Participated <!-- Users icon for participants -->
-        </div>
-      </div>
-
-
-      <!-- Class Progress Section -->
-      <div class="class-progress">
-        <div class="class" *ngFor="let data of Quizzes;" (click)="playQuiz(data._id)">
-          <div class="details">
-            <i class="fas fa-brain icon"></i> <!-- Brain icon for general knowledge -->
-            <div>
-              <div class="subject">{{data.title}}</div>
-              <div class="questions-left">{{data.questions.length}} questions</div>
-            </div>
-          </div>
-          <i class="fas fa-chevron-right arrow"></i>
-        </div>
-
       </div>
     </div>
+    
+    <!-- Main content section -->
+    <div class="section">
+      <!-- Search bar -->
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search quizzes, topics...">
+      </div>
+      
+      <!-- Categories -->
+      <div class="section-title">
+        <h2>Categories</h2>
+        <a href="#">See all <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div class="category-scroll">
+        <div class="category-card active">
+          <div class="icon-wrapper">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <h4>Math</h4>
+        </div>
+        <div class="category-card">
+          <div class="icon-wrapper">
+            <i class="fas fa-flask"></i>
+          </div>
+          <h4>Science</h4>
+        </div>
+        <div class="category-card">
+          <div class="icon-wrapper">
+            <i class="fas fa-book"></i>
+          </div>
+          <h4>Literature</h4>
+        </div>
+        <div class="category-card">
+          <div class="icon-wrapper">
+            <i class="fas fa-globe-americas"></i>
+          </div>
+          <h4>Geography</h4>
+        </div>
+        <div class="category-card">
+          <div class="icon-wrapper">
+            <i class="fas fa-history"></i>
+          </div>
+          <h4>History</h4>
+        </div>
+      </div>
+      
+      <!-- Featured Quizzes -->
+      <div class="section-title">
+        <h2>Featured Quizzes</h2>
+        <a href="#">View all <i class="fas fa-chevron-right"></i></a>
+      </div>
+      
+      <div class="quiz-card">
+        <img src="https://placehold.co/600x400/6C5CE7/FFFFFF?text=Algebra" class="banner" alt="Math Quiz">
+        <div class="badge">New</div>
+        <div class="content">
+          <h3>Algebra Basics Challenge</h3>
+          <div class="meta">
+            <div class="participants">
+              <img src="https://randomuser.me/api/portraits/women/44.jpg">
+              <img src="https://randomuser.me/api/portraits/men/22.jpg">
+              <span>+128 playing</span>
+            </div>
+            <div class="points"><i class="fas fa-bolt"></i> 50 XP</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="quiz-card">
+        <img src="https://placehold.co/600x400/00B894/FFFFFF?text=Chemistry" class="banner" alt="Science Quiz">
+        <div class="badge">Trending</div>
+        <div class="content">
+          <h3>Chemical Elements Master</h3>
+          <div class="meta">
+            <div class="participants">
+              <img src="https://randomuser.me/api/portraits/women/33.jpg">
+              <img src="https://randomuser.me/api/portraits/men/11.jpg">
+              <span>+86 playing</span>
+            </div>
+            <div class="points"><i class="fas fa-bolt"></i> 35 XP</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Progress Card -->
+      <div class="progress-container">
+        <div class="progress-header">
+          <div class="progress-title">
+            <i class="fas fa-chart-line"></i> Your Learning Progress
+          </div>
+          <div class="progress-percent">65%</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <div class="progress-stats">
+          <span>Daily goal: 100 XP</span>
+          <span>1,250/2,000 XP</span>
+        </div>
+      </div>
+      
+      <!-- Leaderboard -->
+      <div class="section-title">
+        <h2>Top Learners</h2>
+        <a href="#">See ranking <i class="fas fa-chevron-right"></i></a>
+      </div>
+      
+      <div class="quiz-card">
+        <div class="content" style="padding-bottom: 8px;">
+          <div class="leaderboard-item">
+            <div class="rank">1</div>
+            <div class="user">
+              <img src="https://randomuser.me/api/portraits/women/12.jpg">
+              <div>
+                <div class="name">Priya Sharma</div>
+                <div class="level">Gold Level</div>
+              </div>
+            </div>
+            <div class="points">1,450</div>
+          </div>
+          <div class="leaderboard-item">
+            <div class="rank">2</div>
+            <div class="user">
+              <img src="https://randomuser.me/api/portraits/men/45.jpg">
+              <div>
+                <div class="name">Rahul Patel</div>
+                <div class="level">Silver Level</div>
+              </div>
+            </div>
+            <div class="points">1,320</div>
+          </div>
+          <div class="leaderboard-item">
+            <div class="rank">3</div>
+            <div class="user">
+              <img src="https://randomuser.me/api/portraits/women/32.jpg">
+              <div>
+                <div class="name">Anjali Singh</div>
+                <div class="level">Silver Level</div>
+              </div>
+            </div>
+            <div class="points">1,280</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <a href="#" class="nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-compass"></i>
+        <span>Discover</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-plus-circle"></i>
+        <span>Create</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-bell"></i>
+        <span>Alerts</span>
+        <div class="badge">3</div>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <button class="floating-btn">
+      <i class="fas fa-bolt"></i>
+    </button>
   </div>
-</ion-content>
-<ion-tabs>
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home" (click)="redirect('home')">
-      <ion-icon name="home"></ion-icon>
-      Home
-    </ion-tab-button>
-    <ion-tab-button tab="radio" (click)="redirect('wallet')">
-      <ion-icon name="wallet"></ion-icon>
-      Wallet
-    </ion-tab-button>
-    <ion-tab-button tab="library">
-      <ion-icon name="person"></ion-icon>
-      Profile
-    </ion-tab-button>
-    <ion-tab-button tab="search" (click)="redirect('login')">
-      <ion-icon name="log-out"></ion-icon>
-      Logout
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
