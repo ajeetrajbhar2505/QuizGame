@@ -496,7 +496,9 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     padding: 14px 0;
     background: var(--white);
     border-top: 1px solid var(--light-gray);
-    position: relative;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
     z-index: 10;
   }
   
