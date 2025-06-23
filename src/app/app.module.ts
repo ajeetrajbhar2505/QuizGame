@@ -22,11 +22,12 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { CreatePage } from './create/create.page';
 import { DiscoverPage } from './discover/discover.page';
+import { ProfilePage } from './profile/profile.page';
 
 library.add(fas);
 
 @NgModule({
-  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage],
+  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [
     GoogleadsService,

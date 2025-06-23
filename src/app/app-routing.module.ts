@@ -4,6 +4,7 @@ import { LoginPage } from './login/login.component';
 import { HomePage } from './home/home.page';
 import { CreatePage } from './create/create.page';
 import { DiscoverPage } from './discover/discover.page';
+import { ProfilePage } from './profile/profile.page';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'discover',
     component : DiscoverPage
+  },
+  {
+    path: 'profile',
+    component : ProfilePage
   }
 ];
 
