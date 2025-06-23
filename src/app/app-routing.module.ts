@@ -5,6 +5,7 @@ import { HomePage } from './home/home.page';
 import { CreatePage } from './create/create.page';
 import { DiscoverPage } from './discover/discover.page';
 import { ProfilePage } from './profile/profile.page';
+import { AlertPage } from './alert/alert.page';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: 'profile',
     component : ProfilePage
+  },
+  {
+    path: 'alert',
+    component : AlertPage
   }
 ];
 

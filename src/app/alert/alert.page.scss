@@ -1,0 +1,284 @@
+
+    $primary: #6C5CE7;
+    $primary-light: #A29BFE;
+    $success: #00B894;
+    $warning: #FDCB6E;
+    $danger: #FF7675;
+    $text: #2D3436;
+    $text-light: #636E72;
+    $bg: #F5F6FA;
+    $card-bg: #FFFFFF;
+    $shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    $transition: all 0.3s ease;
+
+  .dark-mode {
+    $bg: #1A1A2E;
+    $card-bg: #16213E;
+    $text: #E6E6E6;
+    $text-light: #B8B8B8;
+    $shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    background-color: ($bg);
+    color: ($text);
+    transition: ($transition);
+  }
+
+  .phone {
+    max-width: 414px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    color: ($primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px;
+    border-radius: 12px;
+    transition: ($transition);
+  }
+
+  .back-button:hover {
+    background-color: rgba(108, 92, 231, 0.1);
+  }
+
+  .back-button i {
+    margin-right: 8px;
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: ($text);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .header-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: ($card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: ($shadow);
+    transition: ($transition);
+    cursor: pointer;
+  }
+
+  .header-action:hover {
+    transform: translateY(-2px);
+  }
+
+  .alert-container {
+    padding-bottom: 80px;
+  }
+
+  .alert-section {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: ($text);
+  }
+
+  .alert-list {
+    background-color: ($card-bg);
+    border-radius: 16px;
+    box-shadow: ($shadow);
+    overflow: hidden;
+  }
+
+  .alert-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: ($transition);
+    cursor: pointer;
+  }
+
+  .alert-item:last-child {
+    border-bottom: none;
+  }
+
+  .alert-item:hover {
+    background-color: rgba(108, 92, 231, 0.05);
+  }
+
+  .alert-item.unread {
+    background-color: rgba(108, 92, 231, 0.03);
+    border-left: 4px solid ($primary);
+  }
+
+  .alert-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(108, 92, 231, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: ($primary);
+    font-size: 18px;
+  }
+
+  .alert-content {
+    flex: 1;
+  }
+
+  .alert-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: ($text);
+  }
+
+  .alert-message {
+    font-size: 14px;
+    color: ($text-light);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .alert-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .alert-time {
+    font-size: 12px;
+    color: ($text-light);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .alert-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background-color: ($primary);
+    color: white;
+  }
+
+  .alert-action {
+    color: ($text-light);
+    padding-left: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(108, 92, 231, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: ($primary);
+    font-size: 32px;
+  }
+
+  .empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: ($text);
+  }
+
+  .empty-state p {
+    font-size: 14px;
+    color: ($text-light);
+    margin-bottom: 24px;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: ($transition);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background-color: ($primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  }
+
+  .btn-primary:hover {
+    background-color: ($primary);
+    transform: translateY(-2px);
+  }
+
+  /* Alert type colors */
+  .alert-achievement .alert-icon {
+    background-color: rgba(0, 184, 148, 0.1);
+    color: ($success);
+  }
+
+  .alert-warning .alert-icon {
+    background-color: rgba(253, 203, 110, 0.1);
+    color: ($warning);
+  }
+
+  .alert-danger .alert-icon {
+    background-color: rgba(255, 118, 117, 0.1);
+    color: ($danger);
+  }
+
+  @media (max-width: 480px) {
+    .phone {
+      padding: 16px;
+    }
+    
+    .alert-item {
+      padding: 12px;
+    }
+  }
+
