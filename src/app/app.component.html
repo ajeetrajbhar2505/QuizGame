@@ -1,7 +1,7 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
       <!-- Bottom Navigation -->
-      <div class="bottom-nav">
+      <div class="bottom-nav" *ngIf="logged">
         <a routerLink="/home" class="nav-item active">
           <i class="fas fa-home"></i>
           <span>Home</span>

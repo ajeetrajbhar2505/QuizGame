@@ -5,6 +5,7 @@ import { SocketService } from '../socket.service';
 import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { LoaderService } from '../loader.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,9 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly webService: WebService,
     private readonly socketService: SocketService,
     private readonly modalController: ModalController,
-    private readonly inAppBrowser: InAppBrowser
+    private readonly inAppBrowser: InAppBrowser,
+    private readonly loader: LoaderService,
+
   ) { }
 
   ngOnInit() {
@@ -47,7 +50,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   login() {
-    this.router.navigate(['/home'])
+    this.loader.userLogged()
   }
 
 

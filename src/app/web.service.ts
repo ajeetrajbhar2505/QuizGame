@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebService {
+  logged: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
   private apiUrl = `${environment.apiURL}/api`;
 
@@ -38,7 +39,7 @@ export class WebService {
   }
 
 
-   // ---------- User APIs ----------
+  // ---------- User APIs ----------
 
   // Get a specific user by ID
   getUserById(): Observable<any> {
