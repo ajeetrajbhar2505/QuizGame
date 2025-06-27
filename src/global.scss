@@ -92,6 +92,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     display: flex;
     flex-direction: column;
     position: relative;
+    margin-bottom: 50px;
   }
   
   .homeHeader {
