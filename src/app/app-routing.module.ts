@@ -6,6 +6,7 @@ import { CreatePage } from './create/create.page';
 import { DiscoverPage } from './discover/discover.page';
 import { ProfilePage } from './profile/profile.page';
 import { AlertPage } from './alert/alert.page';
+import { UserSetupPage } from './user-setup/user-setup.page';
 
 const routes: Routes = [
   {
@@ -22,7 +23,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'setup',
     pathMatch: 'full'
   },
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
   {
     path: 'alert',
     component : AlertPage
+  },
+  {
+    path: 'setup',
+    component : UserSetupPage
   }
 ];
 

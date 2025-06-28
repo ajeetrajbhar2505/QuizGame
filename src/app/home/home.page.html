@@ -7,7 +7,7 @@
           <h1>Welcome back, User!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
+        <img  routerLink="/login" (click)="logout()" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
       </div>
       
       <div class="stats-container">
@@ -42,7 +42,7 @@
         <h2>Categories</h2>
         <a href="#">See all <i class="fas fa-chevron-right"></i></a>
       </div>
-      <div class="category-scroll">
+      <div class="category-scroll" routerLink="/setup">
         <div class="category-card active">
           <div class="icon-wrapper">
             <i class="fas fa-calculator"></i>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoaderService } from '../loader.service';
 
 @Component({
   selector: 'app-home',
@@ -9,4 +10,9 @@ import { Component } from '@angular/core';
 
 export class HomePage {
 
+  constructor(private loader:LoaderService){}
+
+  logout(){
+    this.loader.userLogged(false)
+  }
 }

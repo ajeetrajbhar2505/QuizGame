@@ -1,0 +1,37 @@
+<ion-content [fullscreen]="true">
+    <div class="screen-container">
+      <div class="form-card">
+        <h1>Welcome to Quiz Platform</h1>
+        <p class="subtext">
+          Choose an organization to join—your quiz‑master journey starts here.
+        </p>
+  
+        <div class="input-group select-wrapper">
+          <label for="org-type">Organization type</label>
+          <select id="org-type">
+            <option value="" disabled selected>Select organization...</option>
+            <option value="individual">Individual</option>
+            <option value="business">Business</option>
+            <option value="education">Education</option>
+          </select>
+        </div>
+  
+        <div class="input-group select-wrapper">
+          <label for="role-type">Your role</label>
+          <select id="role-type">
+            <option value="" disabled selected>Select role...</option>
+            <option value="admin">Admin</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+  
+        <button class="primary-btn" (click)="logged()">Continue</button>
+  
+        <div class="footer">
+          <p>Signed in as ajitrajbhar.careermail.com</p>
+          <a href="#" class="footer-link">Use a different account</a>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+  

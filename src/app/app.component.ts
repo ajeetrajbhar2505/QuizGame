@@ -18,8 +18,12 @@ export class AppComponent implements OnInit {
       this.showLoader = showLoader
     })
     this.LoaderService.loggedState.subscribe(logged=>{
+      console.log(logged);
       this.logged = logged
+      if (logged) {
       this.router.navigate(['/home'])
+      }
+      
     })
   }
 }

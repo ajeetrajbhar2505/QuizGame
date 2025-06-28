@@ -50,7 +50,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   login() {
-    this.loader.userLogged()
+    this.loader.userLogged(false)
   }
 
 

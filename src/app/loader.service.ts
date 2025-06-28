@@ -11,8 +11,8 @@ export class LoaderService {
   loggedState = this.loggedSubject.asObservable();
   loaderState$ = this.loaderSubject.asObservable();
 
-  userLogged(){
-    this.loggedSubject.next(true)
+  userLogged(isLogged:boolean){
+    this.loggedSubject.next(isLogged)
   }
 
   showLoader() {
