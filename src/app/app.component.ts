@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoaderService } from './loader.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,14 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
   showLoader:boolean = false
   logged:boolean =false
-  constructor(private LoaderService:LoaderService,private router:Router) {}
+  currentRoute: string = '';
+  constructor(private LoaderService:LoaderService,private router:Router) {
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event: any) => {
+      this.currentRoute = event.url;
+    });
+  }
 
   ngOnInit(): void {
     this.LoaderService.loaderState$.subscribe(showLoader=>{

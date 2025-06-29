@@ -2,24 +2,24 @@
   <ion-router-outlet></ion-router-outlet>
       <!-- Bottom Navigation -->
       <div class="bottom-nav" *ngIf="logged">
-        <a routerLink="/home" class="nav-item active">
+        <a routerLink="/home" class="nav-item {{currentRoute == '/home' ? 'active':''}}">
           <i class="fas fa-home"></i>
           <span>Home</span>
         </a>
-        <a routerLink="/discover" class="nav-item">
+        <a routerLink="/discover" class="nav-item {{currentRoute == '/discover' ? 'active':''}}">
           <i class="fas fa-compass"></i>
           <span>Discover</span>
         </a>
-        <a routerLink="/create" class="nav-item">
+        <a routerLink="/create" class="nav-item {{currentRoute == '/create' ? 'active':''}}">
           <i class="fas fa-plus-circle"></i>
           <span>Create</span>
         </a>
-        <a routerLink="/alert" class="nav-item">
+        <a routerLink="/alert" class="nav-item {{currentRoute == '/alert' ? 'active':''}}">
           <i class="fas fa-bell"></i>
           <span>Alerts</span>
           <div class="badge">3</div>
         </a>
-        <a  routerLink="/profile" class="nav-item">
+        <a  routerLink="/profile" class="nav-item {{currentRoute == '/profile' ? 'active':''}}">
           <i class="fas fa-user"></i>
           <span>Profile</span>
         </a>

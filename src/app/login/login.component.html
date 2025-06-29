@@ -4,7 +4,8 @@
       <div class="brand">
         <div class="brand-logo">
           <img src="assets/AppLogo.png" alt="QuizGame Logo">
-          <h1>QuizGame</h1>
+          <h1>QuizGame!
+          </h1>
         </div>
         <p class="welcome-text">Welcome back! Please enter<br> your credentials</p>
       </div>
@@ -13,16 +14,12 @@
         <div class="form-group">
           <ion-item lines="none" class="input-item">
             <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-input 
-              type="email" 
-              placeholder="name@gmail.com"
-              id="email"
-            ></ion-input>
+            <ion-input type="email" placeholder="name@gmail.com" id="email"></ion-input>
           </ion-item>
           <div class="error" id="emailError"></div>
         </div>
 
-        <ion-button expand="block" shape="round" class="login-btn" routerLink="/setup" id="loginButton">
+        <ion-button expand="block" shape="round" class="login-btn"  id="open-verifyModel">
           Sign In
           <ion-icon name="arrow-forward" slot="end"></ion-icon>
         </ion-button>
@@ -38,7 +35,7 @@
             <ion-icon name="logo-google" slot="start"></ion-icon>
             Google
           </ion-button>
-          <ion-button fill="clear" class="social-btn facebook"  id="open-facebookModel" (click)="loginWithFacebook()">
+          <ion-button fill="clear" class="social-btn facebook" id="open-facebookModel" (click)="loginWithFacebook()">
             <ion-icon name="logo-facebook" slot="start"></ion-icon>
             Facebook
           </ion-button>
@@ -54,8 +51,8 @@
         <div class="success" *ngIf="!googleProgress">
           <div class="success-animation">
             <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
             </svg>
           </div>
         </div>
@@ -67,7 +64,7 @@
           <h3>{{googleProgress?'Signing in with Google':'Success!'}}</h3>
           <p *ngIf="googleProgress">Please wait...</p>
           <p *ngIf="!googleProgress">You're being redirected</p>
-        </div> 
+        </div>
       </div>
     </ng-template>
   </ion-modal>
@@ -78,8 +75,8 @@
         <div class="success" *ngIf="!facebookProgress">
           <div class="success-animation">
             <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
             </svg>
           </div>
         </div>
@@ -91,8 +88,41 @@
           <h3>{{facebookProgress?'Signing in with Facebook':'Success!'}}</h3>
           <p *ngIf="facebookProgress">Please wait...</p>
           <p *ngIf="!facebookProgress">You're being redirected</p>
-        </div> 
+        </div>
       </div>
+    </ng-template>
+  </ion-modal>
+
+  <!-- verify otp screen -->
+  <ion-modal #modal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="otp-container">
+        <div class="logo">
+            <!-- Replace with your logo -->
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#4a90e2" stroke-width="2"/>
+                <path d="M12 16V12M12 8H12.01" stroke="#4a90e2" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        
+        <h1>Verify your account</h1>
+        <p class="subtitle ">We've sent a 4-digit code to <a class="resend-link">{{'ajitrajbhar@gmail.com'}}</a></p>
+        
+        <div class="otp-inputs">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+        </div>
+        
+        <button class="verify-btn" (click)="closeModal()" routerLink="/setup">Verify</button>
+        
+        <p class="resend-text">
+            Didn't receive code? <a href="#" class="resend-link">Resend</a>
+        </p>
+    </div>
+
+
     </ng-template>
   </ion-modal>
 </ion-content>
