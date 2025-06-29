@@ -26,11 +26,12 @@ import { ProfilePage } from './profile/profile.page';
 import { AlertPage } from './alert/alert.page';
 import { UserSetupPage } from './user-setup/user-setup.page';
 import { CategoriesPage } from './categories/categories.page';
+import { QuizesPage } from './quizes/quizes.page';
 
 library.add(fas);
 
 @NgModule({
-  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage],
+  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [
     GoogleadsService,
