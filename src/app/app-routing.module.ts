@@ -7,6 +7,7 @@ import { DiscoverPage } from './discover/discover.page';
 import { ProfilePage } from './profile/profile.page';
 import { AlertPage } from './alert/alert.page';
 import { UserSetupPage } from './user-setup/user-setup.page';
+import { CategoriesPage } from './categories/categories.page';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
   {
     path: 'setup',
     component : UserSetupPage
+  },
+  {
+    path: 'categories',
+    component : CategoriesPage
   }
 ];
 

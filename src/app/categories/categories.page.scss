@@ -1,0 +1,141 @@
+/* Full screen styling */
+.category-content {
+    --padding-top: 20px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-bottom: 20px;
+  }
+  
+  /* Header section */
+  .section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    color: var(--ion-color-primary); /* Use your theme color */
+    text-decoration: none;
+    font-size: 16px;
+    margin-right: 16px;
+  }
+  
+  .back-button i {
+    margin-right: 8px;
+    font-size: 14px;
+  }
+  
+  .section-title h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Category container */
+  .category-container {
+    width: 100%;
+  }
+  
+  /* Scrollable category list */
+  .category-n-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    padding-bottom: 16px;
+    width: 100%;
+  }
+  
+  /* Hide scrollbar for Chrome/Safari */
+  .category-n-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Category cards */
+  .category-card {
+    flex: 0 0 auto;
+    width: 140px;
+    height: 140px;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .category-card.active {
+    background: var(--ion-color-primary);
+    color: white;
+  }
+  
+  .category-card:active {
+    transform: scale(0.96);
+  }
+  
+  .icon-wrapper {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  
+  .category-card h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    padding: 0 8px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .category-card {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .icon-wrapper {
+      font-size: 32px;
+    }
+    
+    .category-card h4 {
+      font-size: 15px;
+    }
+  }
+
+
+
+  .category-n-scroll {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    justify-content: center;
+}
+
+/* For left-aligned content that's centered as a group */
+.category-n-scroll {
+    display: flex;
+    justify-content: center;
+}
+
+.category-n-scroll::after {
+    content: '';
+    flex: 0 0 12px; /* matches your gap */
+}
+
+/* For wrapping behavior (if you really want both wrapping and scrolling) */
+.category-n-scroll {
+    flex-wrap: wrap;
+    justify-content: flex-start; /* items start from left */
+}
+.icon-wrapper{
+    box-shadow: unset;
+}
