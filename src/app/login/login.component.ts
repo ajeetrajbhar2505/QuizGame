@@ -13,9 +13,14 @@ import { LoaderService } from '../loader.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginPage implements OnInit, OnDestroy {
-  loginSub!: Subscription;
-  googleProgress: boolean = false
-  facebookProgress: boolean = false
+  private authSub!: Subscription;
+  loginForm = {
+    email: '',
+    password: ''
+  };
+  isLoading = false;
+  googleProgress = false;
+  facebookProgress = false;
 
   constructor(
     private readonly router: Router,
@@ -24,73 +29,105 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly inAppBrowser: InAppBrowser,
     private readonly loader: LoaderService,
-
   ) { }
 
   ngOnInit() {
-    this.subscribeToLogin()
+    this.setupAuthListeners();
+    this.setupSocialLoginCallbacks();
   }
 
-  subscribeToLogin() {
-    this.loginSub = this.socketService.loginData$.subscribe(data => {
+  private setupAuthListeners(): void {
+    this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
-        this.googleProgress = false
-        setTimeout(() => {
-          this.closeModal();
-          this.router.navigate(['/home'], { queryParams: { token: data.token } })
-        }, 2000);
+        this.handleSuccessfulLogin(data);
       }
+    });
+
+    // Listen for specific auth errors
+    this.socketService.on('auth:login:error', (error) => {
+      this.isLoading = false;
+      console.error(error.message, 'danger');
+    });
+
+    this.socketService.on('auth:google:error', (error) => {
+      this.googleProgress = false;
+      console.error(error.message, 'danger');
+    });
+
+    this.socketService.on('auth:facebook:error', (error) => {
+      this.facebookProgress = false;
+      console.error(error.message, 'danger');
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.loginSub) {
-      this.loginSub.unsubscribe();
+  private setupSocialLoginCallbacks(): void {
+    // Handle Google auth URL
+    this.socketService.on('auth:google:url', (data) => {
+      this.inAppBrowser.create(data.url, '_blank', {
+        location: 'yes',
+        toolbar: 'yes',
+        zoom: 'yes',
+      });
+    });
+
+    // Handle Facebook auth URL
+    this.socketService.on('auth:facebook:url', (data) => {
+      this.inAppBrowser.create(data.url, '_blank', {
+        location: 'yes',
+        toolbar: 'yes',
+        zoom: 'yes',
+      });
+    });
+  }
+
+  handleSuccessfulLogin(data: any): void {
+    this.isLoading = false;
+    this.googleProgress = false;
+    this.facebookProgress = false;
+    
+    this.loader.userLogged(true);
+    setTimeout(() => {
+      this.closeModal();
+      this.router.navigate(['/home'], { 
+        queryParams: { token: data.token },
+        state: { user: data.user }
+      });
+    }, 1000);
+  }
+
+  login(): void {
+    if (!this.loginForm.email || !this.loginForm.password) {
+      console.error('Please enter both email and password', 'warning');
+      return;
     }
+
+    this.isLoading = true;
+    this.socketService.login(this.loginForm);
   }
 
-  login() {
-    this.loader.userLogged(false)
+  loginWithGoogle(): void {
+    this.googleProgress = true;
+    this.socketService.initiateGoogleLogin();
   }
 
-
-  loginWithGoogle() {
-    this.googleProgress = true
-    // return
-    this.webService.googleLogin().subscribe(
-      (res) => {
-        this.inAppBrowser.create(res['url'], '_blank', {
-          location: 'yes', // Show or hide the browser location bar
-          toolbar: 'yes', // Show or hide the browser toolbar
-          zoom: 'yes', // Enable or disable zoom controls
-        });
-      },
-      (err) => {
-        console.error('Error fetching user:', err);
-      }
-    );
+  loginWithFacebook(): void {
+    this.facebookProgress = true;
+    this.socketService.initiateFacebookLogin();
   }
 
-  loginWithFacebook() {
-    this.facebookProgress = true
-    // return
-    this.webService.facebookLogin().subscribe(
-      (res) => {
-        this.inAppBrowser.create(res['url'], '_blank', {
-          location: 'yes', // Show or hide the browser location bar
-          toolbar: 'yes', // Show or hide the browser toolbar
-          zoom: 'yes', // Enable or disable zoom controls
-        });
-      },
-      (err) => {
-        console.error('Error fetching user:', err);
-      }
-    );
-  }
-
-  async closeModal() {
+  async closeModal(): Promise<void> {
     await this.modalController.dismiss();
   }
 
-
+  ngOnDestroy(): void {
+    if (this.authSub) {
+      this.authSub.unsubscribe();
+    }
+    // Clean up socket listeners
+    this.socketService.off('auth:login:error');
+    this.socketService.off('auth:google:error');
+    this.socketService.off('auth:facebook:error');
+    this.socketService.off('auth:google:url');
+    this.socketService.off('auth:facebook:url');
+  }
 }

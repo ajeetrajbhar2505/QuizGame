@@ -1,33 +1,63 @@
 // socket.service.ts
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../environments/environment';
+
+interface AuthData {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    role: string;
+    isVerified: boolean;
+  };
+}
+
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
-
   private socket!: Socket;
-  private loginDataSource = new BehaviorSubject<any>(null);
-  public loginData$ = this.loginDataSource.asObservable();
+  private authDataSource = new BehaviorSubject<AuthData | null>(null);
+  public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
 
   constructor() {
-    this.connectSocket();
+    this.initializeSocket();
   }
 
-  private connectSocket() {
-    this.socket = io('https://quiz-game-backend-nhn2.onrender.com', {
-      transports: ['websocket'],  // Optional: force websocket (instead of polling)
-      reconnection: true
+  private initializeSocket(): void {
+    this.socket = io(environment.apiURL, {
+      transports: ['websocket'],
+      reconnection: true,
+      autoConnect: true,
+      auth: {
+        token: '123'
+      }
     });
 
-    // Socket connect event
+    this.registerSocketEvents();
+    this.registerAuthEvents();
+  }
+
+  private registerSocketEvents(): void {
     this.socket.on('connect', () => {
       console.log('✅ Socket connected:', this.socket.id);
     });
 
-    // Socket error events
     this.socket.on('connect_error', (error) => {
       console.error('❌ Socket connection error:', error);
     });
@@ -35,28 +65,85 @@ export class SocketService {
     this.socket.on('disconnect', (reason) => {
       console.warn('⚠️ Socket disconnected:', reason);
     });
-
-    this.listenForLogin();  // Start listening for login events
   }
 
-  private listenForLogin() {
-    this.socket.on('receiveLogin', (data) => {
+  private registerAuthEvents(): void {
+    // Auth success events
+    this.socket.on('auth:login:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:register:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:otp:verify:success', this.handleAuthSuccess.bind(this));
+
+    // Auth error events
+    this.socket.on('auth:error', (error) => {
+      console.error('Authentication error:', error.message);
+    });
+
+    // Global login notification
+    this.socket.on('receiveLogin', (data: { token: string }) => {
       localStorage.setItem('token', data.token);
-      this.loginDataSource.next(data);
     });
   }
 
-  emitLogin(payload: any) {
-    this.socket.emit('login', payload);
+  private handleAuthSuccess(data: AuthData): void {
+    localStorage.setItem('token', data.token);
+    this.authDataSource.next(data);
   }
 
-  on(eventName: string, callback: Function) {
-    this.socket.on(eventName, (data) => {
-      callback(data);
-    });
+  // Authentication methods
+  public register(payload: RegisterPayload): void {
+    this.socket.emit('auth:register', payload);
   }
 
-  emit(eventName: string, data: any) {
-    this.socket.emit(eventName, data);
+  public login(payload: LoginPayload): void {
+    this.socket.emit('auth:login', payload);
+  }
+
+  public logout(): void {
+    this.socket.emit('auth:logout');
+    localStorage.removeItem('token');
+    this.authDataSource.next(null);
+  }
+
+  public initiateGoogleLogin(): void {
+    this.socket.emit('auth:google:login');
+  }
+
+  public handleGoogleCallback(code: string): void {
+    this.socket.emit('auth:google:callback', code);
+  }
+
+  public initiateFacebookLogin(): void {
+    this.socket.emit('auth:facebook:login');
+  }
+
+  public handleFacebookCallback(code: string): void {
+    this.socket.emit('auth:facebook:callback', code);
+  }
+
+  public sendOTP(email: string): void {
+    this.socket.emit('auth:otp:send', email);
+  }
+
+  public verifyOTP(email: string, otp: string): void {
+    this.socket.emit('auth:otp:verify', { email, otp });
+  }
+
+  public getCurrentUser(): void {
+    this.socket.emit('auth:me');
+  }
+
+  // Utility methods
+  public on(eventName: string, callback: (data: any) => void): void {
+    this.socket.on(eventName, callback);
+  }
+
+  public off(eventName: string): void {
+    this.socket.off(eventName);
+  }
+
+  public disconnect(): void {
+    this.socket.disconnect();
   }
 }
