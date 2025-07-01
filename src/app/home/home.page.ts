@@ -1,5 +1,14 @@
-import { Component } from '@angular/core';
-import { LoaderService } from '../loader.service';
+import { Component, OnInit } from '@angular/core';
+import { SocketService } from '../socket.service';
+
+interface user {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  role: string;
+  isVerified: boolean;
+}
 
 @Component({
   selector: 'app-home',
@@ -8,11 +17,32 @@ import { LoaderService } from '../loader.service';
   standalone: false,
 })
 
-export class HomePage {
+export class HomePage implements OnInit {
+  User: user = {
+    id: "",
+    name: "",
+    email: "",
+    avatar: "",
+    role: "",
+    isVerified: false
+  }
 
-  constructor(private loader:LoaderService){}
 
-  logout(){
-    this.loader.userLogged(false)
+  constructor(private socketService: SocketService) { }
+
+
+  ngOnInit(): void {
+    const User: any = localStorage.getItem('user')
+    if (User) {
+      this.User = JSON.parse(User)
+    }
+    this.socketService.authData$.subscribe((data: any) => {
+      if (data) {
+        this.User = data.user
+      }
+    })
+  }
+  logout() {
+   this,this.socketService.logout()
   }
 }

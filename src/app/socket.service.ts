@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
+import { Router } from '@angular/router';
 
 interface AuthData {
   token: string;
@@ -35,7 +36,7 @@ export class SocketService {
   private authDataSource = new BehaviorSubject<AuthData | null>(null);
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
 
-  constructor() {
+  constructor(private router:Router) {
     this.initializeSocket();
   }
 
@@ -98,6 +99,7 @@ export class SocketService {
 
   private handleAuthSuccess(data: AuthData): void {
     localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
     this.authDataSource.next(data);
   }
 
@@ -112,8 +114,9 @@ export class SocketService {
 
   public logout(): void {
     this.socket.emit('auth:logout');
-    localStorage.removeItem('token');
+    localStorage.clear();
     this.authDataSource.next(null);
+    this.router.navigate(['/login'])
   }
 
   public initiateGoogleLogin(): void {

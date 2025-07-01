@@ -4,10 +4,10 @@
     <div class="homeHeader">
       <div class="homeHeader-content">
         <div class="user-greeting">
-          <h1>Welcome back, User!</h1>
+          <h1>Welcome back, {{User.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img  routerLink="/login" (click)="logout()" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
+        <img  routerLink="/login" (click)="logout()" [src]="User.avatar" alt="User" class="user-avatar">
       </div>
       
       <div class="stats-container">
