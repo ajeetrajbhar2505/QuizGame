@@ -63,6 +63,8 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupSocialLoginCallbacks(): void {
     // Handle Google auth URL
     this.socketService.on('auth:google:url', (data) => {
+      console.log({'auth:google:url': (data)});
+      
       this.inAppBrowser.create(data.url, '_blank', {
         location: 'yes',
         toolbar: 'yes',

@@ -74,6 +74,8 @@ export class SocketService {
     this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:otp:verify:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:google:callback', this.handleGoogleAuthCallback.bind(this));
+    this.socket.on('auth:facebook:callback', this.handleFacebookAuthCallback.bind(this));
 
     // Auth error events
     this.socket.on('auth:error', (error) => {
@@ -85,6 +87,14 @@ export class SocketService {
       localStorage.setItem('token', data.token);
     });
   }
+
+  handleGoogleAuthCallback(data:string){
+   this.socket.emit('auth:google:callback',data)
+  }
+
+  handleFacebookAuthCallback(data:string){
+    this.socket.emit('auth:facebook:callback',data)
+   }
 
   private handleAuthSuccess(data: AuthData): void {
     localStorage.setItem('token', data.token);
