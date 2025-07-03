@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoaderService } from './loader.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { SocketService } from './socket.service';
 
 @Component({
   selector: 'app-root',
@@ -10,28 +11,22 @@ import { filter } from 'rxjs/operators';
   standalone: false,
 })
 export class AppComponent implements OnInit {
-  showLoader:boolean = false
-  logged:boolean =false
+  showLoader: boolean = false
+  logged: boolean = false
   currentRoute: string = '';
-  constructor(private LoaderService:LoaderService,private router:Router) {
+  constructor(private socketService: SocketService, private router: Router) {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe((event: any) => {
-      this.currentRoute = event.url;
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentRoute = event.url;
+      });
   }
 
   ngOnInit(): void {
-    this.LoaderService.loaderState$.subscribe(showLoader=>{
-      this.showLoader = showLoader
+    this.logged = (localStorage.getItem('token')) ? true : false
+    this.socketService.authData$.subscribe((data:any) => {
+      this.logged = data ? true : false
     })
-    this.LoaderService.loggedState.subscribe(logged=>{
-      console.log(logged);
-      this.logged = logged
-      if (logged) {
-      this.router.navigate(['/home'])
-      }
-      
-    })
+  
   }
 }

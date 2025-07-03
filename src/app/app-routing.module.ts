@@ -9,19 +9,22 @@ import { AlertPage } from './alert/alert.page';
 import { UserSetupPage } from './user-setup/user-setup.page';
 import { CategoriesPage } from './categories/categories.page';
 import { QuizesPage } from './quizes/quizes.page';
+import { authGuard } from './auth.guard';
 
 const routes: Routes = [
   {
     path: 'login',
-    component : LoginPage
+    component: LoginPage
   },
   {
     path: 'home',
-    component : HomePage
+    component: HomePage,
+    canActivate: [authGuard]
   },
   {
     path: 'create',
-    component : CreatePage
+    component: CreatePage,
+    canActivate: [authGuard]
   },
   {
     path: '',
@@ -30,33 +33,39 @@ const routes: Routes = [
   },
   {
     path: 'discover',
-    component : DiscoverPage
+    component: DiscoverPage,
+    canActivate: [authGuard]
   },
   {
     path: 'profile',
-    component : ProfilePage
+    component: ProfilePage,
+    canActivate: [authGuard]
   },
   {
     path: 'alert',
-    component : AlertPage
+    component: AlertPage,
+    canActivate: [authGuard]
   },
   {
     path: 'setup',
-    component : UserSetupPage
+    component: UserSetupPage,
+    canActivate: [authGuard]
   },
   {
     path: 'categories',
-    component : CategoriesPage
+    component: CategoriesPage,
+    canActivate: [authGuard]
   },
   {
     path: 'quizes',
-    component : QuizesPage
+    component: QuizesPage,
+    canActivate: [authGuard]
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules})
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
 })

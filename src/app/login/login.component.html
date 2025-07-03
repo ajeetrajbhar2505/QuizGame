@@ -63,7 +63,7 @@
         <div class="verification-text">
           <h3>{{googleProgress?'Signing in with Google':'Success!'}}</h3>
           <p *ngIf="googleProgress">Please wait...</p>
-          <p *ngIf="!googleProgress">You're being redirected</p>
+          <p *ngIf="!googleProgress">Logged in successfully</p>
         </div>
       </div>
     </ng-template>
@@ -87,7 +87,7 @@
         <div class="verification-text">
           <h3>{{facebookProgress?'Signing in with Facebook':'Success!'}}</h3>
           <p *ngIf="facebookProgress">Please wait...</p>
-          <p *ngIf="!facebookProgress">You're being redirected</p>
+          <p *ngIf="!facebookProgress">Logged in successfully</p>
         </div>
       </div>
     </ng-template>

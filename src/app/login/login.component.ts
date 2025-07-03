@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { LoaderService } from '../loader.service';
-
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,6 +14,7 @@ import { LoaderService } from '../loader.service';
 })
 export class LoginPage implements OnInit, OnDestroy {
   private authSub!: Subscription;
+  private backButtonSubscription!: Subscription;
   loginForm = {
     email: '',
     password: ''
@@ -29,12 +30,17 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly inAppBrowser: InAppBrowser,
     private readonly loader: LoaderService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, () => {
+      console.log('Back button was pressed!');
+    })
     this.setupAuthListeners();
     this.setupSocialLoginCallbacks();
   }
+  
 
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
@@ -45,17 +51,17 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // Listen for specific auth errors
     this.socketService.on('auth:login:error', (error) => {
-      this.isLoading = false;
+      this.isLoading = true;
       console.error(error.message, 'danger');
     });
 
     this.socketService.on('auth:google:error', (error) => {
-      this.googleProgress = false;
+      this.googleProgress = true;
       console.error(error.message, 'danger');
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
-      this.facebookProgress = false;
+      this.facebookProgress = true;
       console.error(error.message, 'danger');
     });
   }
