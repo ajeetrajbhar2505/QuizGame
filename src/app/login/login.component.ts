@@ -22,6 +22,7 @@ export class LoginPage implements OnInit, OnDestroy {
   isLoading = false;
   googleProgress = false;
   facebookProgress = false;
+  authFailed:boolean  = false
 
   constructor(
     private readonly router: Router,
@@ -54,25 +55,24 @@ export class LoginPage implements OnInit, OnDestroy {
     // Listen for specific auth errors
     this.socketService.on('auth:login:error', (error) => {
       this.isLoading = true;
-      console.error(error.message, 'danger');
+      this.authFailed = true
     });
 
     this.socketService.on('auth:google:error', (error) => {
       this.googleProgress = true;
-      console.error(error.message, 'danger');
+      this.authFailed = true
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
       this.facebookProgress = true;
-      console.error(error.message, 'danger');
+      this.authFailed = true
     });
   }
 
   private setupSocialLoginCallbacks(): void {
+    this.authFailed = false
     // Handle Google auth URL
     this.socketService.on('auth:google:url', (data) => {
-      console.log({'auth:google:url': (data)});
-      
       this.inAppBrowser.create(data.url, '_blank', {
         location: 'yes',
         toolbar: 'yes',
@@ -91,7 +91,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   handleSuccessfulLogin(data: any): void {
-    this.isLoading = this.isLoading;
+    this.isLoading = false;
     this.googleProgress = false;
     this.facebookProgress = false;
     
