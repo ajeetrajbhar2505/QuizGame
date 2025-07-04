@@ -22,7 +22,7 @@ export class LoginPage implements OnInit, OnDestroy {
   isLoading = false;
   googleProgress = false;
   facebookProgress = false;
-  authFailed:boolean  = false
+  authFailed: boolean = false
 
   constructor(
     private readonly router: Router,
@@ -32,22 +32,30 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly loader: LoaderService,
     private navCtrl: NavController,
     private platform: Platform
-  ) { }
+  ) {
+    if (localStorage.getItem('token') && localStorage.getItem('token') != undefined) {
+      router.navigate(['/home'])
+    }
+  }
 
   ngOnInit() {
     this.setupAuthListeners();
     this.setupSocialLoginCallbacks();
   }
-  
+
 
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
         if (this.platform.is('android')) {
-        this.navCtrl.back();
+          this.navCtrl.back();
         }
+        this.isLoading = false;
+        this.googleProgress = false;
+        this.facebookProgress = false;
+
         setTimeout(() => {
-        this.handleSuccessfulLogin(data);
+          this.handleSuccessfulLogin(data);
         }, 1000);
       }
     });
@@ -56,21 +64,31 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.on('auth:login:error', (error) => {
       this.isLoading = true;
       this.authFailed = true
+      if (this.platform.is('android')) {
+        this.navCtrl.back();
+      }
     });
 
     this.socketService.on('auth:google:error', (error) => {
       this.googleProgress = true;
       this.authFailed = true
+      if (this.platform.is('android')) {
+        this.navCtrl.back();
+      }
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
       this.facebookProgress = true;
       this.authFailed = true
+      if (this.platform.is('android')) {
+        this.navCtrl.back();
+      }
     });
   }
 
   private setupSocialLoginCallbacks(): void {
     this.authFailed = false
+
     // Handle Google auth URL
     this.socketService.on('auth:google:url', (data) => {
       this.inAppBrowser.create(data.url, '_blank', {
@@ -91,13 +109,9 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   handleSuccessfulLogin(data: any): void {
-    this.isLoading = false;
-    this.googleProgress = false;
-    this.facebookProgress = false;
-    
     setTimeout(() => {
       this.closeModal();
-      this.router.navigate(['/home'], { 
+      this.router.navigate(['/home'], {
         queryParams: { token: data.token },
         state: { user: data.user }
       });
@@ -116,10 +130,12 @@ export class LoginPage implements OnInit, OnDestroy {
 
   loginWithGoogle(): void {
     this.googleProgress = true;
+    this.authFailed = false
     this.socketService.initiateGoogleLogin();
   }
 
   loginWithFacebook(): void {
+    this.authFailed = false
     this.facebookProgress = true;
     this.socketService.initiateFacebookLogin();
   }
