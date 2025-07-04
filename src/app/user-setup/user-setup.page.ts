@@ -13,8 +13,4 @@ export class UserSetupPage implements OnInit {
   ngOnInit() {
   }
 
-  logged(){
-    this.loader.userLogged(true)
-  }
-
 }

@@ -10,3 +10,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
   return true;
 };
+
+export const loginGuard: CanActivateFn = (route, state) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    return true
+  }
+  return false;
+};

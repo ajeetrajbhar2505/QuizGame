@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { WebService } from '../web.service';
 import { SocketService } from '../socket.service';
 import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { LoaderService } from '../loader.service';
+import { NavController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,7 +15,6 @@ import { Platform } from '@ionic/angular';
 })
 export class LoginPage implements OnInit, OnDestroy {
   private authSub!: Subscription;
-  private backButtonSubscription!: Subscription;
   loginForm = {
     email: '',
     password: ''
@@ -25,18 +25,15 @@ export class LoginPage implements OnInit, OnDestroy {
 
   constructor(
     private readonly router: Router,
-    private readonly webService: WebService,
     private readonly socketService: SocketService,
     private readonly modalController: ModalController,
     private readonly inAppBrowser: InAppBrowser,
     private readonly loader: LoaderService,
+    private navCtrl: NavController,
     private platform: Platform
   ) { }
 
   ngOnInit() {
-    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, () => {
-      console.log('Back button was pressed!');
-    })
     this.setupAuthListeners();
     this.setupSocialLoginCallbacks();
   }
@@ -45,7 +42,12 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
+        if (this.platform.is('android')) {
+        this.navCtrl.back();
+        }
+        setTimeout(() => {
         this.handleSuccessfulLogin(data);
+        }, 1000);
       }
     });
 
@@ -89,11 +91,10 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   handleSuccessfulLogin(data: any): void {
-    this.isLoading = false;
+    this.isLoading = this.isLoading;
     this.googleProgress = false;
     this.facebookProgress = false;
     
-    this.loader.userLogged(true);
     setTimeout(() => {
       this.closeModal();
       this.router.navigate(['/home'], { 

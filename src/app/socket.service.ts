@@ -46,7 +46,7 @@ export class SocketService {
       reconnection: true,
       autoConnect: true,
       auth: {
-        token: '123'
+        token: localStorage.getItem('token')
       }
     });
 
@@ -113,7 +113,10 @@ export class SocketService {
   }
 
   public logout(): void {
-    this.socket.emit('auth:logout');
+    const user = JSON.parse(localStorage.getItem('user') || '');
+    if (user) {
+    this.socket.emit('auth:logout',user._id);
+    }
     localStorage.clear();
     this.authDataSource.next(null);
     this.router.navigate(['/login'])
