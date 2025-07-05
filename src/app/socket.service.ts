@@ -37,7 +37,8 @@ export class SocketService {
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
 
   constructor(private router:Router) {
-    this.initializeSocket('');
+     const token  = localStorage.getItem('token') || ''
+    this.initializeSocket(token);
   }
 
   private initializeSocket(token:string) {

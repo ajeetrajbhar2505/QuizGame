@@ -47,13 +47,12 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
+        this.resetAuthStates();
+        
         if (this.platform.is('android')) {
           this.navCtrl.back();
+          this.navCtrl.back();
         }
-        this.isLoading = false;
-        this.googleProgress = false;
-        this.facebookProgress = false;
-        this.authFailed = false
 
         setTimeout(() => {
           this.handleSuccessfulLogin(data);
@@ -63,28 +62,40 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // Listen for specific auth errors
     this.socketService.on('auth:login:error', (error) => {
-      this.isLoading = true;
-      this.authFailed = true
+      this.resetAuthStates();
+      this.authFailed = true;
+      this.isLoading = false;
       if (this.platform.is('android')) {
         this.navCtrl.back();
       }
     });
 
     this.socketService.on('auth:google:error', (error) => {
-      this.googleProgress = true;
-      this.authFailed = true
+      this.resetAuthStates();
+      this.authFailed = true;
+      this.googleProgress = false;
       if (this.platform.is('android')) {
         this.navCtrl.back();
       }
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
-      this.facebookProgress = true;
-      this.authFailed = true
+      this.resetAuthStates();
+      this.authFailed = true;
+      this.facebookProgress = false;
       if (this.platform.is('android')) {
+        this.navCtrl.back();
         this.navCtrl.back();
       }
     });
+  }
+
+
+  private resetAuthStates(): void {
+    this.isLoading = false;
+    this.googleProgress = false;
+    this.facebookProgress = false;
+    this.authFailed = false;
   }
 
   private setupSocialLoginCallbacks(): void {
