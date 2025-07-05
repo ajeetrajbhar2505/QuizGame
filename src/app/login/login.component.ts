@@ -53,6 +53,7 @@ export class LoginPage implements OnInit, OnDestroy {
         this.isLoading = false;
         this.googleProgress = false;
         this.facebookProgress = false;
+        this.authFailed = false
 
         setTimeout(() => {
           this.handleSuccessfulLogin(data);

@@ -37,19 +37,34 @@ export class SocketService {
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
 
   constructor(private router:Router) {
-    this.initializeSocket();
+    this.initializeSocket('');
   }
 
-  private initializeSocket(): void {
+  private initializeSocket(token:string) {
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
       autoConnect: true,
       auth: {
-        token: localStorage.getItem('token')
+        token: token
       }
     });
 
+    // Handle connection errors
+    this.socket.on('connect_error', (err) => {
+      if (err.message.includes('Authentication failed')) {
+        console.warn('Authentication failed - clearing token');
+        this.handleUnauthorized();
+      }
+    });
+  
+    // Handle forced disconnects from server
+    this.socket.on('disconnect', (reason) => {
+      if (reason === 'io server disconnect') {
+        this.handleUnauthorized();
+      }
+    });
+  
     this.registerSocketEvents();
     this.registerAuthEvents();
   }
@@ -100,6 +115,7 @@ export class SocketService {
   private handleAuthSuccess(data: AuthData): void {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    this.initializeSocket(data.token)
     this.authDataSource.next(data);
   }
 
@@ -112,14 +128,31 @@ export class SocketService {
     this.socket.emit('auth:login', payload);
   }
 
-  public logout(): void {
-    const user = JSON.parse(localStorage.getItem('user') || '');
-    if (user) {
-    this.socket.emit('auth:logout',user._id);
+
+  public async logout(): Promise<void> {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      this.socket.emit('auth:logout', user._id);
+      localStorage.clear();
+      this.authDataSource.next(null);
+      this.router.navigate(['/login']);
+  
+    } catch (error) {
+      console.error('Logout error:', error);
+      localStorage.clear();
+      this.authDataSource.next(null);
+      this.router.navigate(['/login']);
     }
-    localStorage.clear();
+  }
+  
+  private handleUnauthorized(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.authDataSource.next(null);
-    this.router.navigate(['/login'])
+    if (this.socket?.connected) {
+      this.socket.disconnect();
+    }
+    this.router.navigate(['/login']);
   }
 
   public initiateGoogleLogin(): void {
