@@ -43,6 +43,7 @@ export class LoginPage implements OnInit, OnDestroy {
   googleProgress = false;
   facebookProgress = false;
   authFailed: boolean = false
+  otpSuccess:boolean = false
 
   constructor(
     private readonly router: Router,
@@ -79,11 +80,21 @@ export class LoginPage implements OnInit, OnDestroy {
       }
     });
 
+    this.socketService.otpSuccess.subscribe(data => {
+      if (data) {
+        this.otpSuccess = true
+        setTimeout(() => {
+          this.handleSuccessfulLogin(data);
+        }, 1000);
+      }
+    })
+
 
     this.loginSub = this.socketService.loginData$.subscribe((data:any) => {
       if (data) {
         this.OtpDetails = data
         this.modal.present();
+        this.loginForm.otp = ""
       }
       else{
         this.errorModal.present();

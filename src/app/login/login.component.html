@@ -31,11 +31,11 @@
 
       <div class="social-login">
         <div class="social-buttons">
-          <ion-button  class="social-btn google" id="open-googleModal" (click)="loginWithGoogle()">
+          <ion-button class="social-btn google" id="open-googleModal" (click)="loginWithGoogle()">
             <ion-icon name="logo-google" slot="start"></ion-icon>
             Google
           </ion-button>
-          <ion-button  class="social-btn facebook" id="open-facebookModel" (click)="loginWithFacebook()">
+          <ion-button class="social-btn facebook" id="open-facebookModel" (click)="loginWithFacebook()">
             <ion-icon name="logo-facebook" slot="start"></ion-icon>
             Facebook
           </ion-button>
@@ -44,165 +44,185 @@
     </div>
   </div>
 
-<!-- Google Verification Modal -->
-<ion-modal #googleModal trigger="open-googleModal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-  <ng-template>
-    <div class="verification-container">
-      <!-- Success State -->
-      <div class="success" *ngIf="!authFailed && !googleProgress">
-        <div class="success-animation">
-          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-          </svg>
+  <!-- Google Verification Modal -->
+  <ion-modal #googleModal trigger="open-googleModal" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="verification-container">
+        <!-- Success State -->
+        <div class="success" *ngIf="!authFailed && !googleProgress">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Failure State -->
+        <div class="failure" *ngIf="authFailed">
+          <div class="failure-animation">
+            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
+            </svg>
+          </div>
+          <p class="failure-message">Authentication Failed</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loader" *ngIf="googleProgress && !authFailed">
+          <div class="loader-spinner"></div>
+          <img src="assets/google.png" class="loader-icon" width="30px" alt="Google">
+        </div>
+
+        <!-- Verification Text -->
+        <div class="verification-text">
+          <h3 *ngIf="!authFailed">{{googleProgress ? 'Signing in with Google' : 'Success!'}}</h3>
+          <p *ngIf="googleProgress && !authFailed">Please wait...</p>
+          <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
+          <p *ngIf="!googleProgress && !authFailed">Logged in successfully</p>
+        </div>
+
+        <!-- Action Buttons (shown only on failure) -->
+        <br>
+        <div class="social-login" *ngIf="authFailed">
+          <div class="social-buttons">
+            <ion-button class="social-btn google" (click)="closeModal()">
+              <ion-icon name="close-circle" slot="start"></ion-icon>
+              Cancel
+            </ion-button>
+            <ion-button class="social-btn facebook" (click)="loginWithGoogle()">
+              <ion-icon name="refresh" slot="start"></ion-icon>
+              Retry
+            </ion-button>
+          </div>
         </div>
       </div>
+    </ng-template>
+  </ion-modal>
 
-      <!-- Failure State -->
-      <div class="failure" *ngIf="authFailed">
-        <div class="failure-animation">
-          <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-          </svg>
+  <!-- Facebook Verification Modal -->
+  <ion-modal #facebookModal trigger="open-facebookModel" [initialBreakpoint]="0.75"
+    [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="verification-container">
+        <!-- Success State -->
+        <div class="success" *ngIf="!authFailed && !facebookProgress">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+          </div>
         </div>
-        <p class="failure-message">Authentication Failed</p>
-      </div>
 
-      <!-- Loading State -->
-      <div class="loader" *ngIf="googleProgress && !authFailed">
-        <div class="loader-spinner"></div>
-        <img src="assets/google.png" class="loader-icon" width="30px" alt="Google">
-      </div>
-
-      <!-- Verification Text -->
-      <div class="verification-text">
-        <h3 *ngIf="!authFailed">{{googleProgress ? 'Signing in with Google' : 'Success!'}}</h3>
-        <p *ngIf="googleProgress && !authFailed">Please wait...</p>
-        <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
-        <p *ngIf="!googleProgress && !authFailed">Logged in successfully</p>
-      </div>
-
-      <!-- Action Buttons (shown only on failure) -->
-      <br>
-      <div class="social-login" *ngIf="authFailed">
-        <div class="social-buttons">
-          <ion-button  class="social-btn google" (click)="closeModal()">
-            <ion-icon name="close-circle" slot="start"></ion-icon>
-            Cancel
-          </ion-button>
-          <ion-button  class="social-btn facebook" (click)="loginWithGoogle()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
-            Retry
-          </ion-button>
+        <!-- Failure State -->
+        <div class="failure" *ngIf="authFailed">
+          <div class="failure-animation">
+            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
+            </svg>
+          </div>
+          <p class="failure-message">Authentication Failed</p>
         </div>
-      </div>
-    </div>
-  </ng-template>
-</ion-modal>
 
-<!-- Facebook Verification Modal -->
-<ion-modal #facebookModal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-  <ng-template>
-    <div class="verification-container">
-      <!-- Success State -->
-      <div class="success" *ngIf="!authFailed && !facebookProgress">
-        <div class="success-animation">
-          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-          </svg>
+        <!-- Loading State -->
+        <div class="loader" *ngIf="facebookProgress && !authFailed">
+          <div class="loader-spinner"></div>
+          <img src="assets/facebook.png" class="loader-icon" width="30px" alt="Facebook">
         </div>
-      </div>
 
-      <!-- Failure State -->
-      <div class="failure" *ngIf="authFailed">
-        <div class="failure-animation">
-          <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-          </svg>
+        <!-- Verification Text -->
+        <div class="verification-text">
+          <h3 *ngIf="!authFailed">{{facebookProgress ? 'Signing in with Facebook' : 'Success!'}}</h3>
+          <p *ngIf="facebookProgress && !authFailed">Please wait...</p>
+          <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
+          <p *ngIf="!facebookProgress && !authFailed">Logged in successfully</p>
         </div>
-        <p class="failure-message">Authentication Failed</p>
-      </div>
 
-      <!-- Loading State -->
-      <div class="loader" *ngIf="facebookProgress && !authFailed">
-        <div class="loader-spinner"></div>
-        <img src="assets/facebook.png" class="loader-icon" width="30px" alt="Facebook">
-      </div>
-
-      <!-- Verification Text -->
-      <div class="verification-text">
-        <h3 *ngIf="!authFailed">{{facebookProgress ? 'Signing in with Facebook' : 'Success!'}}</h3>
-        <p *ngIf="facebookProgress && !authFailed">Please wait...</p>
-        <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
-        <p *ngIf="!facebookProgress && !authFailed">Logged in successfully</p>
-      </div>
-
-      <!-- Action Buttons (shown only on failure) -->
-      <br>
-      <div class="social-login" *ngIf="authFailed">
-        <div class="social-buttons">
-          <ion-button  class="social-btn google" (click)="closeModal()">
-            <ion-icon name="close-circle" slot="start"></ion-icon>
-            Cancel
-          </ion-button>
-          <ion-button  class="social-btn facebook" (click)="loginWithFacebook()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
-            Retry
-          </ion-button>
+        <!-- Action Buttons (shown only on failure) -->
+        <br>
+        <div class="social-login" *ngIf="authFailed">
+          <div class="social-buttons">
+            <ion-button class="social-btn google" (click)="closeModal()">
+              <ion-icon name="close-circle" slot="start"></ion-icon>
+              Cancel
+            </ion-button>
+            <ion-button class="social-btn facebook" (click)="loginWithFacebook()">
+              <ion-icon name="refresh" slot="start"></ion-icon>
+              Retry
+            </ion-button>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-template>
-</ion-modal>
+    </ng-template>
+  </ion-modal>
 
-<!-- Facebook Verification Modal -->
-<ion-modal #errorModal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-  <ng-template>
-    <div class="verification-container">
-   
-      <!-- Failure State -->
-      <div class="failure">
-        <div class="failure-animation">
-          <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-          </svg>
+  <!-- Facebook Verification Modal -->
+  <ion-modal #errorModal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ng-template>
+      <div class="verification-container">
+
+        <!-- Failure State -->
+        <div class="failure">
+          <div class="failure-animation">
+            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
+            </svg>
+          </div>
+          <p class="failure-message">Authentication Failed</p>
         </div>
-        <p class="failure-message">Authentication Failed</p>
-      </div>
 
-    
 
-      <!-- Verification Text -->
-      <div class="verification-text">
-        <p [innerHTML]="errorMessage"></p>
-      </div>
 
-      <!-- Action Buttons (shown only on failure) -->
-      <br>
-      <div class="social-login" *ngIf="authFailed">
-        <div class="social-buttons">
-          <ion-button  class="social-btn google" (click)="closeModal()">
-            <ion-icon name="close-circle" slot="start"></ion-icon>
-            Cancel
-          </ion-button>
-          <ion-button  class="social-btn facebook" (click)="login()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
-            Retry
-          </ion-button>
+        <!-- Verification Text -->
+        <div class="verification-text">
+          <p [innerHTML]="errorMessage"></p>
+        </div>
+
+        <!-- Action Buttons (shown only on failure) -->
+        <br>
+        <div class="social-login" *ngIf="authFailed">
+          <div class="social-buttons">
+            <ion-button class="social-btn google" (click)="closeModal()">
+              <ion-icon name="close-circle" slot="start"></ion-icon>
+              Cancel
+            </ion-button>
+            <ion-button class="social-btn facebook" (click)="login()">
+              <ion-icon name="refresh" slot="start"></ion-icon>
+              Retry
+            </ion-button>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-template>
-</ion-modal>
+    </ng-template>
+  </ion-modal>
 
   <!-- verify otp screen -->
   <ion-modal #modal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
-      <div class="otp-container">
+
+      <div class="verification-container" *ngIf="otpSuccess">
+        <!-- Success State -->
+        <div class="success">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="verification-text">
+          <h3 >Success</h3>
+          <p>Logged in successfully</p>
+        </div>
+      </div>
+
+
+      <div class="otp-container" *ngIf="!otpSuccess">
         <div class="logo">
           <!-- Replace with your logo -->
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

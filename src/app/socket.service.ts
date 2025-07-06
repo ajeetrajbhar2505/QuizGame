@@ -35,9 +35,10 @@ export class SocketService {
   private socket!: Socket;
   private authDataSource = new Subject<AuthData | null>();
   private loginDataSource = new Subject<AuthData | null>();
+  private otpDataSource = new Subject<AuthData | null>();
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
   public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
-
+  public otpSuccess: Observable<AuthData | null> = this.otpDataSource.asObservable()
   constructor(private router: Router) {
     const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
@@ -92,7 +93,7 @@ export class SocketService {
     this.socket.on('auth:register:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
-    this.socket.on('auth:otp:verify:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:otp:verify:success', this.handleotpSuccess.bind(this));
     this.socket.on('auth:google:callback', this.handleGoogleAuthCallback.bind(this));
     this.socket.on('auth:facebook:callback', this.handleFacebookAuthCallback.bind(this));
 
@@ -116,7 +117,6 @@ export class SocketService {
   }
 
   private handleLoginSuccess(data: AuthData): void {
-    this.initializeSocket(data.token)
     this.loginDataSource.next(data);
   }
 
@@ -125,6 +125,13 @@ export class SocketService {
     localStorage.setItem('user', JSON.stringify(data.user));
     this.initializeSocket(data.token)
     this.authDataSource.next(data);
+  }
+
+  private handleotpSuccess(data: AuthData): void {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    this.initializeSocket(data.token)
+    this.otpDataSource.next(data);
   }
 
   // Authentication methods
@@ -180,7 +187,6 @@ export class SocketService {
   }
 
   public sendOTP(email: string, token: string): void {
-    this.initializeSocket(token)
     this.socket.emit('auth:otp:send', email);
   }
 
@@ -189,7 +195,7 @@ export class SocketService {
   }
 
   public verifyloginOTP(email: string, otp: string, verificationToken: string): void {
-    this.socket.emit('auth:otp:loginOTP', email, otp, verificationToken);
+    this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
   }
 
 
