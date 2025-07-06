@@ -1,12 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subscription } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { LoaderService } from '../loader.service';
 import { NavController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
+import { IonModal } from '@ionic/angular';
+
+export interface OtpDetails {
+  success: boolean;
+  message: string;
+  otpId: string;
+  verificationToken: string;
+  expiresAt: Date;
+}
 
 @Component({
   selector: 'app-login',
@@ -15,9 +23,21 @@ import { Platform } from '@ionic/angular';
 })
 export class LoginPage implements OnInit, OnDestroy {
   private authSub!: Subscription;
+  private loginSub!: Subscription;
+  @ViewChild('modal') modal!: IonModal;
+  @ViewChild('errorModal') errorModal!: IonModal;
+  errorMessage: string = `
+  There was an issue processing your request. Please try one of these solutions:<br><br>
+  <div class="main">
+  <div class="error">1. Check your internet connection</div>
+  <div class="error">2. Retry the operation</div>
+  <div class="error">3. Cancel and use a different email address</div></div>
+`;
+
+  OtpDetails!:OtpDetails
   loginForm = {
     email: '',
-    password: ''
+    otp: ''
   };
   isLoading = false;
   googleProgress = false;
@@ -29,7 +49,6 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly socketService: SocketService,
     private readonly modalController: ModalController,
     private readonly inAppBrowser: InAppBrowser,
-    private readonly loader: LoaderService,
     private navCtrl: NavController,
     private platform: Platform
   ) {
@@ -60,17 +79,35 @@ export class LoginPage implements OnInit, OnDestroy {
       }
     });
 
+
+    this.loginSub = this.socketService.loginData$.subscribe((data:any) => {
+      if (data) {
+        this.OtpDetails = data
+        this.modal.present();
+      }
+      else{
+        this.errorModal.present();
+        this.resetAuthStates();
+        this.authFailed = true;
+        console.log(data);
+      }
+    })
     // Listen for specific auth errors
     this.socketService.on('auth:login:error', (error) => {
+      console.log(error);
+      // this.errorMessage = error.message
       this.resetAuthStates();
       this.authFailed = true;
       this.isLoading = false;
+      this.errorModal.present();
       if (this.platform.is('android')) {
         this.navCtrl.back();
       }
     });
 
     this.socketService.on('auth:google:error', (error) => {
+      console.log(error);
+      // this.errorMessage = error.message
       this.resetAuthStates();
       this.authFailed = true;
       this.googleProgress = false;
@@ -80,14 +117,30 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
+      console.log(error);
+      // this.errorMessage = error.message
       this.resetAuthStates();
       this.authFailed = true;
       this.facebookProgress = false;
       if (this.platform.is('android')) {
         this.navCtrl.back();
-        this.navCtrl.back();
       }
     });
+  }
+  
+
+  protected verifyOTP(){
+    if (!this.loginForm.email) {
+      console.error('Please enter email', 'warning');
+      return;
+    }
+    if (!this.loginForm.otp) {
+      console.error('Invalid OTP', 'warning');
+      return;
+    }
+
+    this.isLoading = true;
+    this.socketService.verifyloginOTP(this.loginForm.email,this.loginForm.otp,this.OtpDetails.verificationToken)
   }
 
 
@@ -131,13 +184,13 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   login(): void {
-    if (!this.loginForm.email || !this.loginForm.password) {
-      console.error('Please enter both email and password', 'warning');
+    if (!this.loginForm.email) {
+      console.error('Please enter email', 'warning');
       return;
     }
 
     this.isLoading = true;
-    this.socketService.login(this.loginForm);
+    this.socketService.login(this.loginForm.email);
   }
 
   loginWithGoogle(): void {

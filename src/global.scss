@@ -705,6 +705,15 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
       font-size: 20px;
       margin-bottom: 8px;
     }
+    .verification-text .main .error{
+      width: 100%;
+      text-align: left;
+    }
+    .verification-text .main{
+      width: 100%;
+      display: grid;
+      justify-content: center;
+    }
     
     .verification-text p {
       color: #636e72;

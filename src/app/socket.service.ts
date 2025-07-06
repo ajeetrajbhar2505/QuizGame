@@ -34,14 +34,16 @@ interface RegisterPayload {
 export class SocketService {
   private socket!: Socket;
   private authDataSource = new Subject<AuthData | null>();
+  private loginDataSource = new Subject<AuthData | null>();
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
+  public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
 
-  constructor(private router:Router) {
-     const token  = localStorage.getItem('token') || ''
+  constructor(private router: Router) {
+    const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
   }
 
-  private initializeSocket(token:string) {
+  private initializeSocket(token: string) {
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
@@ -58,14 +60,14 @@ export class SocketService {
         this.handleUnauthorized();
       }
     });
-  
+
     // Handle forced disconnects from server
     this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
         this.handleUnauthorized();
       }
     });
-  
+
     this.registerSocketEvents();
     this.registerAuthEvents();
   }
@@ -86,7 +88,7 @@ export class SocketService {
 
   private registerAuthEvents(): void {
     // Auth success events
-    this.socket.on('auth:login:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:login:success', this.handleLoginSuccess.bind(this));
     this.socket.on('auth:register:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
     this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
@@ -105,13 +107,18 @@ export class SocketService {
     });
   }
 
-  handleGoogleAuthCallback(data:string){
-   this.socket.emit('auth:google:callback',data)
+  handleGoogleAuthCallback(data: string) {
+    this.socket.emit('auth:google:callback', data)
   }
 
-  handleFacebookAuthCallback(data:string){
-    this.socket.emit('auth:facebook:callback',data)
-   }
+  handleFacebookAuthCallback(data: string) {
+    this.socket.emit('auth:facebook:callback', data)
+  }
+
+  private handleLoginSuccess(data: AuthData): void {
+    this.initializeSocket(data.token)
+    this.loginDataSource.next(data);
+  }
 
   private handleAuthSuccess(data: AuthData): void {
     localStorage.setItem('token', data.token);
@@ -125,7 +132,7 @@ export class SocketService {
     this.socket.emit('auth:register', payload);
   }
 
-  public login(payload: LoginPayload): void {
+  public login(payload: string): void {
     this.socket.emit('auth:login', payload);
   }
 
@@ -137,7 +144,7 @@ export class SocketService {
       localStorage.clear();
       this.authDataSource.next(null);
       this.router.navigate(['/login']);
-  
+
     } catch (error) {
       console.error('Logout error:', error);
       localStorage.clear();
@@ -145,7 +152,7 @@ export class SocketService {
       this.router.navigate(['/login']);
     }
   }
-  
+
   private handleUnauthorized(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -172,13 +179,19 @@ export class SocketService {
     this.socket.emit('auth:facebook:callback', code);
   }
 
-  public sendOTP(email: string): void {
+  public sendOTP(email: string, token: string): void {
+    this.initializeSocket(token)
     this.socket.emit('auth:otp:send', email);
   }
 
   public verifyOTP(email: string, otp: string): void {
     this.socket.emit('auth:otp:verify', { email, otp });
   }
+
+  public verifyloginOTP(email: string, otp: string, verificationToken: string): void {
+    this.socket.emit('auth:otp:loginOTP', email, otp, verificationToken);
+  }
+
 
   public getCurrentUser(): void {
     this.socket.emit('auth:me');
