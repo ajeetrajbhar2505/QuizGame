@@ -31,11 +31,11 @@
 
       <div class="social-login">
         <div class="social-buttons">
-          <ion-button class="social-btn google" id="open-googleModal" (click)="loginWithGoogle()">
+          <ion-button class="social-btn google" (click)="loginWithGoogle()">
             <ion-icon name="logo-google" slot="start"></ion-icon>
             Google
           </ion-button>
-          <ion-button class="social-btn facebook" id="open-facebookModel" (click)="loginWithFacebook()">
+          <ion-button class="social-btn facebook" (click)="loginWithFacebook()">
             <ion-icon name="logo-facebook" slot="start"></ion-icon>
             Facebook
           </ion-button>
@@ -159,11 +159,10 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Facebook Verification Modal -->
+  <!-- Error Modal -->
   <ion-modal #errorModal trigger="open-facebookModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
       <div class="verification-container">
-
         <!-- Failure State -->
         <div class="failure">
           <div class="failure-animation">
@@ -174,8 +173,6 @@
           </div>
           <p class="failure-message">Authentication Failed</p>
         </div>
-
-
 
         <!-- Verification Text -->
         <div class="verification-text">
@@ -203,7 +200,6 @@
   <!-- verify otp screen -->
   <ion-modal #modal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
-
       <div class="verification-container" *ngIf="otpSuccess">
         <!-- Success State -->
         <div class="success">
@@ -216,15 +212,13 @@
         </div>
 
         <div class="verification-text">
-          <h3 >Success</h3>
+          <h3>Success</h3>
           <p>Logged in successfully</p>
         </div>
       </div>
 
-
-      <div class="otp-container" *ngIf="!otpSuccess">
+      <div class="otp-container" *ngIf="!otpSuccess && showOtpModal">
         <div class="logo">
-          <!-- Replace with your logo -->
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
@@ -234,20 +228,22 @@
         </div>
 
         <h1>Verify your account</h1>
-        <p class="subtitle ">We've sent a 4-digit code to <a class="resend-link">{{loginForm.email}}</a></p>
+        <p class="subtitle">We've sent a 4-digit code to <a class="resend-link">{{loginForm.email}}</a></p>
 
         <div class="otp-inputs">
           <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
         </div>
 
-        <button class="verify-btn" (click)="verifyOTP()">Verify</button>
+        <button class="verify-btn" [disabled]="this.loginForm.otp == ''" (click)="verifyOTP()">Verify</button>
 
-        <p class="resend-text">
-          Didn't receive code? <a href="#" class="resend-link">Resend</a>
+        <p class="resend-text" *ngIf="!canResendOtp">
+          Resend OTP in  <a (click)="resendOtp()" class="resend-link">{{formatTimer}}</a> 
+          </p>
+          <p class="resend-text" *ngIf="canResendOtp">
+          Didn't receive code? <a (click)="resendOtp()" class="resend-link">Resend</a>
         </p>
       </div>
-
-
     </ng-template>
   </ion-modal>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

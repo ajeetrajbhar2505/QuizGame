@@ -32,7 +32,7 @@ interface RegisterPayload {
   providedIn: 'root'
 })
 export class SocketService {
-  private socket!: Socket;
+  public socket!: Socket;
   private authDataSource = new Subject<AuthData | null>();
   private loginDataSource = new Subject<AuthData | null>();
   private otpDataSource = new Subject<AuthData | null>();
@@ -44,7 +44,7 @@ export class SocketService {
     this.initializeSocket(token);
   }
 
-  private initializeSocket(token: string) {
+  public initializeSocket(token: string) {
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
