@@ -181,8 +181,8 @@ export class SocketService {
       this.router.navigate(['/login']);
     }
 
+    this.socket.disconnect().connect()
     this.presentToast('You have been logged out', 3000, 'bottom', 'dark');
-
   }
 
   private handleUnauthorized(): void {
