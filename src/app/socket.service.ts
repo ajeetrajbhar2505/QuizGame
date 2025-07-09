@@ -39,6 +39,8 @@ export class SocketService {
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
   public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
   public otpSuccess: Observable<AuthData | null> = this.otpDataSource.asObservable()
+  public connectionState$ = new BehaviorSubject<string>('disconnected');
+
   private pairingCode:string
   constructor(private router: Router) {
     const token = localStorage.getItem('token') || ''
@@ -60,23 +62,44 @@ export class SocketService {
     });
   
     // Single connection handler
+     this.setupConnectionMonitoring()
+  
+    this.registerAuthEvents();
+  }
+
+
+  public retryConnection(token?: string) {
+    if (this.socket) {
+      this.socket.disconnect(); // Properly disconnect first
+      this.socket.removeAllListeners(); // Clean up all listeners
+    }
+    
+    this.initializeSocket(token || undefined);
+  }
+  
+  private handleConnectionError(err: any) {
+    console.error('Connection error:', err);
+    setTimeout(() => {
+      this.retryConnection();
+    }, 5000);
+  }
+
+
+  private setupConnectionMonitoring() {
     this.socket.on('connect', () => {
-      console.log('✅ Socket connected:', this.socket.id);
+      this.connectionState$.next('connected');
     });
   
-    // Error handling
-    this.socket.on('connect_error', (err) => {
-      console.warn('Connection error:', err.message);
-      setTimeout(() => this.socket.connect(), 5000);
-    });
-
     this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
         this.handleUnauthorized();
       }
+      this.connectionState$.next('disconnected');
     });
   
-    this.registerAuthEvents();
+    this.socket.on('reconnect_attempt', () => {
+      this.connectionState$.next('reconnecting');
+    });
   }
 
 

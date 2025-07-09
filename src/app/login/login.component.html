@@ -92,7 +92,7 @@
               <ion-icon name="close-circle" slot="start"></ion-icon>
               Cancel
             </ion-button>
-            <ion-button class="social-btn facebook" (click)="loginWithGoogle()">
+            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
               <ion-icon name="refresh" slot="start"></ion-icon>
               Retry
             </ion-button>
@@ -103,8 +103,7 @@
   </ion-modal>
 
   <!-- Facebook Verification Modal -->
-  <ion-modal #facebookModal [initialBreakpoint]="0.75"
-    [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #facebookModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
       <div class="verification-container" inert>
         <!-- Success State -->
@@ -150,7 +149,7 @@
               <ion-icon name="close-circle" slot="start"></ion-icon>
               Cancel
             </ion-button>
-            <ion-button class="social-btn facebook" (click)="loginWithFacebook()">
+            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
               <ion-icon name="refresh" slot="start"></ion-icon>
               Retry
             </ion-button>
@@ -188,7 +187,7 @@
               <ion-icon name="close-circle" slot="start"></ion-icon>
               Cancel
             </ion-button>
-            <ion-button class="social-btn facebook" (click)="login()">
+            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
               <ion-icon name="refresh" slot="start"></ion-icon>
               Retry
             </ion-button>
@@ -199,7 +198,7 @@
   </ion-modal>
 
   <!-- verify otp screen -->
-  <ion-modal #modal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #OTPmodal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
       <div class="verification-container" *ngIf="otpSuccess" inert>
         <!-- Success State -->
@@ -235,12 +234,17 @@
           <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
         </div>
 
-        <button class="verify-btn" [disabled]="this.loginForm.otp == ''" (click)="verifyOTP()">Verify</button>
+        <ion-button [disabled]="this.loginForm.otp == ''" expand="block" shape="round" class="login-btn"
+          (click)="verifyOTP()">
+          Verify
+          <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
+        </ion-button>
+
 
         <p class="resend-text" *ngIf="!canResendOtp">
-          Resend OTP in  <a (click)="resendOtp()" class="resend-link">{{formatTimer}}</a> 
-          </p>
-          <p class="resend-text" *ngIf="canResendOtp">
+          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formatTimer}}</a>
+        </p>
+        <p class="resend-text" *ngIf="canResendOtp">
           Didn't receive code? <a (click)="resendOtp()" class="resend-link">Resend</a>
         </p>
       </div>
