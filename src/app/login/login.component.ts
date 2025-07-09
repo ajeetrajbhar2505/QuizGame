@@ -95,7 +95,6 @@ export class LoginPage implements OnInit, OnDestroy {
 
         if (this.platform.is('android')) {
           this.navCtrl.back();
-          this.navCtrl.back();
         }
 
         setTimeout(() => {
