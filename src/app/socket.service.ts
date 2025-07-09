@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 interface AuthData {
   token: string;
@@ -41,11 +42,12 @@ export class SocketService {
   public otpSuccess: Observable<AuthData | null> = this.otpDataSource.asObservable()
   public connectionState$ = new BehaviorSubject<string>('disconnected');
 
-  private pairingCode:string
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private toastCtrl: ToastController
+    ) {
     const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
-    this.pairingCode = this.generatePairingCode();
   }
   public initializeSocket(token?: string) {
     if (this.socket) {
@@ -178,6 +180,9 @@ export class SocketService {
       this.authDataSource.next(null);
       this.router.navigate(['/login']);
     }
+
+    this.presentToast('You have been logged out', 3000, 'bottom', 'dark');
+
   }
 
   private handleUnauthorized(): void {
@@ -234,5 +239,16 @@ export class SocketService {
 
   public disconnect(): void {
     this.socket.disconnect();
+  }
+
+
+  async presentToast(message: string, duration: number = 3000, position: 'top' | 'bottom' | 'middle' = 'bottom', color?: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration,
+      position,
+      color
+    });
+    toast.present();
   }
 }
