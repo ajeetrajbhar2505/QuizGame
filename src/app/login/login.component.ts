@@ -88,8 +88,8 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
-           this.socketService.presentToast('Login successful', 3000, 'bottom', 'dark');
-           this.loginSuccess = true
+        this.socketService.presentToast('Login successful', 3000, 'bottom', 'dark');
+        this.loginSuccess = true
         this.isLoading = false
         this.resetAuthStates();
 
@@ -105,8 +105,8 @@ export class LoginPage implements OnInit, OnDestroy {
 
     this.otpSub = this.socketService.otpSuccess.subscribe(data => {
       if (data) {
-           this.socketService.presentToast('OTP send successfully!', 3000, 'bottom', 'dark');
-           this.loginSuccess = true
+        this.socketService.presentToast('Login successful', 3000, 'bottom', 'dark');
+        this.loginSuccess = true
         this.isLoading = false
         this.otpSuccess = true;
         setTimeout(() => {
@@ -116,6 +116,7 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.loginSub = this.socketService.loginData$.subscribe((data: any) => {
+      this.socketService.presentToast('OTP send successfully!', 3000, 'bottom', 'dark');
       if (data) {
         this.loginSuccess = true
         this.startOtpTimer()
