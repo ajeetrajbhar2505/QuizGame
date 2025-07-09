@@ -39,52 +39,49 @@ export class SocketService {
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
   public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
   public otpSuccess: Observable<AuthData | null> = this.otpDataSource.asObservable()
+  private pairingCode:string
   constructor(private router: Router) {
     const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
+    this.pairingCode = this.generatePairingCode();
   }
-
-  public initializeSocket(token: string) {
+  public initializeSocket(token?: string) {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+  
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
       autoConnect: true,
-      auth: {
-        token: token
-      }
+      auth: token ? { token } : undefined,
+      reconnectionAttempts: 3,
+      reconnectionDelay: 1000
     });
-
-    // Handle connection errors
+  
+    // Single connection handler
+    this.socket.on('connect', () => {
+      console.log('✅ Socket connected:', this.socket.id);
+    });
+  
+    // Error handling
     this.socket.on('connect_error', (err) => {
-      if (err.message.includes('Authentication failed')) {
-        console.warn('Authentication failed - clearing token');
-        this.handleUnauthorized();
-      }
+      console.warn('Connection error:', err.message);
+      setTimeout(() => this.socket.connect(), 5000);
     });
 
-    // Handle forced disconnects from server
     this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
         this.handleUnauthorized();
       }
     });
-
-    this.registerSocketEvents();
+  
     this.registerAuthEvents();
   }
 
-  private registerSocketEvents(): void {
-    this.socket.on('connect', () => {
-      console.log('✅ Socket connected:', this.socket.id);
-    });
 
-    this.socket.on('connect_error', (error) => {
-      console.error('❌ Socket connection error:', error);
-    });
-
-    this.socket.on('disconnect', (reason) => {
-      console.warn('⚠️ Socket disconnected:', reason);
-    });
+  private generatePairingCode(): string {
+    return Math.random().toString(36).substr(2, 6).toUpperCase();
   }
 
   private registerAuthEvents(): void {

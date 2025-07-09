@@ -51,7 +51,7 @@ export class LoginPage implements OnInit, OnDestroy {
   otpTimer: number = 120;
   timerInterval: any;
   canResendOtp: boolean = false;
-
+  loginSuccess: boolean = false
 
   constructor(
     private readonly router: Router,
@@ -61,10 +61,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private platform: Platform
   ) {
-    if (localStorage.getItem('token') && localStorage.getItem('token') != undefined) {
-      router.navigate(['/home']);
-    }
     this.resetAuthStates();
+    this.socketService.initializeSocket('')
   }
 
   ngOnInit() {
@@ -74,7 +72,10 @@ export class LoginPage implements OnInit, OnDestroy {
 
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
+      console.log({ authdata: data });
+
       if (data) {
+        this.loginSuccess = true
         this.isLoading = false
         this.resetAuthStates();
 
@@ -90,7 +91,9 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.otpSub = this.socketService.otpSuccess.subscribe(data => {
+      console.log({ otpSuccess: data });
       if (data) {
+        this.loginSuccess = true
         this.isLoading = false
         this.otpSuccess = true;
         setTimeout(() => {
@@ -100,9 +103,10 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.loginSub = this.socketService.loginData$.subscribe((data: any) => {
-      console.log({data : data});
-      
+      console.log({ loginData: data });
+
       if (data) {
+        this.loginSuccess = true
         this.startOtpTimer()
         this.OtpDetails = data;
         this.showOtpModal = true;
@@ -120,42 +124,55 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // Listen for specific auth errors
     this.socketService.on('auth:login:error', (error) => {
-      console.log(error);
-      this.resetAuthStates();
-      this.authFailed = true;
-      this.isLoading = false;
-      console.log({loginerror:error});
-      
-      this.errorModal.present();
-      if (this.platform.is('android')) {
-        this.navCtrl.back();
-      }
+      setTimeout(() => {
+        if (!this.loginSuccess) {
+          this.resetAuthStates();
+          this.authFailed = true;
+          this.isLoading = false;
+          console.log({ loginerror: error });
+
+          this.errorModal.present();
+          if (this.platform.is('android')) {
+            this.navCtrl.back();
+          }
+        }
+      }, 1000);
+
     });
 
     this.socketService.on('auth:google:error', (error) => {
-      console.log(error);
-      this.resetAuthStates();
-      this.isLoading = false;
-      this.authFailed = true;
-      this.googleProgress = false;
-      if (this.platform.is('android')) {
-        this.navCtrl.back();
-      }
+      setTimeout(() => {
+        if (!this.loginSuccess) {
+          this.resetAuthStates();
+          this.isLoading = false;
+          this.authFailed = true;
+          this.googleProgress = false;
+          if (this.platform.is('android')) {
+            this.navCtrl.back();
+          }
+        }
+      }, 1000);
+
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
-      console.log(error);
-      this.resetAuthStates();
-      this.isLoading = false;
-      this.authFailed = true;
-      this.facebookProgress = false;
-      if (this.platform.is('android')) {
-        this.navCtrl.back();
-      }
+      setTimeout(() => {
+        if (!this.loginSuccess) {
+          this.resetAuthStates();
+          this.isLoading = false;
+          this.authFailed = true;
+          this.facebookProgress = false;
+          if (this.platform.is('android')) {
+            this.navCtrl.back();
+          }
+        }
+      }, 1000);
+
     });
   }
 
   protected verifyOTP() {
+    this.loginSuccess = false
     if (!this.loginForm.email) {
       console.error('Please enter email', 'warning');
       return;
@@ -186,6 +203,10 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // Handle Google auth URL
     this.socketService.on('auth:google:url', (data) => {
+      if (!this.platform.is('cordova') || !this.platform.is('capacitor')) {
+        window.open(data.url, '_blank')
+        return;
+      }
       this.inAppBrowser.create(data.url, '_blank', {
         location: 'yes',
         toolbar: 'yes',
@@ -195,6 +216,10 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // Handle Facebook auth URL
     this.socketService.on('auth:facebook:url', (data) => {
+      if (!this.platform.is('cordova') || !this.platform.is('capacitor')) {
+        window.open(data.url, '_blank')
+        return;
+      }
       this.inAppBrowser.create(data.url, '_blank', {
         location: 'yes',
         toolbar: 'yes',
@@ -263,14 +288,14 @@ export class LoginPage implements OnInit, OnDestroy {
       }
     }, 1000);
   }
-  
+
   stopOtpTimer(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
   }
-  
+
   get formatTimer(): string {
     const minutes = Math.floor(this.otpTimer / 60);
     const seconds = this.otpTimer % 60;
@@ -279,9 +304,9 @@ export class LoginPage implements OnInit, OnDestroy {
 
   resendOtp(): void {
     if (!this.canResendOtp) return;
-    
-    this.login(); 
-    this.startOtpTimer(); 
+
+    this.login();
+    this.startOtpTimer();
     this.loginForm.otp = ""
   }
 
