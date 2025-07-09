@@ -273,14 +273,16 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.login(this.loginForm.email);
   }
 
-  loginWithGoogle(): void {
+  async loginWithGoogle() {
+    await this.socketService.initializeSocket('')
     this.googleProgress = true;
     this.googleModal.present()
     this.authFailed = false;
     this.socketService.initiateGoogleLogin();
   }
 
-  loginWithFacebook(): void {
+  async loginWithFacebook() {
+    await this.socketService.initializeSocket('')
     this.authFailed = false;
     this.facebookModal.present()
     this.facebookProgress = true;
