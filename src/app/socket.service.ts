@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToasterService } from './toaster.service';
 
 interface AuthData {
   token: string;
@@ -44,7 +44,7 @@ export class SocketService {
 
   constructor(
     private router: Router,
-    private toastCtrl: ToastController
+    private toasterService:ToasterService
     ) {
     const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
@@ -182,7 +182,7 @@ export class SocketService {
     }
 
     this.socket.disconnect().connect()
-    this.presentToast('You have been logged out', 3000, 'bottom', 'dark');
+    this.toasterService.presentToast('You have been logged out', 3000, 'bottom', 'dark');
   }
 
   private handleUnauthorized(): void {
@@ -242,13 +242,19 @@ export class SocketService {
   }
 
 
-  async presentToast(message: string, duration: number = 3000, position: 'top' | 'bottom' | 'middle' = 'bottom', color?: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration,
-      position,
-      color
+  fromEvent<T>(eventName: string): Observable<T> {
+    return new Observable<T>(observer => {
+      const listener = (data: T) => observer.next(data);
+      this.socket.on(eventName, listener);
+      
+      return () => {
+        this.socket.off(eventName, listener);
+      };
     });
-    toast.present();
   }
+
+  emit(eventName: string, payload?: any): void {
+    this.socket.emit(eventName, payload);
+  }
+
 }

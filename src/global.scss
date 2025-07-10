@@ -164,6 +164,41 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     font-size: 12px;
     opacity: 0.8;
   }
+
+  .skeleton {
+    position: relative;
+    height: 93px;
+    overflow: hidden;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-value{
+    animation: shimmer 1.5s ease-in-out;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
   
   .section {
     padding: 24px;

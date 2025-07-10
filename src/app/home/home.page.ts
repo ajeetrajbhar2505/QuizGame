@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from '../socket.service';
+import { DashboardService, UserStats } from '../dashboard.service';
+import { Subscription } from 'rxjs';
 
 interface user {
   id: string;
@@ -17,7 +19,12 @@ interface user {
   standalone: false,
 })
 
-export class HomePage implements OnInit {
+export class HomePage implements OnInit,OnDestroy {
+
+  stats?: UserStats;
+  activity: any[] = [];
+  private subs: Subscription[] = [];
+
   User: user = {
     id: "",
     name: "",
@@ -28,7 +35,10 @@ export class HomePage implements OnInit {
   }
 
 
-  constructor(private socketService: SocketService) { }
+  constructor(
+    private socketService: SocketService,
+    private dashboardService:DashboardService
+    ) { }
 
 
   ngOnInit(): void {
@@ -41,8 +51,27 @@ export class HomePage implements OnInit {
         this.User = data.user
       }
     })
+
+    this.subs.push(
+      this.dashboardService.getDashboardStats().subscribe((data:any) => {
+        this.stats = data['stats'];
+      }),
+      
+      this.dashboardService.getRecentActivity().subscribe((data:any) => {
+        this.activity = data['activity'];
+      }),
+      
+      this.dashboardService.onStatsUpdate().subscribe((data:any) => {
+        this.stats = data['stats'];
+      })
+    );
   }
   logout() {
-   this,this.socketService.logout()
+    this.dashboardService.logout()
+  }
+
+
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 }

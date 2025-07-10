@@ -10,20 +10,42 @@
         <img  routerLink="/login" (click)="logout()" [src]="User.avatar" alt="User" class="user-avatar">
       </div>
       
-      <div class="stats-container">
+
+      <div class="stats-container" *ngIf="!stats">
+        <div class="stat-card skeleton">
+          <div class="fas"></div>
+          <div class="value"></div>
+          <div class="label"></div>
+        </div>
+
+        <div class="stat-card skeleton">
+          <div class="fas"></div>
+          <div class="value"></div>
+          <div class="label"></div>
+        </div>
+
+        <div class="stat-card skeleton">
+          <div class="fas"></div>
+          <div class="value"></div>
+          <div class="label"></div>
+        </div>
+        
+      </div>
+
+      <div class="stats-container" *ngIf="stats">
         <div class="stat-card">
           <i class="fas fa-trophy"></i>
-          <div class="value">1,250</div>
+          <div class="value">{{stats.points}}</div>
           <div class="label">XP Points</div>
         </div>
         <div class="stat-card">
           <i class="fas fa-medal"></i>
-          <div class="value">24</div>
-          <div class="label">Badges</div>
+          <div class="value">{{stats.rank}}</div>
+          <div class="label">Rank</div>
         </div>
         <div class="stat-card">
           <i class="fas fa-fire"></i>
-          <div class="value">7</div>
+          <div class="value">{{stats.streak.current}}</div>
           <div class="label">Streak</div>
         </div>
       </div>
@@ -42,7 +64,7 @@
         <h2>Categories</h2>
         <a routerLink="/categories">See all <i class="fas fa-chevron-right"></i></a>
       </div>
-      <div class="category-scroll">
+      <div class="category-scroll skeleton-value">
         <div class="category-card active">
           <div class="icon-wrapper">
             <i class="fas fa-calculator"></i>

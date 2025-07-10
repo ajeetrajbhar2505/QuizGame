@@ -7,6 +7,7 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
+import { ToasterService } from '../toaster.service';
 
 export interface OtpDetails {
   success: boolean;
@@ -60,7 +61,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly inAppBrowser: InAppBrowser,
     private navCtrl: NavController,
-    private platform: Platform
+    private platform: Platform,
+    private toasterService:ToasterService
   ) {
     this.resetAuthStates();
     this.socketService.initializeSocket('')
@@ -88,7 +90,7 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupAuthListeners(): void {
     this.authSub = this.socketService.authData$.subscribe(data => {
       if (data) {
-        this.socketService.presentToast('Login successful', 3000, 'bottom', 'dark');
+        this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
         this.loginSuccess = true
         this.isLoading = false
         this.resetAuthStates();
@@ -105,7 +107,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
     this.otpSub = this.socketService.otpSuccess.subscribe(data => {
       if (data) {
-        this.socketService.presentToast('Login successful', 3000, 'bottom', 'dark');
+        this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
         this.loginSuccess = true
         this.isLoading = false
         this.otpSuccess = true;
@@ -116,7 +118,7 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.loginSub = this.socketService.loginData$.subscribe((data: any) => {
-      this.socketService.presentToast('OTP send successfully!', 3000, 'bottom', 'dark');
+      this.toasterService.presentToast('OTP send successfully!', 3000, 'bottom', 'dark');
       if (data) {
         this.loginSuccess = true
         this.startOtpTimer()
@@ -138,14 +140,14 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.on('auth:otp:verify:error', (error) => {
       this.errorModalStatus = 'auth:otp:verify:error'
       setTimeout(() => {
-        this.socketService.presentToast(error.message, 3000, 'bottom', 'dark');
+        this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
         this.isLoading = false;
       }, 1000);
 
     });
 
     this.socketService.on('auth:login:error', (error) => {
-      this.socketService.presentToast(error.message, 3000, 'bottom', 'dark');
+      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
       this.errorModalStatus = 'auth:login:error'
       setTimeout(() => {
         if (!this.loginSuccess) {
@@ -162,7 +164,7 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.socketService.on('auth:google:error', (error) => {
-      this.socketService.presentToast(error.message, 3000, 'bottom', 'dark');
+      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
       this.errorModalStatus = 'auth:google:error'
       setTimeout(() => {
         if (!this.loginSuccess) {
@@ -179,7 +181,7 @@ export class LoginPage implements OnInit, OnDestroy {
     });
 
     this.socketService.on('auth:facebook:error', (error) => {
-      this.socketService.presentToast(error.message, 3000, 'bottom', 'dark');
+      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
       this.errorModalStatus = 'auth:facebook:error'
       setTimeout(() => {
         if (!this.loginSuccess) {
