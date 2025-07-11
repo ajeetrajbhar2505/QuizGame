@@ -2,8 +2,8 @@
     <div class="phone">
         <div class="profile-header">
             <div class="avatar-container">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="profile-avatar">
-                <div class="edit-avatar">
+                <img [src]="User?.avatar" alt="Profile" class="profile-avatar">
+                <div class="edit-avatar" *ngIf="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -11,21 +11,20 @@
                     </svg>
                 </div>
             </div>
-            <h1 class="profile-name">Sarah Johnson</h1>
-            <p class="profile-username">{{'@sarahj'}}</p>
-            <p class="profile-bio">Math enthusiast and quiz creator. Love sharing knowledge and challenging minds!</p>
+            <h1 class="profile-name">{{User?.name}}</h1>
+            <p class="profile-username">{{User?.email}}</p>
 
             <div class="profile-stats">
                 <div class="stat-item">
-                    <div class="stat-value">{{stats?.points}}</div>
+                    <div class="stat-value">{{userStats?.points || 0}}</div>
                     <div class="stat-label">XP Points</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">{{stats?.rank}}</div>
+                    <div class="stat-value">{{userStats?.rank || 0}}</div>
                     <div class="stat-label">Rank</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">{{stats?.streak?.current}}</div>
+                    <div class="stat-value">{{userStats?.streak?.current || 0}}</div>
                     <div class="stat-label">Streak</div>
                 </div>
             </div>

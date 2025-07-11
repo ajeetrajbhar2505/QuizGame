@@ -11,7 +11,7 @@
       </div>
       
 
-      <div class="stats-container" *ngIf="!stats">
+      <div class="stats-container" *ngIf="!userStats">
         <div class="stat-card skeleton">
           <div class="fas"></div>
           <div class="value"></div>
@@ -32,20 +32,20 @@
         
       </div>
 
-      <div class="stats-container" *ngIf="stats">
+      <div class="stats-container" *ngIf="userStats">
         <div class="stat-card">
           <i class="fas fa-trophy"></i>
-          <div class="value">{{stats.points}}</div>
+          <div class="value">{{userStats.points}}</div>
           <div class="label">XP Points</div>
         </div>
         <div class="stat-card">
           <i class="fas fa-medal"></i>
-          <div class="value">{{stats.rank}}</div>
+          <div class="value">{{userStats.rank}}</div>
           <div class="label">Rank</div>
         </div>
         <div class="stat-card">
           <i class="fas fa-fire"></i>
-          <div class="value">{{stats.streak.current}}</div>
+          <div class="value">{{userStats.streak.current}}</div>
           <div class="label">Streak</div>
         </div>
       </div>
@@ -161,38 +161,15 @@
       
       <div class="quiz-card">
         <div class="content" style="padding-bottom: 8px;">
-          <div class="leaderboard-item">
-            <div class="rank">1</div>
+          <div class="leaderboard-item" *ngFor="let user of LeaderboardUser;let i = index">
+            <div class="rank">{{i+1}}</div>
             <div class="user">
-              <img src="https://randomuser.me/api/portraits/women/12.jpg">
+              <img [src]="user.avatar">
               <div>
-                <div class="name">Priya Sharma</div>
-                <div class="level">Gold Level</div>
+                <div class="name">{{user.name}}</div>
               </div>
             </div>
-            <div class="points">1,450</div>
-          </div>
-          <div class="leaderboard-item">
-            <div class="rank">2</div>
-            <div class="user">
-              <img src="https://randomuser.me/api/portraits/men/45.jpg">
-              <div>
-                <div class="name">Rahul Patel</div>
-                <div class="level">Silver Level</div>
-              </div>
-            </div>
-            <div class="points">1,320</div>
-          </div>
-          <div class="leaderboard-item">
-            <div class="rank">3</div>
-            <div class="user">
-              <img src="https://randomuser.me/api/portraits/women/32.jpg">
-              <div>
-                <div class="name">Anjali Singh</div>
-                <div class="level">Silver Level</div>
-              </div>
-            </div>
-            <div class="points">1,280</div>
+            <div class="points">{{user.points}}</div>
           </div>
         </div>
       </div>
@@ -200,8 +177,8 @@
     
 
     <!-- Floating Action Button -->
-    <button class="floating-btn">
+    <!-- <button class="floating-btn">
       <i class="fas fa-bolt"></i>
-    </button>
+    </button> -->
   </div>
 </ion-content>

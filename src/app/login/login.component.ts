@@ -8,6 +8,7 @@ import { NavController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
+import { DashboardService } from '../dashboard.service';
 
 export interface OtpDetails {
   success: boolean;
@@ -54,7 +55,7 @@ export class LoginPage implements OnInit, OnDestroy {
   timerInterval: any;
   canResendOtp: boolean = false;
   loginSuccess: boolean = false
-
+  connected: String = ''
   constructor(
     private readonly router: Router,
     private readonly socketService: SocketService,
@@ -62,7 +63,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private readonly inAppBrowser: InAppBrowser,
     private navCtrl: NavController,
     private platform: Platform,
-    private toasterService:ToasterService
+    private toasterService: ToasterService,
+    private dashboardService: DashboardService
   ) {
     this.resetAuthStates();
     this.socketService.initializeSocket('')
@@ -71,6 +73,9 @@ export class LoginPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.setupAuthListeners();
     this.setupSocialLoginCallbacks();
+    this.socketService.connectionState$.subscribe(data => {
+      this.connected = data
+    })
   }
 
   retrySocialLogins() {
@@ -220,7 +225,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.authFailed = false;
     this.otpSuccess = false;
     this.showOtpModal = false;
-    this.loginForm.email = ''
+    this.loginForm.email = 'fyit.ajeetrajbhar18144@gmail.com'
     this.loginForm.otp = ""
   }
 
@@ -257,6 +262,10 @@ export class LoginPage implements OnInit, OnDestroy {
   handleSuccessfulLogin(data: any): void {
     setTimeout(() => {
       this.closeModal();
+      this.dashboardService.getDashboardStats().subscribe()
+      this.dashboardService.getRecentActivity().subscribe()
+      this.dashboardService.getLeaderboardUser().subscribe()
+      this.socketService.authDataSource.next(data)
       this.router.navigate(['/home'], {
         queryParams: { token: data.token },
         state: { user: data.user }
@@ -275,7 +284,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.login(this.loginForm.email);
   }
 
-   loginWithGoogle() {
+  loginWithGoogle() {
     this.resetAuthStates()
     this.googleProgress = true;
     this.googleModal.present()
@@ -283,7 +292,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.initiateGoogleLogin();
   }
 
-   loginWithFacebook() {
+  loginWithFacebook() {
     this.resetAuthStates()
     this.authFailed = false;
     this.facebookModal.present()

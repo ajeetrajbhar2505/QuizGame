@@ -34,7 +34,7 @@ interface RegisterPayload {
 })
 export class SocketService {
   public socket!: Socket;
-  private authDataSource = new Subject<AuthData | null>();
+ authDataSource = new Subject<AuthData | null>();
   private loginDataSource = new Subject<AuthData | null>();
   private otpDataSource = new Subject<AuthData | null>();
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
@@ -44,7 +44,7 @@ export class SocketService {
 
   constructor(
     private router: Router,
-    private toasterService:ToasterService
+    private toasterService:ToasterService,
     ) {
     const token = localStorage.getItem('token') || ''
     this.initializeSocket(token);
@@ -102,11 +102,6 @@ export class SocketService {
     this.socket.on('reconnect_attempt', () => {
       this.connectionState$.next('reconnecting');
     });
-  }
-
-
-  private generatePairingCode(): string {
-    return Math.random().toString(36).substr(2, 6).toUpperCase();
   }
 
   private registerAuthEvents(): void {

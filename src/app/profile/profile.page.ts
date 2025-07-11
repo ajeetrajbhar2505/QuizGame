@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService, UserStats } from '../dashboard.service';
-import { Subscription } from 'rxjs';
+import { DashboardService, UserStats, user } from '../dashboard.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,11 +7,29 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  stats?: UserStats;
-  activity: any[] = [];
-  private subs: Subscription[] = [];
+  userStats?: UserStats;
+  User?:user
+  userActivity: any[] = [];
+  constructor(private dashboardService:DashboardService) {
+    this.dashboardService.getUserStats$.subscribe((data:UserStats)=>{
+      this.userStats = data
+    })
 
-  constructor(private dashboardService:DashboardService) { }
+    this.dashboardService.getUserActivity$.subscribe((data:any)=>{
+      this.userActivity = data
+    })
+
+    this.User = this.dashboardService.getUser()
+
+
+    if (!this.userStats) {
+      this.dashboardService.getDashboardStats().subscribe()
+    }
+
+    if (!this.userActivity) {
+        this.dashboardService.getRecentActivity().subscribe()
+    }
+   }
 
   ngOnInit() {
     
@@ -37,21 +54,7 @@ export class ProfilePage implements OnInit {
             }
         });
     });
-
-    this.subs.push(
-      this.dashboardService.getDashboardStats().subscribe((data:any) => {
-        this.stats = data['stats'];
-      }),
-      
-      this.dashboardService.getRecentActivity().subscribe((data:any) => {
-        this.activity = data['activity'];
-      }),
-      
-      this.dashboardService.onStatsUpdate().subscribe((data:any) => {
-        this.stats = data['stats'];
-      })
-    );
-    
+ 
   }
 
 }
