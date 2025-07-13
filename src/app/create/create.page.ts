@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { CreateQuizesService } from '../create-quizes.service';
 import { Observable, Subscription, interval, map, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToasterService } from '../toaster.service';
 
 @Component({
   selector: 'app-create',
@@ -30,7 +30,7 @@ export class CreatePage implements OnInit, OnDestroy {
 
   constructor(
     private quizService: CreateQuizesService,
-    private toastController: ToastController,
+    private toasterService: ToasterService,
     private router: Router
   ) { }
 
@@ -43,7 +43,7 @@ export class CreatePage implements OnInit, OnDestroy {
         next: (quiz) => {
           this.isCreating = false;
           if (quiz) {
-            this.showToast('Quiz created successfully!');
+            this.toasterService.success('Quiz created successfully!');
             this.quizPrompt = '';
             this.quizPromptDraft = ''
             this.messageSub?.unsubscribe();
@@ -55,7 +55,7 @@ export class CreatePage implements OnInit, OnDestroy {
           this.quizPrompt = this.quizPromptDraft
           this.quizPromptDraft = ''
           this.messageSub?.unsubscribe();
-          this.showToast('Failed to create quiz. Please try again.');
+          this.toasterService.success('Failed to create quiz. Please try again.');
           console.error('Quiz creation error:', err);
         }
       })
@@ -70,7 +70,7 @@ export class CreatePage implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           console.error('Failed to fetch quizzes:', err);
-          this.showToast('Failed to load quizzes. Please try again.');
+          this.toasterService.success('Failed to load quizzes. Please try again.');
         }
       })
     );
@@ -95,7 +95,7 @@ export class CreatePage implements OnInit, OnDestroy {
 
   async createQuiz() {
     if (!this.quizPrompt.trim()) {
-      this.showToast('Please enter a quiz topic');
+      this.toasterService.success('Please enter a quiz topic');
       return;
     }
 
@@ -118,18 +118,10 @@ export class CreatePage implements OnInit, OnDestroy {
     });
   }
 
-  private async showToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 2000,
-      position: 'bottom'
-    });
-    await toast.present();
-  }
 
 
   verifyQuiz(quizId: String) {
-    this.router.navigate([`/verify-quiz`],{queryParams : {id : quizId}})
+    this.router.navigate([`/verify-quiz`], { queryParams: { id: quizId } })
   }
 
 

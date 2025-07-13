@@ -22,6 +22,7 @@ export interface Quiz {
   source: 'openai' | 'manual';
   category?: string;
   isPublic:boolean,
+  approvalStatus:string,
   difficulty?: string;
 }
 
@@ -38,7 +39,7 @@ export class CreateQuizesService {
   constructor(private socketService: SocketService) { }
 
   createQuiz(prompt: string, options?: any): Observable<Quiz> {
-    this.socketService.emit('quiz:create', { prompt, options });
+    this.socketService.socket.emit('quiz:create', { prompt, options });
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:create:success').subscribe({
@@ -57,7 +58,7 @@ export class CreateQuizesService {
   }
 
   getAllQuiz(): Observable<Quiz[]> {
-    this.socketService.emit('quiz:all');
+    this.socketService.socket.emit('quiz:all');
 
     return new Observable<Quiz[]>(observer => {
       const subscription = this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:all:success').subscribe({
@@ -76,7 +77,7 @@ export class CreateQuizesService {
   }
 
   getQuiz(quizId: string): Observable<Quiz> {
-    this.socketService.emit('quiz:get', quizId);
+    this.socketService.socket.emit('quiz:get', quizId);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
@@ -94,8 +95,8 @@ export class CreateQuizesService {
   }
 
 
-  updateQuizStatus(quizId: string, publish: boolean): Observable<Quiz> {
-    this.socketService.emit('quiz:publish', { quizId, publish });
+  updateQuizStatus(quizId: string, publish: boolean,approvalStatus:string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:publish', quizId, publish, approvalStatus);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').subscribe({
@@ -113,7 +114,7 @@ export class CreateQuizesService {
   }
 
   generateNewQuestion(quizId: string): Observable<Quiz> {
-    this.socketService.emit('quiz:get', { quizId });
+    this.socketService.socket.emit('quiz:get', { quizId });
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
@@ -132,7 +133,7 @@ export class CreateQuizesService {
 
 
   startQuiz(quizId: string): Observable<Quiz> {
-    this.socketService.emit('quiz:start', quizId);
+    this.socketService.socket.emit('quiz:start', quizId);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').subscribe({
@@ -159,7 +160,7 @@ export class CreateQuizesService {
       });
     }
 
-    this.socketService.emit('quiz:answer:submit', { quizId, questionId, answer });
+    this.socketService.socket.emit('quiz:answer:submit', { quizId, questionId, answer });
 
     return new Observable<{ correct: boolean, explanation?: string }>(observer => {
       const subscription = this.socketService.fromEvent<{ result: any }>('quiz:answer:result').subscribe({

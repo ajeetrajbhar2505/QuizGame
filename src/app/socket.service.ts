@@ -247,8 +247,4 @@ export class SocketService {
     });
   }
 
-  emit(eventName: string, payload?: any): void {
-    this.socket.emit(eventName, payload);
-  }
-
 }

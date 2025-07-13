@@ -57,7 +57,7 @@ export class DashboardService {
   }
 
   getDashboardStats() {
-    this.socketService.emit('dashboard:stats:get');
+    this.socketService.socket.emit('dashboard:stats:get');
     return new Observable<UserStats>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:stats:success').subscribe({
         next: (data: any) => {
@@ -76,7 +76,7 @@ export class DashboardService {
   }
 
   getRecentActivity() {
-    this.socketService.emit('dashboard:activity:get');
+    this.socketService.socket.emit('dashboard:activity:get');
     return new Observable<any[]>(observer => {
       const subscription = this.socketService.fromEvent<any[]>('dashboard:activity:success').subscribe({
         next: (data: any) => {
@@ -95,7 +95,7 @@ export class DashboardService {
   }
 
   getLeaderboardUser() {
-    this.socketService.emit('dashboard:leaderboardUser:get');
+    this.socketService.socket.emit('dashboard:leaderboardUser:get');
     return new Observable<LeaderboardUser[]>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:leaderboardUser:success').subscribe({
         next: (data: any) => {

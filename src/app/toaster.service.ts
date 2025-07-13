@@ -20,4 +20,23 @@ export class ToasterService {
     });
     toast.present();
   }
+
+  async success(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration : 3000,
+      position : 'bottom',
+    });
+    toast.present();
+  }
+
+  async error(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration : 3000,
+      position : 'bottom',
+    });
+    toast.present();
+  }
+  
 }
