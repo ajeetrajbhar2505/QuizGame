@@ -133,8 +133,9 @@ export class CreateQuizesService {
 
   deleteQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:delete', quizId);
+
     return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').subscribe({
         next: (data) => {
           observer.next(data.quiz);
           observer.complete();

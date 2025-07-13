@@ -58,7 +58,14 @@
         padding: 20px;
         box-shadow: $shadow;
         margin-bottom: 20px;
+        position: relative;
         border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    .cancel{
+        position: absolute;
+        top: 60px;
+        right: 23px;
+        background-color: $card-bg;
     }
 
     .input-label {

@@ -5,6 +5,13 @@
             <label for="quiz-input" class="input-label">Enter your topic or questions</label>
             <textarea [readOnly]="quizPromptDraft" id="quiz-input" [(ngModel)]="quizPrompt" class="big-input"
                 [placeholder]="waitingMessage"></textarea>
+            <button class="action-btn reject-btn cancel" *ngIf="quizPromptDraft" slot="right" (click)="cancelQuizGeneration()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Cancel
+            </button>
         </div>
 
         <button class="generate-btn" (click)="createQuiz()" [disabled]="quizPromptDraft">
@@ -87,7 +94,7 @@
                                 d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        5 min
+                        {{ quiz.estimatedTime / 60 }} min
                     </span>
                     <span class="meta-item">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,10 +118,11 @@
                 <div class="quiz-actions">
                     <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus != 'pending'">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" *ngIf="quiz.approvalStatus == 'rejected'" stroke-width="2" stroke-linecap="round"
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor"
+                                *ngIf="quiz.approvalStatus == 'rejected'" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
-                            <path d="M5 13L9 17L19 7" stroke="currentColor" *ngIf="quiz.approvalStatus == 'approved'" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
+                            <path d="M5 13L9 17L19 7" stroke="currentColor" *ngIf="quiz.approvalStatus == 'approved'"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         {{quiz.approvalStatus}}
                     </button>
@@ -127,12 +135,14 @@
                         </svg>
                     </button>
                     <button class="action-btn reject-btn" *ngIf="quiz.approvalStatus != 'pending'"
-                    (click)="deleteQuiz(quiz._id,i)">
-                    Delete
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="currentColor"/>
-                      </svg>
-                </button>
+                        (click)="deleteQuiz(quiz._id,i)">
+                        Delete
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z"
+                                fill="currentColor" />
+                        </svg>
+                    </button>
                 </div>
             </div>
 
