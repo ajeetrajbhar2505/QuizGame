@@ -131,6 +131,23 @@ export class CreateQuizesService {
     });
   }
 
+  deleteQuiz(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:delete', quizId);
+    return new Observable<Quiz>(observer => {
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
+        next: (data) => {
+          observer.next(data.quiz);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+          observer.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  }
+
 
   startQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:start', quizId);
