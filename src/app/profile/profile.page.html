@@ -2,7 +2,7 @@
     <div class="phone">
         <div class="profile-header">
             <div class="avatar-container">
-                <img [src]="User?.avatar" alt="Profile" class="profile-avatar">
+                <img [src]="User?.avatar || 'assets/AppLogo.png'" alt="Profile" class="profile-avatar" loading="lazy" >
                 <div class="edit-avatar" *ngIf="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

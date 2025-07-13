@@ -59,7 +59,6 @@ export class SocketService {
       reconnection: true,
       autoConnect: true,
       auth: token ? { token } : undefined,
-      reconnectionAttempts: 3,
       reconnectionDelay: 1000
     });
   

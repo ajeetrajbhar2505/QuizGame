@@ -7,7 +7,7 @@
           <h1>Welcome back, {{User.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img  routerLink="/login" (click)="logout()" [src]="User.avatar" alt="User" class="user-avatar">
+        <img loading="lazy"  routerLink="/login" (click)="logout()" [src]="User.avatar || 'assets/AppLogo.png'" alt="User" class="user-avatar">
       </div>
       
 
