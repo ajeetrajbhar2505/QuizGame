@@ -21,8 +21,8 @@ export interface Quiz {
   createdBy: string;
   source: 'openai' | 'manual';
   category?: string;
-  isPublic:boolean,
-  approvalStatus:string,
+  isPublic: boolean,
+  approvalStatus: string,
   difficulty?: string;
 }
 
@@ -95,13 +95,14 @@ export class CreateQuizesService {
   }
 
 
-  updateQuizStatus(quizId: string, publish: boolean,approvalStatus:string): Observable<Quiz> {
+  updateQuizStatus(quizId: string, publish: boolean, approvalStatus: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:publish', quizId, publish, approvalStatus);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').subscribe({
         next: (data) => {
-          observer.next(data.quiz);
+          this.getAllQuiz().toPromise()
+          observer.next(data['quiz']);
           observer.complete();
         },
         error: (err) => {
@@ -113,8 +114,8 @@ export class CreateQuizesService {
     });
   }
 
-  generateNewQuestion(quizId: string,index:number): Observable<Quiz> {
-    this.socketService.socket.emit('quiz:refreshQuestion', quizId,index);
+  generateNewQuestion(quizId: string, index: number): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:refreshQuestion', quizId, index);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').subscribe({
@@ -135,7 +136,7 @@ export class CreateQuizesService {
     this.socketService.socket.emit('quiz:delete', quizId);
 
     return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').subscribe({
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
         next: (data) => {
           observer.next(data.quiz);
           observer.complete();

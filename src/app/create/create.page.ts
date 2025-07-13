@@ -32,7 +32,9 @@ export class CreatePage implements OnInit, OnDestroy {
     private quizService: CreateQuizesService,
     private toasterService: ToasterService,
     private router: Router
-  ) { }
+  ) {
+    this.loadQuizzes();
+   }
 
   ngOnInit(): void {
 
@@ -73,7 +75,6 @@ export class CreatePage implements OnInit, OnDestroy {
       })
     );
 
-    this.loadQuizzes();
   }
 
   ngOnDestroy(): void {
