@@ -229,6 +229,9 @@
     .tab-content {
         display: none;
     }
+    .tab-content .quiz-card{
+        animation: unset;
+    }
 
     .tab-content.active {
         display: block;

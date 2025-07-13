@@ -16,7 +16,7 @@ export interface Quiz {
   title: string;
   description: string;
   questions: QuizQuestion[];
-  estimatedTime: string;
+  estimatedTime: number;
   totalQuestions: number;
   createdBy: string;
   source: 'openai' | 'manual';
@@ -44,6 +44,7 @@ export class CreateQuizesService {
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:create:success').subscribe({
         next: (data) => {
+          this.getAllQuiz().toPromise()
           this.quizDraft$.next(data.quiz);
           observer.next(data.quiz);
           observer.complete();
@@ -138,6 +139,7 @@ export class CreateQuizesService {
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
         next: (data) => {
+          this.getAllQuiz().toPromise()
           observer.next(data.quiz);
           observer.complete();
         },
