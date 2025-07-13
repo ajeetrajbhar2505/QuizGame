@@ -51,8 +51,9 @@ export class VerifyQuizComponent implements OnInit {
   }
 
   refreshQuestion(index: number): void {
-    this.quizService.generateNewQuestion(this.quiz._id).subscribe({
+    this.quizService.generateNewQuestion(this.quiz._id,index).subscribe({
       next: (newQuestion: any) => {
+        console.log({newQuestion});
         this.quiz.questions[index] = newQuestion;
       },
       error: (err: any) => {

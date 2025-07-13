@@ -142,6 +142,7 @@ interface Quiz {
   category?: string;
   totalQuestions?: number,
   difficulty?: string;
+  approvalStatus:string
 }
 
 interface QuizQuestion {

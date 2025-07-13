@@ -113,11 +113,11 @@ export class CreateQuizesService {
     });
   }
 
-  generateNewQuestion(quizId: string): Observable<Quiz> {
-    this.socketService.socket.emit('quiz:get', { quizId });
+  generateNewQuestion(quizId: string,index:number): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:refreshQuestion', quizId,index);
 
     return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').subscribe({
         next: (data) => {
           observer.next(data.quiz);
           observer.complete();
