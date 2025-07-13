@@ -10,6 +10,7 @@ import { UserSetupPage } from './user-setup/user-setup.page';
 import { CategoriesPage } from './categories/categories.page';
 import { QuizesPage } from './quizes/quizes.page';
 import { authGuard, loginGuard } from './auth.guard';
+import { VerifyQuizComponent } from './verify-quiz/verify-quiz.component';
 
 const routes: Routes = [
   {
@@ -60,6 +61,11 @@ const routes: Routes = [
   {
     path: 'quizes',
     component: QuizesPage,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'verify-quiz',
+    component: VerifyQuizComponent,
     canActivate: [authGuard]
   }
 ];

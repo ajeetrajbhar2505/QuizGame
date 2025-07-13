@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { SocketService } from './socket.service';
 
-interface QuizQuestion {
+export interface QuizQuestion {
   _id: string;
   questionText: string;
   options: string[];
@@ -11,14 +11,17 @@ interface QuizQuestion {
   explanation?: string;
 }
 
-interface Quiz {
+export interface Quiz {
   _id: string;
   title: string;
   description: string;
   questions: QuizQuestion[];
+  estimatedTime: string;
+  totalQuestions: number;
   createdBy: string;
   source: 'openai' | 'manual';
   category?: string;
+  isPublic:boolean,
   difficulty?: string;
 }
 
@@ -26,7 +29,7 @@ interface Quiz {
   providedIn: 'root'
 })
 export class CreateQuizesService {
-  
+
   private quizDraft$ = new BehaviorSubject<Quiz | null>(null);
   private quizesDraft$ = new BehaviorSubject<Quiz[]>([]);
   private activeQuiz$ = new BehaviorSubject<Quiz | null>(null);
@@ -73,12 +76,11 @@ export class CreateQuizesService {
   }
 
   getQuiz(quizId: string): Observable<Quiz> {
-    this.socketService.emit('quiz:get', { quizId });
+    this.socketService.emit('quiz:get', quizId);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
         next: (data) => {
-          this.quizDraft$.next(data.quiz);
           observer.next(data.quiz);
           observer.complete();
         },
@@ -91,8 +93,46 @@ export class CreateQuizesService {
     });
   }
 
+
+  updateQuizStatus(quizId: string, publish: boolean): Observable<Quiz> {
+    this.socketService.emit('quiz:publish', { quizId, publish });
+
+    return new Observable<Quiz>(observer => {
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').subscribe({
+        next: (data) => {
+          observer.next(data.quiz);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+          observer.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  }
+
+  generateNewQuestion(quizId: string): Observable<Quiz> {
+    this.socketService.emit('quiz:get', { quizId });
+
+    return new Observable<Quiz>(observer => {
+      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
+        next: (data) => {
+          observer.next(data.quiz);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+          observer.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  }
+
+
   startQuiz(quizId: string): Observable<Quiz> {
-    this.socketService.emit('quiz:start', { quizId });
+    this.socketService.emit('quiz:start', quizId);
 
     return new Observable<Quiz>(observer => {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').subscribe({

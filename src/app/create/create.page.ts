@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { CreateQuizesService } from '../create-quizes.service';
 import { Observable, Subscription, interval, map, take } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create',
@@ -29,7 +30,8 @@ export class CreatePage implements OnInit, OnDestroy {
 
   constructor(
     private quizService: CreateQuizesService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -125,6 +127,10 @@ export class CreatePage implements OnInit, OnDestroy {
     await toast.present();
   }
 
+
+  verifyQuiz(quizId: String) {
+    this.router.navigate([`/verify-quiz`],{queryParams : {id : quizId}})
+  }
 
 
   getMessages(): Observable<string> {

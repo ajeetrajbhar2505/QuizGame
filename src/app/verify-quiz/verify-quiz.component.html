@@ -1,0 +1,66 @@
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div *ngIf="quiz" class="quiz-preview-container">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+      <ion-chip [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
+        {{ quiz.difficulty | titlecase }}
+      </ion-chip>
+      <div class="quiz-meta">
+        <span class="meta-item">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ quiz.estimatedTime / 60 }} min
+        </span>
+        <span class="meta-item">
+          <ion-icon name="help-circle-outline"></ion-icon>
+          {{ quiz.totalQuestions }} questions
+        </span>
+      </div>
+    </div>
+
+    <!-- Quiz Title & Description -->
+    <div class="quiz-title">{{ quiz.title }}</div>
+    <div class="quiz-description">{{ quiz.description }}</div>
+
+    <!-- Questions Preview -->
+    <div class="section-title">Questions Preview</div>
+    <div class="questions-preview">
+      <div *ngFor="let question of quiz.questions; let i = index" class="question-card">
+        <div class="question-header">
+          <div class="question-number">Question {{ i + 1 }}</div>
+          <button class="refresh-btn" (click)="refreshQuestion(i)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23 4V10H17M1 20V14H7M1 14C1.53043 14 2.03914 13.7893 2.41421 13.4142C2.78929 13.0391 3 12.5304 3 12C3 10.1435 3.7375 8.363 5.05025 7.05025C6.36301 5.7375 8.14348 5 10 5L13 5M23 10C22.4696 10 21.9609 10.2107 21.5858 10.5858C21.2107 10.9609 21 11.4696 21 12C21 13.8565 20.2625 15.637 18.9497 16.9497C17.637 18.2625 15.8565 19 14 19H11" 
+                    stroke="currentColor" 
+                    stroke-width="2" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+        <div class="question-text">{{ question.question }}</div>
+        
+        <div class="options-list">
+          <div *ngFor="let option of question.options" class="option-item">
+            <div class="option-bullet"></div>
+            <div class="option-text">{{ option }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="quiz-actions" *ngIf="quiz.isPublic">
+      <button class="action-btn reject-btn" (click)="rejectQuiz()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Reject
+      </button>
+      <button class="action-btn approve-btn" (click)="approveQuiz()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Approve
+      </button>
+    </div>
+  </div>
+</ion-content>
