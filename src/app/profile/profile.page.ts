@@ -1,105 +1,114 @@
-import { Component, OnInit } from '@angular/core';
-import { DashboardService, UserStats, user } from '../dashboard.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DashboardService, UserStats } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss',],
+  styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage implements OnInit, OnDestroy {
   userStats?: UserStats;
-  User?:user
+  currentUser?: any;
+  User:any
   userActivity: any[] = [];
   quizesDraft: Quiz[] = [];
+  activeTab: string = 'quizzes'; // Default active tab
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
-    private dashboardService:DashboardService,
-    private quizService:CreateQuizesService,
-    private router:Router,
-    private toasterService:ToasterService
-    ) {
-    this.dashboardService.getUserStats$.subscribe((data:UserStats)=>{
-      this.userStats = data
-    })
+    private dashboardService: DashboardService,
+    private quizService: CreateQuizesService,
+    private router: Router,
+    private toasterService: ToasterService
+  ) {}
 
-    this.dashboardService.getUserActivity$.subscribe((data:any)=>{
-      this.userActivity = data
-    })
+  ngOnInit(): void {
+    this.setupDataListeners();
+    this.loadInitialData();
+    this.setupTabSwitching();
+  }
 
-    this.User = this.dashboardService.getUser()
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 
+  private setupDataListeners(): void {
+    // User stats listener
+    this.subscriptions.add(
+      this.dashboardService.getUserStats$.subscribe((data: UserStats) => {
+        this.userStats = data;
+      })
+    );
 
+    // User activity listener
+    this.subscriptions.add(
+      this.dashboardService.getUserActivity$.subscribe((data: any) => {
+        this.userActivity = data;
+      })
+    );
+
+    // Current user
+    this.currentUser = this.dashboardService.getUser();
+
+    // Draft quizzes listener
+    this.subscriptions.add(
+      this.quizService.getQuizesDraft().subscribe({
+        next: (quizes: Quiz[]) => {
+          this.quizesDraft = quizes;
+        },
+        error: (err: any) => {
+          console.error('Failed to fetch quizzes:', err);
+          this.toasterService.error('Failed to load your quizzes');
+        }
+      })
+    );
+  }
+
+  private loadInitialData(): void {
     if (!this.userStats) {
-      this.dashboardService.getDashboardStats().subscribe()
+      this.dashboardService.getDashboardStats().subscribe({
+        error: (err) => {
+          console.error('Failed to load dashboard stats:', err);
+        }
+      });
     }
 
-    if (!this.userActivity) {
-        this.dashboardService.getRecentActivity().subscribe()
+    if (this.userActivity.length === 0) {
+      this.dashboardService.getRecentActivity().subscribe({
+        error: (err) => {
+          console.error('Failed to load recent activity:', err);
+        }
+      });
     }
-    this.loadQuizzes()
-   }
 
-  ngOnInit() {
-    
-    // Tab switching
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs and contents
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
-            tab.classList.add('active');
-            const tabId = tab.getAttribute('data-tab');
-            if (tabId) {
-                const tabContent = document.getElementById(tabId);
-                if (tabContent) {
-                    tabContent.classList.add('active');
-                }
-            }
-        });
-    });
- 
-    this.quizService.getQuizesDraft().subscribe({
-      next: (quizes: any) => {
-        this.quizesDraft = quizes;
-      },
-      error: (err: any) => {
-        console.error('Failed to fetch quizzes:', err);
-      }
-    })
-
+    this.loadQuizzes();
   }
 
-  verifyQuiz(quizId: String) {
-    this.router.navigate([`/verify-quiz`], { queryParams: { id: quizId } })
+  private setupTabSwitching(): void {
+    // This is now handled in the template with Angular's click bindings
+    // The DOM manipulation has been moved to the template
   }
 
-  deleteQuiz(quizId: string, index: number): void {
-    this.quizService.deleteQuiz(quizId).subscribe({
-      next: () => {
-        this.quizesDraft = this.quizesDraft.filter((_, i) => i !== index);
-      },
-      error: (err) => {
-        this.toasterService.error(err.error?.message || 'Failed to delete quiz');
-        console.error('Delete failed:', err);
-      }
-    });
+  changeTab(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  verifyQuiz(quizId: string): void {
+    this.router.navigate(['/verify-quiz'], { queryParams: { id: quizId } });
+  }
+
+  deleteQuiz(quizId: string): void {
+    this.quizService.deleteQuiz(quizId)
   }
 
   loadQuizzes(): void {
-    this.quizService.getAllQuiz().subscribe({
-      error: (err) => {
-        console.error('Error loading quizzes:', err);
-      }
-    });
   }
 
-
+  trackByQuizId(index: number, quiz: Quiz): string {
+    return quiz._id;
+  }
 }

@@ -9,7 +9,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
   standalone: false,
 })
 
-export class HomePage implements OnInit {
+export class HomePage  {
   userStats?: UserStats
   LeaderboardUser?: LeaderboardUser[]
   userActivity?: any
@@ -48,20 +48,9 @@ export class HomePage implements OnInit {
         this.dashboardService.getLeaderboardUser().subscribe()
     }
 
-
     this.loadQuizzes()
   }
 
-  ngOnInit(): void {
-    this.quizService.getPublishedQuizes().subscribe({
-      next: (quizes: any) => {
-        this.quizesDraft = quizes;
-      },
-      error: (err: any) => {
-        console.error('Failed to fetch quizzes:', err);
-      }
-    })
-  }
 
   startQuiz(quizId:string){
 
@@ -69,10 +58,8 @@ export class HomePage implements OnInit {
 
 
   loadQuizzes(): void {
-    this.quizService.getPublishedQuiz().subscribe({
-      error: (err) => {
-        console.error('Error loading quizzes:', err);
-      }
+    this.quizService.getPublishedQuizes().subscribe(quizzes => {
+      this.quizesDraft = quizzes;
     });
   }
 

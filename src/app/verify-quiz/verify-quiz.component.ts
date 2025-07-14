@@ -1,47 +1,65 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CreateQuizesService, Quiz } from '../create-quizes.service';
+import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
 import { ToasterService } from '../toaster.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-verify-quiz',
   templateUrl: './verify-quiz.component.html',
   styleUrls: ['./verify-quiz.component.scss']
 })
-export class VerifyQuizComponent implements OnInit {
-  quiz!: any;
+export class VerifyQuizComponent implements OnInit, OnDestroy {
+  quiz?: Quiz;
   isLoading: boolean = true;
-  rejecting: boolean = false
-  approving: boolean = false
+  rejecting: boolean = false;
+  approving: boolean = false;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
-    private toasterService:ToasterService
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(data => {
-      this.loadQuiz(data['id']);
-    })
+    this.subscriptions.add(
+      this.route.queryParams.subscribe(params => {
+        const quizId = params['id'];
+        if (quizId) {
+          this.loadQuiz(quizId);
+        } else {
+          this.toasterService.error('No quiz ID provided');
+          this.isLoading = false;
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   loadQuiz(quizId: string): void {
     this.isLoading = true;
-    this.quizService.getQuiz(quizId).subscribe({
-      next: (quiz) => {
-        this.quiz = quiz;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.toasterService.error('Failed to load quiz')
-        console.error('Failed to load quiz', err);
-        this.isLoading = false;
-      }
-    });
+    this.subscriptions.add(
+      this.quizService.getQuiz(quizId).subscribe({
+        next: (quiz) => {
+          this.quiz = quiz;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.toasterService.error('Failed to load quiz');
+          console.error('Failed to load quiz', err);
+          this.isLoading = false;
+        }
+      })
+    );
   }
 
-  getDifficultyColor(difficulty: string): string {
+  getDifficultyColor(difficulty?: string): string {
+    if (!difficulty) return 'primary';
+    
     switch (difficulty.toLowerCase()) {
       case 'easy': return 'success';
       case 'medium': return 'warning';
@@ -51,48 +69,43 @@ export class VerifyQuizComponent implements OnInit {
   }
 
   refreshQuestion(index: number): void {
-    this.quizService.generateNewQuestion(this.quiz._id,index).subscribe({
-      next: (newQuestion: any) => {
-        console.log({newQuestion});
-        this.quiz.questions[index] = newQuestion;
-      },
-      error: (err: any) => {
-        this.toasterService.error('Failed to refresh question')
-        console.error('Failed to refresh question', err);
-      }
-    });
+    if (!this.quiz?._id) return;
+
+    this.subscriptions.add(
+      this.quizService.generateNewQuestion(this.quiz._id, index).subscribe({
+        next: (updatedQuiz) => {
+          if (this.quiz?.questions) {
+            this.quiz.questions[index] = updatedQuiz.questions[index];
+            this.toasterService.success('Question refreshed successfully');
+          }
+        },
+        error: (err) => {
+          this.toasterService.error('Failed to refresh question');
+          console.error('Failed to refresh question', err);
+        }
+      })
+    );
   }
 
   approveQuiz(): void {
-    this.approving = true
-    this.quizService.updateQuizStatus(this.quiz._id, true, 'approved').subscribe({
-      next: (data) => {
-        this.approving = false
-        this.quiz = data
-        this.toasterService.success('Quiz Approved')
-      },
-      error: (err: any) => {
-        this.approving = false
-        this.toasterService.error('Approval failed')
-        console.error('Approval failed', err);
-      }
-    });
+    if (!this.quiz?._id) return;
+
+    this.approving = true;
+    this.subscriptions.add(
+      this.quizService.updateQuizStatus(this.quiz._id, true, 'approved')
+    );
   }
 
   rejectQuiz(): void {
-    this.rejecting = true
-    this.quizService.updateQuizStatus(this.quiz._id, false, 'rejected').subscribe({
-      next: (data) => {
-        this.rejecting = false
-        this.quiz = data
-        this.toasterService.success('Quiz Rejected')
-      },
-      error: (err: any) => {
-        this.rejecting = false
-        this.toasterService.error('Rejection failed')
-        console.error('Rejection failed', err);
-      }
-    });
+    if (!this.quiz?._id) return;
+
+    this.rejecting = true;
+    this.subscriptions.add(
+      this.quizService.updateQuizStatus(this.quiz._id, false, 'rejected')
+    );
   }
 
+  trackByQuestionId(index: number, question: QuizQuestion): string {
+    return question._id;
+  }
 }

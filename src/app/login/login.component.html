@@ -4,7 +4,7 @@
       <div class="brand">
         <div class="brand-logo">
           <img src="assets/AppLogo.png" alt="QuizGame Logo">
-          <h1>QuizGame{{connected == 'connected'?'!':'!!'}}
+          <h1>QuizGame{{connectionState == 'connected'?'!':'!!'}}
           </h1>
         </div>
         <p class="welcome-text">Welcome back! Please enter<br> your credentials</p>
@@ -242,7 +242,7 @@
 
 
         <p class="resend-text" *ngIf="!canResendOtp">
-          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formatTimer}}</a>
+          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formattedTimer}}</a>
         </p>
         <p class="resend-text" *ngIf="canResendOtp">
           Didn't receive code? <a (click)="resendOtp()" class="resend-link">Resend</a>
