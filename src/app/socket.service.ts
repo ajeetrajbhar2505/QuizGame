@@ -33,7 +33,7 @@ type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecti
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService implements OnDestroy {
+export class SocketService  {
   socket!: Socket;
   private authDataSource = new Subject<AuthData | null>();
   private loginDataSource = new Subject<AuthData | null>();
@@ -54,25 +54,24 @@ export class SocketService implements OnDestroy {
     this.initializeSocket(token);
   }
 
-  ngOnDestroy(): void {
-    this.cleanupSocket();
-  }
-
-  private initializeSocket(token?: string): void {
-    this.cleanupSocket();
-
+  public initializeSocket(token?: string) {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+  
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
       autoConnect: true,
       auth: token ? { token } : undefined,
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 5
+      reconnectionDelay: 1000
     });
-
-    this.setupConnectionMonitoring();
+  
+     this.setupConnectionMonitoring()
+  
     this.registerAuthEvents();
   }
+
 
   private cleanupSocket(): void {
     if (this.socket) {
@@ -83,80 +82,64 @@ export class SocketService implements OnDestroy {
     this.socketSubscriptions = [];
   }
 
-  private setupConnectionMonitoring(): void {
-    const connectListener = () => {
+  private setupConnectionMonitoring() {
+    this.socket.on('connect', () => {
       this.connectionState$.next('connected');
-      this.toasterService.presentToast('Connected to server', 2000, 'bottom', 'success');
-    };
-
-    const disconnectListener = (reason: string) => {
+    });
+  
+    this.socket.on('disconnect', (reason) => {
       if (reason === 'io server disconnect') {
         this.handleUnauthorized();
       }
       this.connectionState$.next('disconnected');
-      this.toasterService.presentToast('Disconnected from server', 2000, 'bottom', 'warning');
-    };
-
-    const reconnectAttemptListener = () => {
+    });
+  
+    this.socket.on('reconnect_attempt', () => {
       this.connectionState$.next('reconnecting');
-    };
-
-    const reconnectFailedListener = () => {
-      this.toasterService.presentToast('Failed to reconnect to server', 2000, 'bottom', 'danger');
-    };
-
-    this.socket.on('connect', connectListener);
-    this.socket.on('disconnect', disconnectListener);
-    this.socket.on('reconnect_attempt', reconnectAttemptListener);
-    this.socket.on('reconnect_failed', reconnectFailedListener);
-
-    this.socketSubscriptions.push(
-      () => {
-        this.socket.off('connect', connectListener);
-        this.socket.off('disconnect', disconnectListener);
-        this.socket.off('reconnect_attempt', reconnectAttemptListener);
-        this.socket.off('reconnect_failed', reconnectFailedListener);
-      }
-    );
+    });
   }
 
   private registerAuthEvents(): void {
-    const loginSuccessListener = this.handleLoginSuccess.bind(this);
-    const authSuccessListener = this.handleAuthSuccess.bind(this);
-    const otpSuccessListener = this.handleOtpSuccess.bind(this);
-    const authErrorListener = (error: { message: string }) => {
+    // Auth success events
+    this.socket.on('auth:login:success', this.handleLoginSuccess.bind(this));
+    this.socket.on('auth:register:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
+    this.socket.on('auth:otp:verify:success', this.handleOtpSuccess.bind(this));
+    this.socket.on('auth:google:callback', this.handleGoogleAuthCallback.bind(this));
+    this.socket.on('auth:facebook:callback', this.handleFacebookAuthCallback.bind(this));
+
+    // Auth error events
+    this.socket.on('auth:error', (error) => {
       console.error('Authentication error:', error.message);
-      this.toasterService.presentToast(error.message, 3000, 'bottom', 'danger');
-    };
+    });
 
-    this.socket.on('auth:login:success', loginSuccessListener);
-    this.socket.on('auth:register:success', authSuccessListener);
-    this.socket.on('auth:google:success', authSuccessListener);
-    this.socket.on('auth:facebook:success', authSuccessListener);
-    this.socket.on('auth:otp:verify:success', otpSuccessListener);
-    this.socket.on('auth:error', authErrorListener);
-
-    this.socketSubscriptions.push(
-      () => {
-        this.socket.off('auth:login:success', loginSuccessListener);
-        this.socket.off('auth:register:success', authSuccessListener);
-        this.socket.off('auth:google:success', authSuccessListener);
-        this.socket.off('auth:facebook:success', authSuccessListener);
-        this.socket.off('auth:otp:verify:success', otpSuccessListener);
-        this.socket.off('auth:error', authErrorListener);
-      }
-    );
+    // Global login notification
+    this.socket.on('receiveLogin', (data: { token: string }) => {
+      localStorage.setItem('token', data.token);
+    });
   }
 
   public retryConnection(token?: string): void {
     this.initializeSocket(token || undefined);
   }
 
+  handleGoogleAuthCallback(data: string) {
+    this.socket.emit('auth:google:callback', data)
+  }
+
+  handleFacebookAuthCallback(data: string) {
+    this.socket.emit('auth:facebook:callback', data)
+  }
+
+
   private handleLoginSuccess(data: AuthData): void {
     this.loginDataSource.next(data);
   }
 
   private handleAuthSuccess(data: AuthData): void {
+    console.log(data);
+    
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     this.initializeSocket(data.token);
