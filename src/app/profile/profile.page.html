@@ -61,6 +61,7 @@
 
         <div class="tab-content active" id="quizzes">
             <div class="quiz-card" *ngFor="let quiz of quizesDraft;let i = index">
+                <div class="quiz-header">
                 <h3 class="quiz-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -72,6 +73,18 @@
                     </svg>
                     {{quiz.title}}
                 </h3>
+                <div class="quiz-meta">
+                    <span class="quiz-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        1.2K
+                    </span>
+                </div>
+                </div>
                 <p class="quiz-description">{{quiz.description}}</p>
                 <div class="quiz-meta">
                     <span class="meta-item">

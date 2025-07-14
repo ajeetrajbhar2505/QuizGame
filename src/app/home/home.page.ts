@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
+import { CreateQuizesService, Quiz } from '../create-quizes.service';
 
 @Component({
   selector: 'app-home',
@@ -8,10 +9,11 @@ import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard
   standalone: false,
 })
 
-export class HomePage {
+export class HomePage implements OnInit {
   userStats?: UserStats
   LeaderboardUser?: LeaderboardUser[]
   userActivity?: any
+  quizesDraft: Quiz[] = [];
 
   User: user = {
     id: "",
@@ -24,7 +26,8 @@ export class HomePage {
 
 
   constructor(
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private quizService:CreateQuizesService
   ) {
 
     this.dashboardService.getUserStats$.subscribe((data: UserStats) => {
@@ -45,6 +48,32 @@ export class HomePage {
         this.dashboardService.getLeaderboardUser().subscribe()
     }
 
+
+    this.loadQuizzes()
+  }
+
+  ngOnInit(): void {
+    this.quizService.getPublishedQuizes().subscribe({
+      next: (quizes: any) => {
+        this.quizesDraft = quizes;
+      },
+      error: (err: any) => {
+        console.error('Failed to fetch quizzes:', err);
+      }
+    })
+  }
+
+  startQuiz(quizId:string){
+
+  }
+
+
+  loadQuizzes(): void {
+    this.quizService.getPublishedQuiz().subscribe({
+      error: (err) => {
+        console.error('Error loading quizzes:', err);
+      }
+    });
   }
 
   logout() {

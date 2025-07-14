@@ -33,6 +33,7 @@ export class CreateQuizesService {
 
   private quizDraft$ = new BehaviorSubject<Quiz | null>(null);
   private quizesDraft$ = new BehaviorSubject<Quiz[]>([]);
+  private quizesPublished$ = new BehaviorSubject<Quiz[]>([]);
   private activeQuiz$ = new BehaviorSubject<Quiz | null>(null);
   private quizResult$ = new BehaviorSubject<{ correct: boolean, explanation?: string } | null>(null);
 
@@ -77,6 +78,26 @@ export class CreateQuizesService {
     });
   }
 
+  getPublishedQuiz(): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:published');
+
+    return new Observable<Quiz[]>(observer => {
+      const subscription = this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').subscribe({
+        next: (data) => {
+          this.quizesPublished$.next(data.quizes);
+          observer.next(data.quizes);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+          observer.complete();
+        }
+      });
+      return () => subscription.unsubscribe();
+    });
+  }
+
+
   getQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:get', quizId);
 
@@ -103,6 +124,7 @@ export class CreateQuizesService {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').subscribe({
         next: (data) => {
           this.getAllQuiz().toPromise()
+          this.getPublishedQuiz().toPromise()
           observer.next(data['quiz']);
           observer.complete();
         },
@@ -140,6 +162,7 @@ export class CreateQuizesService {
       const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
         next: (data) => {
           this.getAllQuiz().toPromise()
+          this.getPublishedQuiz().toPromise()
           observer.next(data.quiz);
           observer.complete();
         },
@@ -205,6 +228,10 @@ export class CreateQuizesService {
 
   getQuizesDraft(): Observable<Quiz[]> {
     return this.quizesDraft$.asObservable();
+  }
+
+  getPublishedQuizes(): Observable<Quiz[]> {
+    return this.quizesPublished$.asObservable();
   }
 
   getActiveQuiz(): Observable<Quiz | null> {
