@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DashboardService, UserStats } from '../dashboard.service';
+import { DashboardService, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 export class ProfilePage implements OnInit, OnDestroy {
   userStats?: UserStats;
   currentUser?: any;
-  User:any
+  User?:user
   userActivity: any[] = [];
   quizesDraft: Quiz[] = [];
   activeTab: string = 'quizzes'; // Default active tab
@@ -24,7 +24,9 @@ export class ProfilePage implements OnInit, OnDestroy {
     private quizService: CreateQuizesService,
     private router: Router,
     private toasterService: ToasterService
-  ) {}
+  ) {
+    this.User = this.dashboardService.getUser()
+  }
 
   ngOnInit(): void {
     this.setupDataListeners();
