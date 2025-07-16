@@ -40,11 +40,9 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   private setupDataListeners(): void {
     // User stats listener
-    this.subscriptions.add(
       this.dashboardService.getUserStats$.subscribe((data: UserStats) => {
         this.userStats = data;
       })
-    );
 
     // User activity listener
     this.subscriptions.add(
@@ -57,7 +55,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.currentUser = this.dashboardService.getUser();
 
     // Draft quizzes listener
-    this.subscriptions.add(
       this.quizService.getQuizesDraft().subscribe({
         next: (quizes: Quiz[]) => {
           this.quizesDraft = quizes;
@@ -67,7 +64,6 @@ export class ProfilePage implements OnInit, OnDestroy {
           this.toasterService.error('Failed to load your quizzes');
         }
       })
-    );
   }
 
   private loadInitialData(): void {
@@ -108,6 +104,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   loadQuizzes(): void {
+    this.quizService.getAllQuiz().subscribe({
+      error: (err) => {
+        console.error('Error loading quizzes:', err);
+      }
+    });
   }
 
   trackByQuizId(index: number, quiz: Quiz): string {
