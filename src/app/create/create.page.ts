@@ -66,7 +66,7 @@ export class CreatePage implements OnInit, OnDestroy {
 
   private setupQuizSubscriptions(): void {
     this.quizSubscriptions.push(
-      this.quizService.getCurrentDraft().subscribe({
+      this.quizService.getCurrentDraft$.subscribe({
         next: (quiz) => {
           this.isCreating = false;
           if (quiz) {
@@ -82,7 +82,7 @@ export class CreatePage implements OnInit, OnDestroy {
     );
 
     this.quizSubscriptions.push(
-      this.quizService.getQuizesDraft().subscribe(quizzes => {
+      this.quizService.getQuizesDraft$.subscribe(quizzes => {
         this.draftQuizzes = quizzes;
       })
     );

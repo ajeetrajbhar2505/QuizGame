@@ -53,7 +53,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
-      this.quizService.getQuizesDraft().subscribe({
+      this.quizService.getQuizesDraft$.subscribe({
         next: (quizzes: Quiz[]) => this.draftQuizzes = quizzes,
         error: (err) => {
           console.error('Failed to fetch quizzes:', err);

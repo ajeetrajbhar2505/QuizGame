@@ -36,8 +36,29 @@ export class CreateQuizesService {
   private quizzesPublishedSubject$ = new Subject<Quiz[]>();
   private activeQuizSubject$ = new Subject<Quiz | null>();
   private quizResultSubject$ = new Subject<{ correct: boolean, explanation?: string } | null>();
+  getCurrentDraft$ = this.quizDraftSubject$.asObservable();
+  getQuizesDraft$ = this.quizzesDraftSubject$.asObservable();
+  getPublishedQuizes$ = this.quizzesPublishedSubject$.asObservable();
+  getActiveQuiz$ = this.activeQuizSubject$.asObservable();
+  getQuizResults$ = this.quizResultSubject$.asObservable();
+  constructor(private socketService: SocketService) {
+    this.setupSocketListeners()
+   }
 
-  constructor(private socketService: SocketService) { }
+
+  private setupSocketListeners(): void {
+    // Listener for when quizzes are updated
+    this.socketService.socket.on('quiz:all:success', (data: { quizes: Quiz[] }) => {
+      console.log(data);
+      this.quizzesDraftSubject$.next(data.quizes);
+    });
+
+    // Listener for published quizzes updates
+    this.socketService.socket.on('quiz:published:success', (data: { quizes: Quiz[] }) => {
+      console.log(data);
+      this.quizzesPublishedSubject$.next(data.quizes);
+    });
+  }
 
   createQuiz(prompt: string, options?: any): Observable<Quiz> {
     this.socketService.socket.emit('quiz:create', { prompt, options });
@@ -202,7 +223,7 @@ export class CreateQuizesService {
       });
     }
 
-    this.socketService.socket.emit('quiz:answer:submit', );
+    this.socketService.socket.emit('quiz:answer:submit',);
 
     return new Observable<{ correct: boolean, explanation?: string }>(observer => {
       const subscription = this.socketService.fromEvent<{ result: any }>('quiz:answer:result').subscribe({
@@ -220,25 +241,6 @@ export class CreateQuizesService {
     });
   }
 
-  getCurrentDraft(): Observable<Quiz | null> {
-    return this.quizDraftSubject$.asObservable();
-  }
-
-  getQuizesDraft(): Observable<Quiz[]> {
-    return this.quizzesDraftSubject$.asObservable();
-  }
-
-  getPublishedQuizes(): Observable<Quiz[]> {
-    return this.quizzesPublishedSubject$.asObservable();
-  }
-
-  getActiveQuiz(): Observable<Quiz | null> {
-    return this.activeQuizSubject$.asObservable();
-  }
-
-  getQuizResults(): Observable<{ correct: boolean, explanation?: string } | null> {
-    return this.quizResultSubject$.asObservable();
-  }
 
   clearDraft(): void {
     this.quizDraftSubject$.next(null);

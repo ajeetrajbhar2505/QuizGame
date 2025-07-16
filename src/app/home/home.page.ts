@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 
@@ -7,7 +7,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   userStats?: UserStats;
   leaderboardUsers?: LeaderboardUser[];
   userActivity?: any;
@@ -26,8 +26,13 @@ export class HomePage {
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService
   ) {
+  }
+
+
+  ngOnInit(): void {
     this.initializeData();
   }
+
 
   private initializeData(): void {
     // User stats
@@ -58,7 +63,8 @@ export class HomePage {
   }
 
   private subscribeToQuizUpdates(): void {
-    this.quizService.getPublishedQuizes().subscribe(quizzes => {
+    this.quizService.getPublishedQuizes$.subscribe(quizzes => {
+      console.log({publishedQuizzes : quizzes});
       this.publishedQuizzes = quizzes;
     });
   }
