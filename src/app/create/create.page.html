@@ -64,7 +64,7 @@
             Generate Quiz
         </button>
 
-        <div class="generated-quizzes" *ngIf="quizesDraft.length">
+        <div class="generated-quizzes" *ngIf="draftQuizzes.length">
             <h2 class="section-title">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -74,7 +74,7 @@
                 Generated Quizzes
             </h2>
 
-            <div class="quiz-card" *ngFor="let quiz of quizesDraft;let i = index">
+            <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
                 <h3 class="quiz-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -148,7 +148,7 @@
 
         </div>
 
-        <div class="floating-action" (click)="loadQuizzes()">
+        <div class="floating-action" (click)="loadDraftQuizzes()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 4v6h-6"/>
                 <path d="M1 20v-6h6"/>

@@ -4,10 +4,10 @@
     <div class="homeHeader">
       <div class="homeHeader-content">
         <div class="user-greeting">
-          <h1>Welcome back, {{User.name}}!</h1>
+          <h1>Welcome back, {{currentUser.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img loading="lazy" routerLink="/login" (click)="logout()" [src]="User.avatar || 'assets/AppLogo.png'"
+        <img loading="lazy" routerLink="/login" (click)="logout()" [src]="currentUser.avatar || 'assets/AppLogo.png'"
           alt="User" class="user-avatar">
       </div>
 
@@ -104,7 +104,7 @@
         <a routerLink="/quizes">View all <i class="fas fa-chevron-right"></i></a>
       </div>
 
-      <div class="quiz-card" *ngFor="let quiz of quizesDraft;let i = index">
+      <div class="quiz-card" *ngFor="let quiz of publishedQuizzes;let i = index">
         <div class="quiz-header">
           <h3 class="quiz-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,7 +201,7 @@
 
       <div class="quiz-card">
         <div class="content" style="padding-bottom: 8px;">
-          <div class="leaderboard-item" *ngFor="let user of LeaderboardUser;let i = index">
+          <div class="leaderboard-item" *ngFor="let user of leaderboardUsers;let i = index">
             <div class="rank">{{i+1}}</div>
             <div class="user">
               <img [src]="user.avatar">

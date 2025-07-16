@@ -12,12 +12,12 @@ import { Subscription } from 'rxjs';
 })
 export class ProfilePage implements OnInit, OnDestroy {
   userStats?: UserStats;
-  currentUser?: any;
-  User?:user
-  userActivity: any[] = [];
-  quizesDraft: Quiz[] = [];
+  currentUser: user;
+  userActivities: any[] = [];
+  draftQuizzes: Quiz[] = [];
   activeTab: string = 'quizzes'; // Default active tab
-  private subscriptions: Subscription = new Subscription();
+
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private dashboardService: DashboardService,
@@ -25,70 +25,67 @@ export class ProfilePage implements OnInit, OnDestroy {
     private router: Router,
     private toasterService: ToasterService
   ) {
-    this.User = this.dashboardService.getUser()
+    this.currentUser = this.dashboardService.getUser();
   }
 
   ngOnInit(): void {
-    this.setupDataListeners();
+    this.setupDataSubscriptions();
     this.loadInitialData();
-    this.setupTabSwitching();
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    this.cleanupSubscriptions();
   }
 
-  private setupDataListeners(): void {
-    // User stats listener
-      this.dashboardService.getUserStats$.subscribe((data: UserStats) => {
-        this.userStats = data;
-      })
-
-    // User activity listener
-    this.subscriptions.add(
-      this.dashboardService.getUserActivity$.subscribe((data: any) => {
-        this.userActivity = data;
+  private setupDataSubscriptions(): void {
+    this.subscriptions.push(
+      this.dashboardService.getUserStats$.subscribe({
+        next: (stats: UserStats) => this.userStats = stats,
+        error: (err) => console.error('Error loading user stats:', err)
       })
     );
 
-    // Current user
-    this.currentUser = this.dashboardService.getUser();
+    this.subscriptions.push(
+      this.dashboardService.getUserActivity$.subscribe({
+        next: (activities) => this.userActivities = activities,
+        error: (err) => console.error('Error loading user activities:', err)
+      })
+    );
 
-    // Draft quizzes listener
+    this.subscriptions.push(
       this.quizService.getQuizesDraft().subscribe({
-        next: (quizes: Quiz[]) => {
-          this.quizesDraft = quizes;
-        },
-        error: (err: any) => {
+        next: (quizzes: Quiz[]) => this.draftQuizzes = quizzes,
+        error: (err) => {
           console.error('Failed to fetch quizzes:', err);
           this.toasterService.error('Failed to load your quizzes');
         }
       })
+    );
+  }
+
+  private cleanupSubscriptions(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions = [];
   }
 
   private loadInitialData(): void {
     if (!this.userStats) {
-      this.dashboardService.getDashboardStats().subscribe({
-        error: (err) => {
-          console.error('Failed to load dashboard stats:', err);
-        }
-      });
+      this.subscriptions.push(
+        this.dashboardService.getDashboardStats().subscribe({
+          error: (err) => console.error('Failed to load dashboard stats:', err)
+        })
+      );
     }
 
-    if (this.userActivity.length === 0) {
-      this.dashboardService.getRecentActivity().subscribe({
-        error: (err) => {
-          console.error('Failed to load recent activity:', err);
-        }
-      });
+    if (this.userActivities.length === 0) {
+      this.subscriptions.push(
+        this.dashboardService.getRecentActivity().subscribe({
+          error: (err) => console.error('Failed to load recent activity:', err)
+        })
+      );
     }
 
     this.loadQuizzes();
-  }
-
-  private setupTabSwitching(): void {
-    // This is now handled in the template with Angular's click bindings
-    // The DOM manipulation has been moved to the template
   }
 
   changeTab(tab: string): void {
@@ -100,15 +97,26 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   deleteQuiz(quizId: string): void {
-    this.quizService.deleteQuiz(quizId)
+    this.subscriptions.push(
+      this.quizService.deleteQuiz(quizId).subscribe({
+        next: () => {
+          this.draftQuizzes = this.draftQuizzes.filter(quiz => quiz._id !== quizId);
+          this.toasterService.success('Quiz deleted successfully');
+        },
+        error: (err) => {
+          this.toasterService.error('Failed to delete quiz');
+          console.error('Delete quiz error:', err);
+        }
+      })
+    );
   }
 
-  loadQuizzes(): void {
-    this.quizService.getAllQuiz().subscribe({
-      error: (err) => {
-        console.error('Error loading quizzes:', err);
-      }
-    });
+  private loadQuizzes(): void {
+    this.subscriptions.push(
+      this.quizService.getAllQuiz().subscribe({
+        error: (err) => console.error('Error loading quizzes:', err)
+      })
+    );
   }
 
   trackByQuizId(index: number, quiz: Quiz): string {

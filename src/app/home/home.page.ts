@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 
@@ -6,66 +6,72 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  standalone: false,
 })
+export class HomePage {
+  userStats?: UserStats;
+  leaderboardUsers?: LeaderboardUser[];
+  userActivity?: any;
+  publishedQuizzes: Quiz[] = [];
 
-export class HomePage  {
-  userStats?: UserStats
-  LeaderboardUser?: LeaderboardUser[]
-  userActivity?: any
-  quizesDraft: Quiz[] = [];
-
-  User: user = {
+  currentUser: user = {
     id: "",
     name: "",
     email: "",
     avatar: "",
     role: "",
     isVerified: false
-  }
-
+  };
 
   constructor(
     private dashboardService: DashboardService,
-    private quizService:CreateQuizesService
+    private quizService: CreateQuizesService
   ) {
+    this.initializeData();
+  }
 
+  private initializeData(): void {
+    // User stats
     this.dashboardService.getUserStats$.subscribe((data: UserStats) => {
-      this.userStats = data
-    })
+      this.userStats = data;
+    });
 
+    // Leaderboard
     this.dashboardService.getLeaderboard$.subscribe((data: LeaderboardUser[]) => {
-      this.LeaderboardUser = data
-    })
+      this.leaderboardUsers = data;
+    });
 
-    this.User = this.dashboardService.getUser()
+    // Current user
+    this.currentUser = this.dashboardService.getUser();
 
+    // Fetch initial data if not available
     if (!this.userStats) {
-      this.dashboardService.getDashboardStats().subscribe()
+      this.dashboardService.getDashboardStats().subscribe();
     }
 
-    if (!this.LeaderboardUser?.length) {
-        this.dashboardService.getLeaderboardUser().subscribe()
+    if (!this.leaderboardUsers?.length) {
+      this.dashboardService.getLeaderboardUser().subscribe();
     }
 
-    this.loadQuizzes()
+    // Quiz data
+    this.loadPublishedQuizzes();
+    this.subscribeToQuizUpdates();
   }
 
-
-  startQuiz(quizId:string){
-
-  }
-
-
-  loadQuizzes(): void {
+  private subscribeToQuizUpdates(): void {
     this.quizService.getPublishedQuizes().subscribe(quizzes => {
-      this.quizesDraft = quizzes;
+      this.publishedQuizzes = quizzes;
     });
   }
 
-  logout() {
-    this.dashboardService.logout()
+  private loadPublishedQuizzes(): void {
+    this.quizService.getPublishedQuiz().toPromise();
   }
 
+  startQuiz(quizId: string): void {
+    // Quiz start logic will go here
+  }
 
+  logout(): void {
+    this.dashboardService.logout();
+  }
 }

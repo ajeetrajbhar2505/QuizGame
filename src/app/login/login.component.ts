@@ -10,7 +10,7 @@ import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
 
-export interface OtpDetails {
+interface OtpDetails {
   success: boolean;
   message: string;
   otpId: string;
@@ -24,187 +24,215 @@ export interface OtpDetails {
   styleUrls: ['./login.component.scss'],
 })
 export class LoginPage implements OnInit, OnDestroy {
-  private authSub!: Subscription;
-  private loginSub!: Subscription;
-  private otpSub!: Subscription;
-  @ViewChild('OTPmodal') OTPmodal!: IonModal;
+  @ViewChild('OTPmodal') otpModal!: IonModal;
   @ViewChild('errorModal') errorModal!: IonModal;
   @ViewChild('googleModal') googleModal!: IonModal;
   @ViewChild('facebookModal') facebookModal!: IonModal;
-  errorModalStatus: string = ""
-  errorMessage: string = `
-  There was an issue processing your request. Please try one of these solutions:<br><br>
-  <div class="main">
-  <div class="error">1. Check your internet connection</div>
-  <div class="error">2. Retry the operation</div>
-  <div class="error">3. Cancel and use a different email address</div></div>
-`;
 
-  OtpDetails!: OtpDetails;
   loginForm = {
-    email: '',
+    email: 'fyit.ajeetrajbhar18144@gmail.com',
     otp: ''
   };
+
+  otpDetails?: OtpDetails;
+  errorModalStatus = '';
+  errorMessage = `
+    There was an issue processing your request. Please try one of these solutions:<br><br>
+    <div class="main">
+    <div class="error">1. Check your internet connection</div>
+    <div class="error">2. Retry the operation</div>
+    <div class="error">3. Cancel and use a different email address</div></div>
+  `;
+
   isLoading = false;
   googleProgress = false;
   facebookProgress = false;
-  authFailed: boolean = false;
-  otpSuccess: boolean = false;
-  showOtpModal: boolean = false;
-  otpTimer: number = 120;
-  timerInterval: any;
-  canResendOtp: boolean = false;
-  loginSuccess: boolean = false
-  connected: String = ''
+  authFailed = false;
+  otpSuccess = false;
+  showOtpModal = false;
+  loginSuccess = false;
+  connected = '';
+  otpTimer = 120;
+  canResendOtp = false;
+
+  private timerInterval: any;
+  private subscriptions: Subscription[] = [];
+
   constructor(
-    private readonly router: Router,
-    private readonly socketService: SocketService,
-    private readonly modalController: ModalController,
-    private readonly inAppBrowser: InAppBrowser,
+    private router: Router,
+    private socketService: SocketService,
+    private modalController: ModalController,
+    private inAppBrowser: InAppBrowser,
     private navCtrl: NavController,
     private platform: Platform,
     private toasterService: ToasterService,
     private dashboardService: DashboardService
   ) {
     this.resetAuthStates();
-    this.socketService.initializeSocket('')
+    this.socketService.initializeSocket('');
   }
 
   ngOnInit() {
-    this.setupAuthListeners();
-    this.setupSocialLoginCallbacks();
-    this.socketService.connectionState$.subscribe(data => {
-      this.connected = data
-    })
+    this.setupSocketListeners();
+    this.setupConnectionListener();
   }
 
-  retrySocialLogins() {
-    switch (this.errorModalStatus) {
-      case 'auth:google:error':
-        this.loginWithGoogle()
-        break;
-      case 'auth:facebook:error':
-        this.loginWithFacebook()
-        break;
-      default:
-        this.login()
-        break;
+  ngOnDestroy() {
+    this.cleanupSubscriptions();
+    this.stopOtpTimer();
+    this.removeSocketListeners();
+  }
+
+  private setupSocketListeners(): void {
+    this.subscriptions.push(
+      this.socketService.authData$.subscribe(data => this.handleAuthSuccess(data))
+    );
+
+    this.subscriptions.push(
+      this.socketService.otpSuccess.subscribe(data => this.handleOtpSuccess(data))
+    );
+
+    this.subscriptions.push(
+      this.socketService.loginData$.subscribe(data => this.handleLoginResponse(data))
+    );
+
+    this.setupErrorHandlers();
+    this.setupSocialLoginCallbacks();
+  }
+
+  private setupConnectionListener(): void {
+    this.subscriptions.push(
+      this.socketService.connectionState$.subscribe(state => this.connected = state)
+    );
+  }
+
+  private setupErrorHandlers(): void {
+    const errorHandlers = {
+      'auth:otp:verify:error': (error: any) => this.handleOtpVerifyError(error),
+      'auth:login:error': (error: any) => this.handleLoginError(error),
+      'auth:google:error': (error: any) => this.handleGoogleError(error),
+      'auth:facebook:error': (error: any) => this.handleFacebookError(error)
+    };
+
+    Object.entries(errorHandlers).forEach(([event, handler]) => {
+      this.socketService.on(event, handler);
+    });
+  }
+
+  private setupSocialLoginCallbacks(): void {
+    this.socketService.on('auth:google:url', (data) => this.openAuthUrl(data.url));
+    this.socketService.on('auth:facebook:url', (data) => this.openAuthUrl(data.url));
+  }
+
+  private openAuthUrl(url: string): void {
+    if (!this.platform.is('cordova')) {
+      window.open(url, '_blank');
+      return;
+    }
+    this.inAppBrowser.create(url, '_blank', {
+      location: 'yes',
+      toolbar: 'yes',
+      zoom: 'yes',
+    });
+  }
+
+  private handleAuthSuccess(data: any): void {
+    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
+    this.loginSuccess = true;
+    this.isLoading = false;
+    this.resetAuthStates();
+
+    if (this.platform.is('android')) {
+      this.navCtrl.back();
+    }
+
+    setTimeout(() => this.handleSuccessfulLogin(data), 1000);
+  }
+
+  private handleOtpSuccess(data: any): void {
+    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
+    this.loginSuccess = true;
+    this.isLoading = false;
+    this.otpSuccess = true;
+    setTimeout(() => this.handleSuccessfulLogin(data), 1000);
+  }
+
+  private handleLoginResponse(data: any): void {
+    if (data) {
+      this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'dark');
+      this.loginSuccess = true;
+      this.startOtpTimer();
+      this.otpDetails = data;
+      this.showOtpModal = true;
+      this.isLoading = false;
+      this.otpSuccess = false;
+      this.otpModal.present();
+      this.loginForm.otp = "";
+    } else {
+      this.errorModal.present();
+      this.resetAuthStates();
+      this.authFailed = true;
     }
   }
 
-  private setupAuthListeners(): void {
-    this.authSub = this.socketService.authData$.subscribe(data => {
-      if (data) {
-        this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
-        this.loginSuccess = true
-        this.isLoading = false
-        this.resetAuthStates();
+  private handleOtpVerifyError(error: any): void {
+    this.errorModalStatus = 'auth:otp:verify:error';
+    setTimeout(() => {
+      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
+      this.isLoading = false;
+    }, 1000);
+  }
 
+  private handleLoginError(error: any): void {
+    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
+    this.errorModalStatus = 'auth:login:error';
+    setTimeout(() => {
+      if (!this.loginSuccess) {
+        this.resetAuthStates();
+        this.authFailed = true;
+        this.isLoading = false;
+        this.errorModal.present();
         if (this.platform.is('android')) {
           this.navCtrl.back();
         }
-
-        setTimeout(() => {
-          this.handleSuccessfulLogin(data);
-        }, 1000);
       }
-    });
-
-    this.otpSub = this.socketService.otpSuccess.subscribe(data => {
-      if (data) {
-        this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
-        this.loginSuccess = true
-        this.isLoading = false
-        this.otpSuccess = true;
-        setTimeout(() => {
-          this.handleSuccessfulLogin(data);
-        }, 1000);
-      }
-    });
-
-    this.loginSub = this.socketService.loginData$.subscribe((data: any) => {
-      this.toasterService.presentToast('OTP send successfully!', 3000, 'bottom', 'dark');
-      if (data) {
-        this.loginSuccess = true
-        this.startOtpTimer()
-        this.OtpDetails = data;
-        this.showOtpModal = true;
-        this.isLoading = false
-        this.otpSuccess = false;
-        this.OTPmodal.present();
-        this.loginForm.otp = "";
-      } else {
-        this.errorModal.present();
-        this.resetAuthStates();
-        this.authFailed = true;
-      }
-    });
-
-    // Listen for specific auth errors
-
-    this.socketService.on('auth:otp:verify:error', (error) => {
-      this.errorModalStatus = 'auth:otp:verify:error'
-      setTimeout(() => {
-        this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-        this.isLoading = false;
-      }, 1000);
-
-    });
-
-    this.socketService.on('auth:login:error', (error) => {
-      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-      this.errorModalStatus = 'auth:login:error'
-      setTimeout(() => {
-        if (!this.loginSuccess) {
-          this.resetAuthStates();
-          this.authFailed = true;
-          this.isLoading = false;
-          this.errorModal.present();
-          if (this.platform.is('android')) {
-            this.navCtrl.back();
-          }
-        }
-      }, 1000);
-
-    });
-
-    this.socketService.on('auth:google:error', (error) => {
-      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-      this.errorModalStatus = 'auth:google:error'
-      setTimeout(() => {
-        if (!this.loginSuccess) {
-          this.resetAuthStates();
-          this.isLoading = false;
-          this.authFailed = true;
-          this.googleProgress = false;
-          if (this.platform.is('android')) {
-            this.navCtrl.back();
-          }
-        }
-      }, 1000);
-
-    });
-
-    this.socketService.on('auth:facebook:error', (error) => {
-      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-      this.errorModalStatus = 'auth:facebook:error'
-      setTimeout(() => {
-        if (!this.loginSuccess) {
-          this.resetAuthStates();
-          this.isLoading = false;
-          this.authFailed = true;
-          this.facebookProgress = false;
-          if (this.platform.is('android')) {
-            this.navCtrl.back();
-          }
-        }
-      }, 1000);
-
-    });
+    }, 1000);
   }
 
-  protected verifyOTP() {
-    this.loginSuccess = false
+  private handleGoogleError(error: any): void {
+    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
+    this.errorModalStatus = 'auth:google:error';
+    setTimeout(() => {
+      if (!this.loginSuccess) {
+        this.resetAuthStates();
+        this.isLoading = false;
+        this.authFailed = true;
+        this.googleProgress = false;
+        if (this.platform.is('android')) {
+          this.navCtrl.back();
+        }
+      }
+    }, 1000);
+  }
+
+  private handleFacebookError(error: any): void {
+    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
+    this.errorModalStatus = 'auth:facebook:error';
+    setTimeout(() => {
+      if (!this.loginSuccess) {
+        this.resetAuthStates();
+        this.isLoading = false;
+        this.authFailed = true;
+        this.facebookProgress = false;
+        if (this.platform.is('android')) {
+          this.navCtrl.back();
+        }
+      }
+    }, 1000);
+  }
+
+  verifyOTP(): void {
+    this.loginSuccess = false;
     if (!this.loginForm.email) {
       console.error('Please enter email', 'warning');
       return;
@@ -215,62 +243,11 @@ export class LoginPage implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.socketService.verifyloginOTP(this.loginForm.email, this.loginForm.otp, this.OtpDetails.verificationToken);
-  }
-
-  private resetAuthStates(): void {
-    this.isLoading = false;
-    this.googleProgress = false;
-    this.facebookProgress = false;
-    this.authFailed = false;
-    this.otpSuccess = false;
-    this.showOtpModal = false;
-    this.loginForm.email = 'fyit.ajeetrajbhar18144@gmail.com'
-    this.loginForm.otp = ""
-  }
-
-  private setupSocialLoginCallbacks(): void {
-    this.authFailed = false;
-
-    // Handle Google auth URL
-    this.socketService.on('auth:google:url', (data) => {
-      if (!this.platform.is('cordova') || !this.platform.is('capacitor')) {
-        window.open(data.url, '_blank')
-        return;
-      }
-      this.inAppBrowser.create(data.url, '_blank', {
-        location: 'yes',
-        toolbar: 'yes',
-        zoom: 'yes',
-      });
-    });
-
-    // Handle Facebook auth URL
-    this.socketService.on('auth:facebook:url', (data) => {
-      if (!this.platform.is('cordova') || !this.platform.is('capacitor')) {
-        window.open(data.url, '_blank')
-        return;
-      }
-      this.inAppBrowser.create(data.url, '_blank', {
-        location: 'yes',
-        toolbar: 'yes',
-        zoom: 'yes',
-      });
-    });
-  }
-
-  handleSuccessfulLogin(data: any): void {
-    setTimeout(() => {
-      this.closeModal();
-      this.dashboardService.getDashboardStats().subscribe()
-      this.dashboardService.getRecentActivity().subscribe()
-      this.dashboardService.getLeaderboardUser().subscribe()
-      this.socketService.authDataSource.next(data)
-      this.router.navigate(['/home'], {
-        queryParams: { token: data.token },
-        state: { user: data.user }
-      });
-    }, 1000);
+    this.socketService.verifyloginOTP(
+      this.loginForm.email, 
+      this.loginForm.otp, 
+      this.otpDetails!.verificationToken
+    );
   }
 
   login(): void {
@@ -284,20 +261,34 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.login(this.loginForm.email);
   }
 
-  loginWithGoogle() {
-    this.resetAuthStates()
+  loginWithGoogle(): void {
+    this.resetAuthStates();
     this.googleProgress = true;
-    this.googleModal.present()
+    this.googleModal.present();
     this.authFailed = false;
     this.socketService.initiateGoogleLogin();
   }
 
-  loginWithFacebook() {
-    this.resetAuthStates()
+  loginWithFacebook(): void {
+    this.resetAuthStates();
     this.authFailed = false;
-    this.facebookModal.present()
+    this.facebookModal.present();
     this.facebookProgress = true;
     this.socketService.initiateFacebookLogin();
+  }
+
+  retrySocialLogins(): void {
+    switch (this.errorModalStatus) {
+      case 'auth:google:error':
+        this.loginWithGoogle();
+        break;
+      case 'auth:facebook:error':
+        this.loginWithFacebook();
+        break;
+      default:
+        this.login();
+        break;
+    }
   }
 
   async closeModal(): Promise<void> {
@@ -306,7 +297,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   startOtpTimer(): void {
-    this.otpTimer = 120; // Reset to 2 minutes
+    this.otpTimer = 120;
     this.canResendOtp = false;
     this.timerInterval = setInterval(() => {
       this.otpTimer--;
@@ -320,14 +311,13 @@ export class LoginPage implements OnInit, OnDestroy {
   stopOtpTimer(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
-      this.timerInterval = null;
     }
   }
 
-  get formatTimer(): string {
+  get formattedTimer(): string {
     const minutes = Math.floor(this.otpTimer / 60);
     const seconds = this.otpTimer % 60;
-    return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds} seconds`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} seconds`;
   }
 
   resendOtp(): void {
@@ -335,35 +325,48 @@ export class LoginPage implements OnInit, OnDestroy {
 
     this.login();
     this.startOtpTimer();
-    this.loginForm.otp = ""
+    this.loginForm.otp = "";
   }
 
-  ngOnDestroy(): void {
-    this.stopOtpTimer()
-    if (this.authSub) {
-      this.authSub.unsubscribe();
-    }
-    if (this.loginSub) {
-      this.loginSub.unsubscribe();
-    }
-    if (this.otpSub) {
-      this.otpSub.unsubscribe();
-    }
-    // Clean up socket listeners
-    this.removeAuthEvents()
+  private resetAuthStates(): void {
+    this.isLoading = false;
+    this.googleProgress = false;
+    this.facebookProgress = false;
+    this.authFailed = false;
+    this.otpSuccess = false;
+    this.showOtpModal = false;
+    this.loginForm.otp = "";
   }
 
-  private removeAuthEvents(): void {
-    if (!this.socketService.socket) return;
+  private handleSuccessfulLogin(data: any): void {
+    this.closeModal();
+    this.dashboardService.getDashboardStats().subscribe();
+    this.dashboardService.getRecentActivity().subscribe();
+    this.dashboardService.getLeaderboardUser().subscribe();
+    this.socketService.authDataSource.next(data);
+    this.router.navigate(['/home'], {
+      queryParams: { token: data.token },
+      state: { user: data.user }
+    });
+  }
+
+  private cleanupSubscriptions(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private removeSocketListeners(): void {
+    const events = [
+      'auth:login:success',
+      'auth:register:success',
+      'auth:google:success',
+      'auth:facebook:success',
+      'auth:otp:verify:success',
+      'auth:google:callback',
+      'auth:facebook:callback',
+      'auth:error',
+      'receiveLogin'
+    ];
     
-    this.socketService.off('auth:login:success');
-    this.socketService.off('auth:register:success');
-    this.socketService.off('auth:google:success');
-    this.socketService.off('auth:facebook:success');
-    this.socketService.off('auth:otp:verify:success');
-    this.socketService.off('auth:google:callback');
-    this.socketService.off('auth:facebook:callback');
-    this.socketService.off('auth:error');
-    this.socketService.off('receiveLogin');
+    events.forEach(event => this.socketService.off(event));
   }
 }

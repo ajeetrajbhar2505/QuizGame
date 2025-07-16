@@ -242,7 +242,7 @@
 
 
         <p class="resend-text" *ngIf="!canResendOtp">
-          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formatTimer}}</a>
+          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formattedTimer}}</a>
         </p>
         <p class="resend-text" *ngIf="canResendOtp">
           Didn't receive code? <a (click)="resendOtp()" class="resend-link">Resend</a>

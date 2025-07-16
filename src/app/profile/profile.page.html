@@ -2,7 +2,7 @@
     <div class="phone">
         <div class="profile-header">
             <div class="avatar-container">
-                <img [src]="User?.avatar || 'assets/AppLogo.png'" alt="Profile" class="profile-avatar" loading="lazy" >
+                <img [src]="currentUser.avatar || 'assets/AppLogo.png'" alt="Profile" class="profile-avatar" loading="lazy" >
                 <div class="edit-avatar" *ngIf="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -11,8 +11,8 @@
                     </svg>
                 </div>
             </div>
-            <h1 class="profile-name">{{User?.name}}</h1>
-            <p class="profile-username">{{User?.email}}</p>
+            <h1 class="profile-name">{{currentUser.name}}</h1>
+            <p class="profile-username">{{currentUser.email}}</p>
 
             <div class="profile-stats">
                 <div class="stat-item">
@@ -60,7 +60,7 @@
         </div>
 
         <div class="tab-content active" id="quizzes">
-            <div class="quiz-card" *ngFor="let quiz of quizesDraft;let i = index">
+            <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
                 <div class="quiz-header">
                 <h3 class="quiz-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
