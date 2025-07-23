@@ -154,7 +154,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private handleLoginResponse(data: any): void {
-    if (data) {
+    if (data != null) {
       this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'dark');
       this.loginSuccess = true;
       this.startOtpTimer();
@@ -218,7 +218,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.authFailed = false;
     this.isLoading = true;
     try {
-      await this.socketService.sendOTP(this.loginForm.email);
+      await this.socketService.login(this.loginForm.email);
     } catch (error:any) {
       this.handleAuthError(error.message);
     }
