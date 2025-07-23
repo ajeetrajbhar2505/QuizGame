@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +25,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
-    private quizService: CreateQuizesService
+    private quizService: CreateQuizesService,
+    private sanitizer: DomSanitizer
   ) {
   }
 
@@ -48,6 +50,8 @@ export class HomePage implements OnInit {
     // Current user
     this.currentUser = this.dashboardService.getUser();
 
+
+
     // Fetch initial data if not available
     if (!this.userStats) {
       this.dashboardService.getDashboardStats().subscribe();
@@ -62,9 +66,12 @@ export class HomePage implements OnInit {
     this.subscribeToQuizUpdates();
   }
 
+  protected makeSafeUrl(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url || 'assets/AppLogo.png')
+  }
+
   private subscribeToQuizUpdates(): void {
     this.quizService.getPublishedQuizes$.subscribe(quizzes => {
-      console.log({publishedQuizzes : quizzes});
       this.publishedQuizzes = quizzes;
     });
   }

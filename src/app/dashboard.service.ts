@@ -6,7 +6,7 @@ export interface user {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar: string;
   role: string;
   isVerified: boolean;
 }

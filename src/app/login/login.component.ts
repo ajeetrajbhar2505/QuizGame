@@ -30,7 +30,7 @@ export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('facebookModal') facebookModal!: IonModal;
 
   loginForm = {
-    email: 'fyit.ajeetrajbhar18144@gmail.com',
+    email: '',
     otp: ''
   };
 
@@ -67,10 +67,7 @@ export class LoginPage implements OnInit, OnDestroy {
     private platform: Platform,
     private toasterService: ToasterService,
     private dashboardService: DashboardService
-  ) {
-    this.resetAuthStates();
-    this.socketService.initializeSocket('');
-  }
+  ) {}
 
   ngOnInit() {
     this.setupSocketListeners();
@@ -80,7 +77,6 @@ export class LoginPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.cleanupSubscriptions();
     this.stopOtpTimer();
-    this.removeSocketListeners();
   }
 
   private setupSocketListeners(): void {
@@ -96,32 +92,29 @@ export class LoginPage implements OnInit, OnDestroy {
       this.socketService.loginData$.subscribe(data => this.handleLoginResponse(data))
     );
 
-    this.setupErrorHandlers();
-    this.setupSocialLoginCallbacks();
+    this.subscriptions.push(
+      this.socketService.fromEvent<{url: string}>('auth:google:url').subscribe(data => 
+        this.openAuthUrl(data.url)
+      )
+    );
+
+    this.subscriptions.push(
+      this.socketService.fromEvent<{url: string}>('auth:facebook:url').subscribe(data => 
+        this.openAuthUrl(data.url)
+      )
+    );
+
+    this.subscriptions.push(
+      this.socketService.fromEvent<{message: string}>('auth:error').subscribe(error => 
+        this.handleAuthError(error.message)
+      )
+    );
   }
 
   private setupConnectionListener(): void {
     this.subscriptions.push(
       this.socketService.connectionState$.subscribe(state => this.connected = state)
     );
-  }
-
-  private setupErrorHandlers(): void {
-    const errorHandlers = {
-      'auth:otp:verify:error': (error: any) => this.handleOtpVerifyError(error),
-      'auth:login:error': (error: any) => this.handleLoginError(error),
-      'auth:google:error': (error: any) => this.handleGoogleError(error),
-      'auth:facebook:error': (error: any) => this.handleFacebookError(error)
-    };
-
-    Object.entries(errorHandlers).forEach(([event, handler]) => {
-      this.socketService.on(event, handler);
-    });
-  }
-
-  private setupSocialLoginCallbacks(): void {
-    this.socketService.on('auth:google:url', (data) => this.openAuthUrl(data.url));
-    this.socketService.on('auth:facebook:url', (data) => this.openAuthUrl(data.url));
   }
 
   private openAuthUrl(url: string): void {
@@ -137,6 +130,9 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private handleAuthSuccess(data: any): void {
+    if (data == null) {
+      return
+    }
     this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
     this.loginSuccess = true;
     this.isLoading = false;
@@ -175,17 +171,8 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  private handleOtpVerifyError(error: any): void {
-    this.errorModalStatus = 'auth:otp:verify:error';
-    setTimeout(() => {
-      this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-      this.isLoading = false;
-    }, 1000);
-  }
-
-  private handleLoginError(error: any): void {
-    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-    this.errorModalStatus = 'auth:login:error';
+  private handleAuthError(message: string): void {
+    this.toasterService.presentToast(message, 3000, 'bottom', 'dark');
     setTimeout(() => {
       if (!this.loginSuccess) {
         this.resetAuthStates();
@@ -199,66 +186,42 @@ export class LoginPage implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  private handleGoogleError(error: any): void {
-    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-    this.errorModalStatus = 'auth:google:error';
-    setTimeout(() => {
-      if (!this.loginSuccess) {
-        this.resetAuthStates();
-        this.isLoading = false;
-        this.authFailed = true;
-        this.googleProgress = false;
-        if (this.platform.is('android')) {
-          this.navCtrl.back();
-        }
-      }
-    }, 1000);
-  }
-
-  private handleFacebookError(error: any): void {
-    this.toasterService.presentToast(error.message, 3000, 'bottom', 'dark');
-    this.errorModalStatus = 'auth:facebook:error';
-    setTimeout(() => {
-      if (!this.loginSuccess) {
-        this.resetAuthStates();
-        this.isLoading = false;
-        this.authFailed = true;
-        this.facebookProgress = false;
-        if (this.platform.is('android')) {
-          this.navCtrl.back();
-        }
-      }
-    }, 1000);
-  }
-
-  verifyOTP(): void {
+  async verifyOTP(): Promise<void> {
     this.loginSuccess = false;
     if (!this.loginForm.email) {
-      console.error('Please enter email', 'warning');
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
       return;
     }
     if (!this.loginForm.otp) {
-      console.error('Invalid OTP', 'warning');
+      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom', 'warning');
       return;
     }
 
     this.isLoading = true;
-    this.socketService.verifyloginOTP(
-      this.loginForm.email, 
-      this.loginForm.otp, 
-      this.otpDetails!.verificationToken
-    );
+    try {
+      await this.socketService.verifyloginOTP(
+        this.loginForm.email, 
+        this.loginForm.otp, 
+        this.otpDetails!.verificationToken
+      );
+    } catch (error:any) {
+      this.handleAuthError(error.message);
+    }
   }
 
-  login(): void {
+  async login(): Promise<void> {
     if (!this.loginForm.email) {
-      console.error('Please enter email', 'warning');
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
       return;
     }
 
     this.authFailed = false;
     this.isLoading = true;
-    this.socketService.login(this.loginForm.email);
+    try {
+      await this.socketService.sendOTP(this.loginForm.email);
+    } catch (error:any) {
+      this.handleAuthError(error.message);
+    }
   }
 
   loginWithGoogle(): void {
@@ -339,11 +302,12 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private handleSuccessfulLogin(data: any): void {
+    console.log(data);
+    
     this.closeModal();
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getRecentActivity().subscribe();
     this.dashboardService.getLeaderboardUser().subscribe();
-    this.socketService.authDataSource.next(data);
     this.router.navigate(['/home'], {
       queryParams: { token: data.token },
       state: { user: data.user }
@@ -352,21 +316,6 @@ export class LoginPage implements OnInit, OnDestroy {
 
   private cleanupSubscriptions(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-  }
-
-  private removeSocketListeners(): void {
-    const events = [
-      'auth:login:success',
-      'auth:register:success',
-      'auth:google:success',
-      'auth:facebook:success',
-      'auth:otp:verify:success',
-      'auth:google:callback',
-      'auth:facebook:callback',
-      'auth:error',
-      'receiveLogin'
-    ];
-    
-    events.forEach(event => this.socketService.off(event));
+    this.subscriptions = [];
   }
 }

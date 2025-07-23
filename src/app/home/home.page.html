@@ -7,7 +7,7 @@
           <h1>Welcome back, {{currentUser.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img loading="lazy" routerLink="/login" (click)="logout()" [src]="currentUser.avatar || 'assets/AppLogo.png'"
+        <img loading="eager" routerLink="/login" (click)="logout()" [src]="makeSafeUrl(currentUser.avatar)"
           alt="User" class="user-avatar">
       </div>
 
@@ -63,7 +63,6 @@
       <!-- Categories -->
       <div class="section-title">
         <h2>Categories</h2>
-        <a routerLink="/categories">See all <i class="fas fa-chevron-right"></i></a>
       </div>
       <div class="category-scroll skeleton-value">
         <div class="category-card active">
@@ -147,6 +146,7 @@
             {{quiz.totalQuestions}} Qs
           </span>
         </div>
+        
         <div class="quiz-meta">
           <span class="meta-item">
             <i class="fas fa-bolt"></i>
@@ -204,7 +204,7 @@
           <div class="leaderboard-item" *ngFor="let user of leaderboardUsers;let i = index">
             <div class="rank">{{i+1}}</div>
             <div class="user">
-              <img [src]="user.avatar">
+              <img loading="lazy" [src]=" makeSafeUrl(user.avatar)">
               <div>
                 <div class="name">{{user.name}}</div>
               </div>

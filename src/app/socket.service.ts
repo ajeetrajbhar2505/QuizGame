@@ -165,17 +165,18 @@ export class SocketService {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       this.socket.emit('auth:logout', user._id);
       localStorage.clear();
+      this.retryConnection()
       this.authDataSource.next(null);
       this.router.navigate(['/login']);
 
     } catch (error) {
       console.error('Logout error:', error);
       localStorage.clear();
+      this.retryConnection()
       this.authDataSource.next(null);
       this.router.navigate(['/login']);
     }
 
-    this.socket.disconnect().connect()
     this.toasterService.presentToast('You have been logged out', 3000, 'bottom', 'dark');
   }
 
@@ -205,7 +206,7 @@ export class SocketService {
     this.socket.emit('auth:facebook:callback', code);
   }
 
-  public sendOTP(email: string, token: string): void {
+  public sendOTP(email: string, token?: string): void {
     this.socket.emit('auth:otp:send', email);
   }
 

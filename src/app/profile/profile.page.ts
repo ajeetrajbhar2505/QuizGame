@@ -4,6 +4,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
 import { Subscription } from 'rxjs';
+import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-profile',
@@ -121,5 +122,20 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   trackByQuizId(index: number, quiz: Quiz): string {
     return quiz._id;
+  }
+
+  async shareApp() {
+    const appName = "QuizMaster";
+    const message = `🚀 Challenge yourself with ${appName}! 
+  Test your knowledge with fun quizzes and compete with friends. 
+  Join me now!`;
+
+    const shareOptions = {
+      title: `Try ${appName} - The Ultimate Quiz App`,
+      text: message,
+      url: 'https://your-app-website-or-play-store-link.com',
+      dialogTitle: 'Challenge Your Friends',
+    };
+    await Share.share(shareOptions);
   }
 }

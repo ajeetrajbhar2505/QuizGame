@@ -49,13 +49,11 @@ export class CreateQuizesService {
   private setupSocketListeners(): void {
     // Listener for when quizzes are updated
     this.socketService.socket.on('quiz:all:success', (data: { quizes: Quiz[] }) => {
-      console.log(data);
       this.quizzesDraftSubject$.next(data.quizes);
     });
 
     // Listener for published quizzes updates
     this.socketService.socket.on('quiz:published:success', (data: { quizes: Quiz[] }) => {
-      console.log(data);
       this.quizzesPublishedSubject$.next(data.quizes);
     });
   }

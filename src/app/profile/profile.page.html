@@ -30,7 +30,7 @@
             </div>
 
             <div class="action-buttons">
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" routerLink="/create">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -39,7 +39,7 @@
                     </svg>
                     Create Quiz
                 </button>
-                <button class="btn btn-outline">
+                <button class="btn btn-outline" (click)="shareApp()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle>
@@ -55,11 +55,11 @@
 
 
         <div class="tabs">
-            <div class="tab active" data-tab="quizzes">My Quizzes</div>
-            <div class="tab" data-tab="stats">Stats</div>
+            <div class="tab {{activeTab == 'quizzes'?'active':''}}" (click)="activeTab = 'quizzes'">My Quizzes</div>
+            <div class="tab {{activeTab == 'stats'?'active':''}}" (click)="activeTab = 'stats'">Stats</div>
         </div>
 
-        <div class="tab-content active" id="quizzes">
+        <div class="tab-content {{activeTab == 'quizzes'?'active':''}}">
             <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
                 <div class="quiz-header">
                 <h3 class="quiz-title">
@@ -146,7 +146,7 @@
             </div>
         </div>
 
-        <div class="tab-content" id="stats">
+        <div class="tab-content {{activeTab == 'stats'?'active':''}}">
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-card-title">
