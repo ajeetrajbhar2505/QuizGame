@@ -82,7 +82,7 @@ export class CreatePage implements OnInit, OnDestroy {
     );
 
     this.quizSubscriptions.push(
-      this.quizService.getQuizesDraft$.subscribe(quizzes => {
+      this.quizService.getAllQuiz().subscribe(quizzes => {
         this.draftQuizzes = quizzes;
       })
     );

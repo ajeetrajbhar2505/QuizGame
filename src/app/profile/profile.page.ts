@@ -54,7 +54,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
-      this.quizService.getQuizesDraft$.subscribe({
+      this.quizService.getAllQuiz().subscribe({
         next: (quizzes: Quiz[]) => this.draftQuizzes = quizzes,
         error: (err) => {
           console.error('Failed to fetch quizzes:', err);
@@ -125,17 +125,18 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   async shareApp() {
-    const appName = "QuizMaster";
+    const appName = "QuizMaster"; 
     const message = `🚀 Challenge yourself with ${appName}! 
   Test your knowledge with fun quizzes and compete with friends. 
   Join me now!`;
-
+    
     const shareOptions = {
       title: `Try ${appName} - The Ultimate Quiz App`,
       text: message,
-      url: 'https://your-app-website-or-play-store-link.com',
+      url: 'https://your-app-website-or-play-store-link.com', 
       dialogTitle: 'Challenge Your Friends',
     };
     await Share.share(shareOptions);
+
   }
 }
