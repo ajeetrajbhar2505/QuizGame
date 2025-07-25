@@ -28,7 +28,16 @@ export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal!: IonModal;
   @ViewChild('googleModal') googleModal!: IonModal;
   @ViewChild('facebookModal') facebookModal!: IonModal;
-
+  continuewith :boolean  = false
+  onclick(){
+    this.continuewith = true
+      setTimeout(() => {
+        const inputElement = document.getElementById('input');
+    if (inputElement) {
+        inputElement.focus();
+    }
+  }, 0);
+}
   loginForm = {
     email: '',
     otp: ''

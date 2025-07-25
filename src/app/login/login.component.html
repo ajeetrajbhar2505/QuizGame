@@ -1,253 +1,69 @@
 <ion-content [fullscreen]="true">
-  <div class="login-container">
-    <div class="login-card">
-      <div class="brand">
-        <div class="brand-logo">
-          <img src="assets/AppLogo.png" alt="QuizGame Logo">
-          <h1>QuizGame{{connected == 'connected'?'!':'!!'}}
-          </h1>
+  <div class="card">
+    <!-- Logo -->
+    <div class="logo">
+  <i class="fas fa-brain"></i>
+    </div>
+  
+    <!-- Heading -->
+    <h1>Join Our Quiz App Community</h1>
+    
+    <!-- Subtitle -->
+    <p class="subtitle">
+     Join thousands of players testing their knowledge daily. Track your progress, earn badges, and climb the leaderboards!
+    </p>
+  
+    <div class="features">
+      <span class="feature">1000+ Questions</span>
+      <span class="feature">Daily Challenges</span>
+      <span class="feature">Global Leaderboard</span>
+    </div>
+  
+    <!-- Options title -->
+    <p class="options-title">Quick sign up with</p>
+  
+    <!-- Login options -->
+    <div class="methods">
+      <button class="btn btn-google" (click)="continuewith = false">
+        <div class="btn-content">
+          <i class="fab fa-google"></i>
+          Google
         </div>
-        <p class="welcome-text">Welcome back! Please enter<br> your credentials</p>
-      </div>
-
-      <div id="loginForm">
-        <div class="form-group">
-          <ion-item lines="none" class="input-item">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
-            <ion-input [(ngModel)]="loginForm.email" type="email" placeholder="name@gmail.com" id="email"></ion-input>
-          </ion-item>
-          <div class="error" id="emailError"></div>
+        <div class="arrow">&rarr;</div>
+      </button>
+      
+      <button class="btn btn-facebook" (click)="continuewith = false">
+        <div class="btn-content">
+          <i class="fab fa-facebook-f"></i>
+          Facebook
         </div>
-
-        <ion-button [disabled]="isLoading" expand="block" shape="round" class="login-btn" (click)="login()">
-          Sign In
-          <ion-icon *ngIf="!isLoading" name="arrow-forward" slot="end"></ion-icon>
-          <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
-        </ion-button>
-      </div>
-
-      <div class="divider">
-        <span>or continue with</span>
-      </div>
-
-      <div class="social-login">
-        <div class="social-buttons">
-          <ion-button class="social-btn google" (click)="loginWithGoogle()">
-            <ion-icon name="logo-google" slot="start"></ion-icon>
-            Google
-          </ion-button>
-          <ion-button class="social-btn facebook" (click)="loginWithFacebook()">
-            <ion-icon name="logo-facebook" slot="start"></ion-icon>
-            Facebook
-          </ion-button>
+        <div class="arrow">&rarr;</div>
+      </button>
+      
+      <button class="btn btn-email" (click)="onclick()">
+        <div class="btn-content">
+          <i class="fas fa-envelope"></i>
+          <span *ngIf="!continuewith">Email</span>
+          <input id="input" *ngIf="continuewith" type="text" placeholder="Type Your Email here...">
         </div>
-      </div>
+        <div class="arrow">&rarr;</div>
+      </button>
+    </div>
+  
+    <!-- Terms and Privacy -->
+    <div class="terms">
+      By joining, you agree to our <a href="#">Quiz Rules</a>, <a href="#">Terms</a>, and confirm you're at least 13 years old. Your progress will be saved to your account.
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification">
+      <input type="checkbox" id="notifications">
+      <label for="notifications">Notify me about weekly tournaments, new question packs, and special rewards!</label>
+    </div>
+  
+    <!-- Powered by -->
+    <div class="powered">
+      <i class="fas fa-brain"></i> Powered by <span>Ajit Rajbhar</span>
     </div>
   </div>
-
-  <!-- Google Verification Modal -->
-  <ion-modal #googleModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-    <ng-template>
-      <div class="verification-container">
-        <!-- Success State -->
-        <div class="success" *ngIf="!authFailed && !googleProgress">
-          <div class="success-animation">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-            </svg>
-          </div>
-        </div>
-
-        <!-- Failure State -->
-        <div class="failure" *ngIf="authFailed">
-          <div class="failure-animation">
-            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-            </svg>
-          </div>
-          <p class="failure-message">Authentication Failed</p>
-        </div>
-
-        <!-- Loading State -->
-        <div class="loader" *ngIf="googleProgress && !authFailed">
-          <div class="loader-spinner"></div>
-          <img src="assets/google.png" class="loader-icon" width="30px" alt="Google">
-        </div>
-
-        <!-- Verification Text -->
-        <div class="verification-text">
-          <h3 *ngIf="!authFailed">{{googleProgress ? 'Signing in with Google' : 'Success!'}}</h3>
-          <p *ngIf="googleProgress && !authFailed">Please wait...</p>
-          <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
-          <p *ngIf="!googleProgress && !authFailed">Logged in successfully</p>
-        </div>
-
-        <!-- Action Buttons (shown only on failure) -->
-        <br>
-        <div class="social-login" *ngIf="authFailed">
-          <div class="social-buttons">
-            <ion-button class="social-btn google" (click)="closeModal()">
-              <ion-icon name="close-circle" slot="start"></ion-icon>
-              Cancel
-            </ion-button>
-            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
-              <ion-icon name="refresh" slot="start"></ion-icon>
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-
-  <!-- Facebook Verification Modal -->
-  <ion-modal #facebookModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-    <ng-template>
-      <div class="verification-container">
-        <!-- Success State -->
-        <div class="success" *ngIf="!authFailed && !facebookProgress">
-          <div class="success-animation">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-            </svg>
-          </div>
-        </div>
-
-        <!-- Failure State -->
-        <div class="failure" *ngIf="authFailed">
-          <div class="failure-animation">
-            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-            </svg>
-          </div>
-          <p class="failure-message">Authentication Failed</p>
-        </div>
-
-        <!-- Loading State -->
-        <div class="loader" *ngIf="facebookProgress && !authFailed">
-          <div class="loader-spinner"></div>
-          <img src="assets/facebook.png" class="loader-icon" width="30px" alt="Facebook">
-        </div>
-
-        <!-- Verification Text -->
-        <div class="verification-text">
-          <h3 *ngIf="!authFailed">{{facebookProgress ? 'Signing in with Facebook' : 'Success!'}}</h3>
-          <p *ngIf="facebookProgress && !authFailed">Please wait...</p>
-          <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
-          <p *ngIf="!facebookProgress && !authFailed">Logged in successfully</p>
-        </div>
-
-        <!-- Action Buttons (shown only on failure) -->
-        <br>
-        <div class="social-login" *ngIf="authFailed">
-          <div class="social-buttons">
-            <ion-button class="social-btn google" (click)="closeModal()">
-              <ion-icon name="close-circle" slot="start"></ion-icon>
-              Cancel
-            </ion-button>
-            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
-              <ion-icon name="refresh" slot="start"></ion-icon>
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-
-  <!-- Error Modal -->
-  <ion-modal #errorModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-    <ng-template>
-      <div class="verification-container">
-        <!-- Failure State -->
-        <div class="failure">
-          <div class="failure-animation">
-            <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="crossmark__cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
-            </svg>
-          </div>
-          <p class="failure-message">Authentication Failed</p>
-        </div>
-
-        <!-- Verification Text -->
-        <div class="verification-text">
-          <p [innerHTML]="errorMessage"></p>
-        </div>
-
-        <!-- Action Buttons (shown only on failure) -->
-        <br>
-        <div class="social-login" *ngIf="authFailed">
-          <div class="social-buttons">
-            <ion-button class="social-btn google" (click)="closeModal()">
-              <ion-icon name="close-circle" slot="start"></ion-icon>
-              Cancel
-            </ion-button>
-            <ion-button class="social-btn facebook" (click)="retrySocialLogins()">
-              <ion-icon name="refresh" slot="start"></ion-icon>
-              Retry
-            </ion-button>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-
-  <!-- verify otp screen -->
-  <ion-modal #OTPmodal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
-    <ng-template>
-      <div class="verification-container" *ngIf="otpSuccess">
-        <!-- Success State -->
-        <div class="success">
-          <div class="success-animation">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-            </svg>
-          </div>
-        </div>
-
-        <div class="verification-text">
-          <h3>Success</h3>
-          <p>Logged in successfully</p>
-        </div>
-      </div>
-
-      <div class="otp-container" *ngIf="!otpSuccess && showOtpModal">
-        <div class="logo">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-              stroke="#4a90e2" stroke-width="2" />
-            <path d="M12 16V12M12 8H12.01" stroke="#4a90e2" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </div>
-
-        <h1>Verify your account</h1>
-        <p class="subtitle">We've sent otp code to <a class="resend-link">{{loginForm.email}}</a></p>
-
-        <div class="otp-inputs">
-          <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
-        </div>
-
-        <ion-button [disabled]="this.loginForm.otp == ''" expand="block" shape="round" class="login-btn"
-          (click)="verifyOTP()">
-          Verify
-          <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
-        </ion-button>
-
-
-        <p class="resend-text" *ngIf="!canResendOtp">
-          Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formattedTimer}}</a>
-        </p>
-        <p class="resend-text" *ngIf="canResendOtp">
-          Didn't receive code? <a (click)="resendOtp()" class="resend-link">Resend</a>
-        </p>
-      </div>
-    </ng-template>
-  </ion-modal>
 </ion-content>
