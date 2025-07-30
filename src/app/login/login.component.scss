@@ -88,9 +88,12 @@
     content: '';
     position: absolute;
     top: 50%;
-    width: 20%;
+    width: 30%;
     height: 1px;
     background: lightgray;
+    @media (max-width: 414px) {
+    width: 22%;
+    }
   }
 
   .options-title::before {
