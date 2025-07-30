@@ -2,18 +2,18 @@
   <div class="card">
     <!-- Logo -->
     <div class="logo">
-  <i class="fas fa-brain"></i>
-    </div>
+      <img src="https://play-lh.googleusercontent.com/csvV4lAxLZx0Z6Ni-465trvkCvfjVvl_afFVW422Db6XdKyfi2Kli2IX2-QdDwMaXw=w480-h960-rw" alt="">
+    <h1>Join Our Quiz App Community</h1>
+  </div>
   
     <!-- Heading -->
-    <h1>Join Our Quiz App Community</h1>
     
     <!-- Subtitle -->
     <p class="subtitle">
      Join thousands of players testing their knowledge daily. Track your progress, earn badges, and climb the leaderboards!
     </p>
   
-    <div class="features">
+    <div class="features" *ngIf="false">
       <span class="feature">1000+ Questions</span>
       <span class="feature">Daily Challenges</span>
       <span class="feature">Global Leaderboard</span>
@@ -46,24 +46,22 @@
           <span *ngIf="!continuewith">Email</span>
           <input id="input" *ngIf="continuewith" type="text" placeholder="Type Your Email here...">
         </div>
-        <div class="arrow">&rarr;</div>
+        <div *ngIf="!continuewith" class="arrow">&rarr;</div>
+        <div *ngIf="continuewith && false" class="error arrow">&#33;</div>
       </button>
     </div>
-  
+    <button class="btn btn-email center" *ngIf="continuewith">
+      Continue
+      </button>
     <!-- Terms and Privacy -->
     <div class="terms">
       By joining, you agree to our <a href="#">Quiz Rules</a>, <a href="#">Terms</a>, and confirm you're at least 13 years old. Your progress will be saved to your account.
     </div>
     
-    <!-- Notification -->
-    <div class="notification">
-      <input type="checkbox" id="notifications">
-      <label for="notifications">Notify me about weekly tournaments, new question packs, and special rewards!</label>
-    </div>
-  
     <!-- Powered by -->
     <div class="powered">
-      <i class="fas fa-brain"></i> Powered by <span>Ajit Rajbhar</span>
+      <ion-icon name="newspaper-outline"></ion-icon>
+      Powered by <span>Ajit Rajbhar</span>
     </div>
   </div>
 </ion-content>

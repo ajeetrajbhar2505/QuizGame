@@ -8,9 +8,9 @@
 
 
 .card {
-background: ($bg);
+// background: ($bg);
   width: 100%;
-  padding: 40px;
+  padding: 20px;
   text-align: center;
   position: relative;
   overflow-x: hidden;
@@ -37,17 +37,23 @@ background: ($bg);
 }
 
 .logo {
-  width: 70px;
-  height: 70px;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, ($primary), ($secondary));
+  width: 100%;
+  height: 100px;
+  margin-bottom: 25%;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 28px;
-  box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+  position: relative;
+  h1{
+    position: absolute !important;
+    top: 120%;
+  }
+  img{
+    width: 170px;
+  }
 }
 
 h1 {
@@ -83,7 +89,7 @@ h1 {
   top: 50%;
   width: 30%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1));
+  background: lightgray;
 }
 
 .options-title::before {
@@ -92,7 +98,6 @@ h1 {
 
 .options-title::after {
   right: 0;
-  background: linear-gradient(90deg, rgba(0,0,0,0.1), transparent);
 }
 
 .methods {
@@ -114,8 +119,7 @@ h1 {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid lightgray;
   outline: none;
   width: 100%;
   position: relative;
@@ -157,6 +161,12 @@ h1 {
 .btn-facebook i {
   color: #1877F2;
 }
+.center{
+  justify-content: center;
+  gap: 10px;
+  color: #fff;
+  background: #6475fc;
+}
 
 .btn-email i {
   color: ($primary);
@@ -167,6 +177,9 @@ h1 {
   color: ($text-light);
   transition: transform 0.3s ease;
   z-index: 2;
+}
+.error{
+  color: #ce3737 !important;
 }
 
 .btn:hover .arrow {
