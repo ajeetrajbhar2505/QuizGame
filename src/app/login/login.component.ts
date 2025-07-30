@@ -220,7 +220,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   async login(): Promise<void> {
     if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
+      this.toasterService.presentToast('Please enter email', 1000, 'bottom');
       return;
     }
 
@@ -236,7 +236,7 @@ export class LoginPage implements OnInit, OnDestroy {
   loginWithGoogle(): void {
     this.resetAuthStates();
     this.googleProgress = true;
-    // this.googleModal.present();
+    this.googleModal.present();
     this.authFailed = false;
     this.socketService.initiateGoogleLogin();
   }
@@ -244,7 +244,7 @@ export class LoginPage implements OnInit, OnDestroy {
   loginWithFacebook(): void {
     this.resetAuthStates();
     this.authFailed = false;
-    // this.facebookModal.present();
+    this.facebookModal.present();
     this.facebookProgress = true;
     this.socketService.initiateFacebookLogin();
   }
@@ -311,8 +311,6 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private handleSuccessfulLogin(data: any): void {
-    console.log(data);
-    
     this.closeModal();
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getRecentActivity().subscribe();

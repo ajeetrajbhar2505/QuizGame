@@ -11,7 +11,7 @@ export class ToasterService {
   ) { }
 
 
-  async presentToast(message: string, duration: number = 3000, position: 'top' | 'bottom' | 'middle' = 'bottom', color?: string) {
+  async presentToast(message: string, duration: number = 1000, position: 'top' | 'bottom' | 'middle' = 'bottom', color?: string) {
     const toast = await this.toastCtrl.create({
       message,
       duration,
@@ -24,7 +24,7 @@ export class ToasterService {
   async success(message: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration : 3000,
+      duration : 1000,
       position : 'top',
     });
     toast.present();
