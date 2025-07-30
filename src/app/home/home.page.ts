@@ -45,10 +45,18 @@ export class HomePage implements OnInit {
     // Leaderboard
     this.dashboardService.getLeaderboard$.subscribe((data: LeaderboardUser[]) => {
       this.leaderboardUsers = data;
+      this.leaderboardUsers.map((data:any)=>{
+        if (data.avatar) {
+          data.avatar = this.makeSafeUrl(data.avatar);
+        }
+      })
     });
 
     // Current user
     this.currentUser = this.dashboardService.getUser();
+    if (this.currentUser.avatar) {
+      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
+    }
 
 
 
@@ -67,7 +75,7 @@ export class HomePage implements OnInit {
   }
 
   protected makeSafeUrl(url: string): SafeUrl {
-    return this.sanitizer.bypassSecurityTrustUrl(url || 'assets/AppLogo.png')
+    return this.sanitizer.bypassSecurityTrustUrl(url)
   }
 
   private subscribeToQuizUpdates(): void {

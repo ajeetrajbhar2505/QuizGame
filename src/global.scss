@@ -108,8 +108,6 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   
   .homeHeader {
     padding: 32px 24px 24px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: var(--white);
     position: relative;
     z-index: 1;
     border-bottom-left-radius: 30px;
@@ -195,21 +193,8 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
       rgba(255, 255, 255, 0.1),
       transparent
     );
-    animation: shimmer 1.5s infinite;
   }
 
-  .skeleton-value{
-    animation: shimmer 1.5s ease-in-out;
-  }
-  
-  @keyframes shimmer {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(0);
-    }
-  }
   
   .section {
     padding: 24px;
@@ -256,15 +241,12 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     padding: 16px 20px 16px 50px;
     border-radius: 30px;
     border: none;
-    background: var(--light);
     font-size: 15px;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
+    border: 1px solid lightgray;
   }
   
   .search-bar input:focus {
     outline: none;
-    box-shadow: 0 0 0 3px var(--primary-light);
   }
   
   .category-scroll {

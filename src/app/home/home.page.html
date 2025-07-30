@@ -7,48 +7,8 @@
           <h1>Welcome back, {{currentUser.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img loading="eager" routerLink="/login" (click)="logout()" [src]="makeSafeUrl(currentUser.avatar)"
+        <img loading="eager" routerLink="/login" (click)="logout()" [src]="currentUser.avatar"
           alt="User" class="user-avatar">
-      </div>
-
-
-      <div class="stats-container" *ngIf="!userStats">
-        <div class="stat-card skeleton">
-          <div class="fas"></div>
-          <div class="value"></div>
-          <div class="label"></div>
-        </div>
-
-        <div class="stat-card skeleton">
-          <div class="fas"></div>
-          <div class="value"></div>
-          <div class="label"></div>
-        </div>
-
-        <div class="stat-card skeleton">
-          <div class="fas"></div>
-          <div class="value"></div>
-          <div class="label"></div>
-        </div>
-
-      </div>
-
-      <div class="stats-container" *ngIf="userStats">
-        <div class="stat-card">
-          <i class="fas fa-trophy"></i>
-          <div class="value">{{userStats.points}}</div>
-          <div class="label">XP Points</div>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-medal"></i>
-          <div class="value">{{userStats.rank}}</div>
-          <div class="label">Rank</div>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-fire"></i>
-          <div class="value">{{userStats.streak.current}}</div>
-          <div class="label">Streak</div>
-        </div>
       </div>
     </div>
 
@@ -176,22 +136,6 @@
 
       </div>
 
-      <!-- Progress Card -->
-      <div class="progress-container">
-        <div class="progress-homeHeader">
-          <div class="progress-title">
-            <i class="fas fa-chart-line"></i> Your Learning Progress
-          </div>
-          <div class="progress-percent">65%</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
-        </div>
-        <div class="progress-stats">
-          <span>Daily goal: 100 XP</span>
-          <span>1,250/2,000 XP</span>
-        </div>
-      </div>
 
       <!-- Leaderboard -->
       <div class="section-title">
@@ -204,7 +148,7 @@
           <div class="leaderboard-item" *ngFor="let user of leaderboardUsers;let i = index">
             <div class="rank">{{i+1}}</div>
             <div class="user">
-              <img loading="lazy" [src]=" makeSafeUrl(user.avatar)">
+              <img loading="eager" [src]="user.avatar">
               <div>
                 <div class="name">{{user.name}}</div>
               </div>

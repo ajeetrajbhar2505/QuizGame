@@ -236,7 +236,7 @@ export class LoginPage implements OnInit, OnDestroy {
   loginWithGoogle(): void {
     this.resetAuthStates();
     this.googleProgress = true;
-    this.googleModal.present();
+    // this.googleModal.present();
     this.authFailed = false;
     this.socketService.initiateGoogleLogin();
   }
@@ -244,7 +244,7 @@ export class LoginPage implements OnInit, OnDestroy {
   loginWithFacebook(): void {
     this.resetAuthStates();
     this.authFailed = false;
-    this.facebookModal.present();
+    // this.facebookModal.present();
     this.facebookProgress = true;
     this.socketService.initiateFacebookLogin();
   }

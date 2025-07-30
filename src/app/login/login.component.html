@@ -25,14 +25,14 @@
     <!-- Login options -->
     <div class="methods">
       <button class="btn btn-google" (click)="continuewith = false">
-        <div class="btn-content">
+        <div class="btn-content" (click)="loginWithGoogle()">
           <i class="fab fa-google"></i>
           Google
         </div>
         <div class="arrow">&rarr;</div>
       </button>
       
-      <button class="btn btn-facebook" (click)="continuewith = false">
+      <button class="btn btn-facebook" (click)="continuewith = false;loginWithFacebook()">
         <div class="btn-content">
           <i class="fab fa-facebook-f"></i>
           Facebook
