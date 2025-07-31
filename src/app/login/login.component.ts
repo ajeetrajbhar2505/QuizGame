@@ -147,7 +147,6 @@ export class LoginPage implements OnInit, OnDestroy {
       });
     } catch (error) {
       console.error('Error opening browser:', error);
-      this.toasterService.presentToast('Error opening browser', 3000, 'bottom', 'danger');
     }
   }
 
