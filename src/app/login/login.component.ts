@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavController } from '@ionic/angular';
@@ -9,7 +9,7 @@ import { Platform } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
-import { App } from '@capacitor/app';
+import { takeUntil } from 'rxjs/operators';
 
 interface OtpDetails {
   success: boolean;
@@ -29,16 +29,7 @@ export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal!: IonModal;
   @ViewChild('googleModal') googleModal!: IonModal;
   @ViewChild('facebookModal') facebookModal!: IonModal;
-  continuewith: boolean = false
-  onclick() {
-    this.continuewith = true
-    setTimeout(() => {
-      const inputElement = document.getElementById('input');
-      if (inputElement) {
-        inputElement.focus();
-      }
-    }, 0);
-  }
+
   loginForm = {
     email: '',
     otp: ''
@@ -54,6 +45,8 @@ export class LoginPage implements OnInit, OnDestroy {
     <div class="error">3. Cancel and use a different email address</div></div>
   `;
 
+  // State flags
+  continuewith = false;
   isLoading = false;
   googleProgress = false;
   facebookProgress = false;
@@ -61,11 +54,13 @@ export class LoginPage implements OnInit, OnDestroy {
   otpSuccess = false;
   showOtpModal = false;
   loginSuccess = false;
-  connected = '';
-  otpTimer = 120;
   canResendOtp = false;
+  connectionState = 'disconnected';
 
-  private timerInterval: any;
+  // Timer
+  otpTimer = 120;
+  private timerSubscription?: Subscription;
+  private destroy$ = new Subject<void>();
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -85,45 +80,57 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.cleanupSubscriptions();
-    this.stopOtpTimer();
+    this.cleanup();
   }
 
   private setupSocketListeners(): void {
     this.subscriptions.push(
-      this.socketService.authData$.subscribe(data => this.handleAuthSuccess(data))
+      this.socketService.authData$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => this.handleAuthSuccess(data))
     );
 
     this.subscriptions.push(
-      this.socketService.otpSuccess.subscribe(data => this.handleOtpSuccess(data))
+      this.socketService.otpSuccess$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => this.handleOtpSuccess(data))
     );
 
     this.subscriptions.push(
-      this.socketService.loginData$.subscribe(data => this.handleLoginResponse(data))
+      this.socketService.loginData$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => this.handleLoginResponse(data))
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{ url: string }>('auth:google:url').subscribe(data =>
-        this.openAuthUrl(data.url)
-      )
+      this.socketService.fromEvent<{ url: string }>('auth:google:url')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => this.openAuthUrl(data.url))
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{ url: string }>('auth:facebook:url').subscribe(data =>
-        this.openAuthUrl(data.url)
-      )
+      this.socketService.fromEvent<{ url: string }>('auth:facebook:url')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => this.openAuthUrl(data.url))
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{ message: string }>('auth:error').subscribe(error =>
-        this.handleAuthError(error.message)
-      )
+      this.socketService.fromEvent<{ message: string }>('auth:error')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(error => this.handleAuthError(error.message))
     );
   }
 
   private setupConnectionListener(): void {
     this.subscriptions.push(
-      this.socketService.connectionState$.subscribe(state => this.connected = state)
+      this.socketService.connectionState
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(state => {
+          this.connectionState = state;
+          if (state === 'disconnected') {
+            this.toasterService.presentToast('Connection lost. Trying to reconnect...', 2000, 'bottom', 'warning');
+          }
+        })
     );
   }
 
@@ -133,99 +140,93 @@ export class LoginPage implements OnInit, OnDestroy {
       return;
     }
 
-
     try {
-      this.inAppBrowser.create(url, '_system');
-    } catch (error) {
-
-      this.inAppBrowser.create(url, '_blank', {
-        location: 'yes',
-        toolbar: 'yes',
-        zoom: 'yes',
-        hardwareback: 'yes'
+      const browser = this.inAppBrowser.create(url, '_system');
+      browser.on('exit').subscribe(() => {
+        this.handleBrowserClose();
       });
-
+    } catch (error) {
+      console.error('Error opening browser:', error);
+      this.toasterService.presentToast('Error opening browser', 3000, 'bottom', 'danger');
     }
+  }
 
+  private handleBrowserClose(): void {
+    this.googleProgress = false;
+    this.facebookProgress = false;
+    this.googleModal.dismiss();
+    this.facebookModal.dismiss();
   }
 
   async handleAuthSuccess(data: any) {
-    if (data == null) {
-      return
-    }
-    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
+    if (!data) return;
+    
+    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
     this.loginSuccess = true;
     this.isLoading = false;
     this.resetAuthStates();
 
-    if (this.platform.is('android')) {
-      // await this.navCtrl.back()
-    }
-
-    setTimeout(() => this.handleSuccessfulLogin(data), 1000);
+    await this.handleSuccessfulLogin(data);
   }
 
   private handleOtpSuccess(data: any): void {
-    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'dark');
+    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
     this.loginSuccess = true;
     this.isLoading = false;
     this.otpSuccess = true;
-    setTimeout(() => this.handleSuccessfulLogin(data), 1000);
+    this.handleSuccessfulLogin(data);
   }
 
   async handleLoginResponse(otpDetails: any) {
-    if (otpDetails != null) {
-      this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'dark');
-      this.loginSuccess = true;
-      this.startOtpTimer();
-      this.otpDetails = otpDetails;
-      this.showOtpModal = true;
-      this.isLoading = false;
-      this.otpSuccess = false;
-      this.otpModal.present();
+    if (!otpDetails) {
+      this.showErrorModal();
+      return;
+    }
+
+    this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'success');
+    this.loginSuccess = true;
+    this.startOtpTimer();
+    this.otpDetails = otpDetails;
+    this.showOtpModal = true;
+    this.isLoading = false;
+    this.otpSuccess = false;
+    
+    try {
+      await this.otpModal.present();
       const { data } = await this.otpModal.onDidDismiss();
-      if (data == undefined || data || data == null) {
-        this.loginForm.email = ""
-        this.toasterService.dismiss()
-        this.continuewith = false
+      
+      if (!data) {
+        this.resetForm();
       }
-      this.loginForm.otp = "";
-    } else {
-      this.errorModal.present();
-      this.resetAuthStates();
-      this.authFailed = true;
+    } catch (error) {
+      console.error('Error presenting OTP modal:', error);
     }
   }
 
+  private showErrorModal(): void {
+    this.errorModal.present();
+    this.resetAuthStates();
+    this.authFailed = true;
+  }
+
   handleAuthError(message: string) {
-    this.toasterService.presentToast(message, 3000, 'bottom', 'dark');
-    setTimeout(async () => {
+    this.toasterService.presentToast(message, 3000, 'bottom', 'danger');
+    setTimeout(() => {
       if (!this.loginSuccess) {
         this.resetAuthStates();
         this.authFailed = true;
         this.isLoading = false;
-        this.errorModal.present();
-        if (this.platform.is('android')) {
-          // await this.navCtrl.back()
-        }
+        this.showErrorModal();
       }
     }, 1000);
   }
 
   async verifyOTP(): Promise<void> {
-    this.loginSuccess = false;
-    if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
-      return;
-    }
-    if (!this.loginForm.otp) {
-      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom', 'warning');
-      return;
-    }
+    if (!this.validateOtpForm()) return;
 
     this.isLoading = true;
     try {
-      await this.socketService.verifyloginOTP(
+      await this.socketService.verifyLoginOTP(
         this.loginForm.email,
         this.loginForm.otp,
         this.otpDetails!.verificationToken
@@ -235,9 +236,21 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
+  private validateOtpForm(): boolean {
+    if (!this.loginForm.email) {
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
+      return false;
+    }
+    if (!this.loginForm.otp) {
+      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom', 'warning');
+      return false;
+    }
+    return true;
+  }
+
   async login(): Promise<void> {
     if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 1000, 'bottom');
+      this.toasterService.presentToast('Please enter email', 1000, 'bottom', 'warning');
       return;
     }
 
@@ -253,17 +266,29 @@ export class LoginPage implements OnInit, OnDestroy {
   async loginWithGoogle() {
     this.resetAuthStates();
     this.googleProgress = true;
-    this.googleModal.present();
-    this.authFailed = false;
-    this.socketService.initiateGoogleLogin();
+    this.errorModalStatus = 'auth:google:error';
+    
+    try {
+      await this.googleModal.present();
+      this.socketService.initiateGoogleLogin();
+    } catch (error) {
+      this.googleProgress = false;
+      this.handleAuthError('Failed to initiate Google login');
+    }
   }
 
   async loginWithFacebook() {
     this.resetAuthStates();
-    this.authFailed = false;
-    this.facebookModal.present();
     this.facebookProgress = true;
-    this.socketService.initiateFacebookLogin();
+    this.errorModalStatus = 'auth:facebook:error';
+    
+    try {
+      await this.facebookModal.present();
+      this.socketService.initiateFacebookLogin();
+    } catch (error) {
+      this.facebookProgress = false;
+      this.handleAuthError('Failed to initiate Facebook login');
+    }
   }
 
   retrySocialLogins(): void {
@@ -280,33 +305,31 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  async closeModal(): Promise<void> {
-    this.showOtpModal = false;
-    await this.modalController.dismiss();
-  }
-
-  startOtpTimer(): void {
+  private startOtpTimer(): void {
+    this.stopOtpTimer();
     this.otpTimer = 120;
     this.canResendOtp = false;
-    this.timerInterval = setInterval(() => {
+    
+    this.timerSubscription = timer(0, 1000).subscribe(() => {
       this.otpTimer--;
       if (this.otpTimer <= 0) {
         this.stopOtpTimer();
         this.canResendOtp = true;
       }
-    }, 1000);
+    });
   }
 
-  stopOtpTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
+  private stopOtpTimer(): void {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+      this.timerSubscription = undefined;
     }
   }
 
   get formattedTimer(): string {
     const minutes = Math.floor(this.otpTimer / 60);
     const seconds = this.otpTimer % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} seconds`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   resendOtp(): void {
@@ -324,21 +347,58 @@ export class LoginPage implements OnInit, OnDestroy {
     this.authFailed = false;
     this.otpSuccess = false;
     this.showOtpModal = false;
-    this.loginForm.otp = "";
   }
 
-  private handleSuccessfulLogin(data: any): void {
-    this.closeModal();
+  private resetForm(): void {
+    this.loginForm.email = "";
+    this.loginForm.otp = "";
+    this.toasterService.dismiss();
+    this.continuewith = false;
+  }
+
+  private async handleSuccessfulLogin(data: any): Promise<void> {
+    await this.closeModal();
+    
+    // Load initial data
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getLeaderboardUser().subscribe();
+    
+    // Navigate to home
     this.router.navigate(['/home'], {
       queryParams: { token: data.token },
       state: { user: data.user }
     });
   }
 
+  async closeModal(): Promise<void> {
+    this.showOtpModal = false;
+    try {
+      await this.modalController.dismiss();
+    } catch (error) {
+      console.error('Error closing modal:', error);
+    }
+  }
+
+  private cleanup(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.stopOtpTimer();
+    this.cleanupSubscriptions();
+  }
+
   private cleanupSubscriptions(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
     this.subscriptions = [];
+  }
+
+  // UI Helpers
+  focusInput(): void {
+    this.continuewith = true;
+    setTimeout(() => {
+      const inputElement = document.getElementById('input');
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, 0);
   }
 }
