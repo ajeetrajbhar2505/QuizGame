@@ -237,6 +237,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private validateOtpForm(): boolean {
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!this.loginForm.email) {
       this.toasterService.presentToast('Please enter email', 3000, 'bottom');
       return false;
@@ -245,6 +246,12 @@ export class LoginPage implements OnInit, OnDestroy {
       this.toasterService.presentToast('Please enter email', 3000, 'bottom');
       return false;
     }
+
+    if (!emailRegex.test(this.loginForm.email)) {
+      this.toasterService.presentToast('Please enter valid email', 3000, 'bottom');
+      return false;
+    }
+    
     if (!this.loginForm.otp) {
       this.toasterService.presentToast('Invalid OTP', 3000, 'bottom');
       return false;
@@ -257,8 +264,19 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   async login(): Promise<void> {
+
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 1000, 'bottom');
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom');
+      return;
+    }
+    if (this.loginForm.email.toString().length > 320) {
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom');
+      return;
+    }
+
+    if (!emailRegex.test(this.loginForm.email)) {
+      this.toasterService.presentToast('Please enter valid email', 3000, 'bottom');
       return;
     }
 

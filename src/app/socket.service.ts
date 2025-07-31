@@ -131,7 +131,7 @@ export class SocketService implements OnDestroy {
         'Connection failed. Please refresh the page.', 
         3000, 
         'bottom', 
-        'danger'
+       
       );
     });
   }
@@ -196,7 +196,7 @@ export class SocketService implements OnDestroy {
       error.message || 'Authentication failed',
       3000,
       'bottom',
-      'danger'
+     
     );
   }
 
