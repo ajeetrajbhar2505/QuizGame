@@ -279,11 +279,11 @@ export class SocketService implements OnDestroy {
   }
 
   public verifyOTP(email: string, otp: string): void {
-    this.socket.emit('auth:otp:verify', { email, otp });
+    this.socket.emit('auth:otp:verify', email, otp);
   }
 
   public verifyLoginOTP(email: string, otp: string, verificationToken: string): void {
-    this.socket.emit('auth:verify:loginOTP', { email, otp, verificationToken });
+    this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
   }
 
   public getCurrentUser(): void {
