@@ -41,20 +41,13 @@ export class ProfilePage implements OnInit, OnDestroy {
   private setupDataSubscriptions(): void {
     this.subscriptions.push(
       this.dashboardService.getUserStats$.subscribe({
-        next: (stats: UserStats) => this.userStats = stats,
+        next: (stats: any) => this.userStats = stats,
         error: (err) => console.error('Error loading user stats:', err)
       })
     );
 
     this.subscriptions.push(
-      this.dashboardService.getUserActivity$.subscribe({
-        next: (activities) => this.userActivities = activities,
-        error: (err) => console.error('Error loading user activities:', err)
-      })
-    );
-
-    this.subscriptions.push(
-      this.quizService.getAllQuiz().subscribe({
+      this.quizService.getQuizesDraft$.subscribe({
         next: (quizzes: Quiz[]) => this.draftQuizzes = quizzes,
         error: (err) => {
           console.error('Failed to fetch quizzes:', err);
@@ -74,14 +67,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.subscriptions.push(
         this.dashboardService.getDashboardStats().subscribe({
           error: (err) => console.error('Failed to load dashboard stats:', err)
-        })
-      );
-    }
-
-    if (this.userActivities.length === 0) {
-      this.subscriptions.push(
-        this.dashboardService.getRecentActivity().subscribe({
-          error: (err) => console.error('Failed to load recent activity:', err)
         })
       );
     }

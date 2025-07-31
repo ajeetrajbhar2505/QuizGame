@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
+import { App } from '@capacitor/app';
 
 interface OtpDetails {
   success: boolean;
@@ -28,16 +29,16 @@ export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal!: IonModal;
   @ViewChild('googleModal') googleModal!: IonModal;
   @ViewChild('facebookModal') facebookModal!: IonModal;
-  continuewith :boolean  = false
-  onclick(){
+  continuewith: boolean = false
+  onclick() {
     this.continuewith = true
-      setTimeout(() => {
-        const inputElement = document.getElementById('input');
-    if (inputElement) {
+    setTimeout(() => {
+      const inputElement = document.getElementById('input');
+      if (inputElement) {
         inputElement.focus();
-    }
-  }, 0);
-}
+      }
+    }, 0);
+  }
   loginForm = {
     email: '',
     otp: ''
@@ -76,7 +77,7 @@ export class LoginPage implements OnInit, OnDestroy {
     private platform: Platform,
     private toasterService: ToasterService,
     private dashboardService: DashboardService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.setupSocketListeners();
@@ -102,19 +103,19 @@ export class LoginPage implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{url: string}>('auth:google:url').subscribe(data => 
+      this.socketService.fromEvent<{ url: string }>('auth:google:url').subscribe(data =>
         this.openAuthUrl(data.url)
       )
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{url: string}>('auth:facebook:url').subscribe(data => 
+      this.socketService.fromEvent<{ url: string }>('auth:facebook:url').subscribe(data =>
         this.openAuthUrl(data.url)
       )
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{message: string}>('auth:error').subscribe(error => 
+      this.socketService.fromEvent<{ message: string }>('auth:error').subscribe(error =>
         this.handleAuthError(error.message)
       )
     );
@@ -131,14 +132,24 @@ export class LoginPage implements OnInit, OnDestroy {
       window.open(url, '_blank');
       return;
     }
-    this.inAppBrowser.create(url, '_blank', {
-      location: 'yes',
-      toolbar: 'yes',
-      zoom: 'yes',
-    });
+
+
+    try {
+      this.inAppBrowser.create(url, '_system');
+    } catch (error) {
+
+      this.inAppBrowser.create(url, '_blank', {
+        location: 'yes',
+        toolbar: 'yes',
+        zoom: 'yes',
+        hardwareback: 'yes'
+      });
+
+    }
+
   }
 
-  private handleAuthSuccess(data: any): void {
+  async handleAuthSuccess(data: any) {
     if (data == null) {
       return
     }
@@ -148,7 +159,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.resetAuthStates();
 
     if (this.platform.is('android')) {
-      this.navCtrl.back();
+      // await this.navCtrl.back()
     }
 
     setTimeout(() => this.handleSuccessfulLogin(data), 1000);
@@ -162,16 +173,22 @@ export class LoginPage implements OnInit, OnDestroy {
     setTimeout(() => this.handleSuccessfulLogin(data), 1000);
   }
 
-  private handleLoginResponse(data: any): void {
-    if (data != null) {
+  async handleLoginResponse(otpDetails: any) {
+    if (otpDetails != null) {
       this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'dark');
       this.loginSuccess = true;
       this.startOtpTimer();
-      this.otpDetails = data;
+      this.otpDetails = otpDetails;
       this.showOtpModal = true;
       this.isLoading = false;
       this.otpSuccess = false;
       this.otpModal.present();
+      const { data } = await this.otpModal.onDidDismiss();
+      if (data == undefined || data || data == null) {
+        this.loginForm.email = ""
+        this.toasterService.dismiss()
+        this.continuewith = false
+      }
       this.loginForm.otp = "";
     } else {
       this.errorModal.present();
@@ -180,16 +197,16 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  private handleAuthError(message: string): void {
+  handleAuthError(message: string) {
     this.toasterService.presentToast(message, 3000, 'bottom', 'dark');
-    setTimeout(() => {
+    setTimeout(async () => {
       if (!this.loginSuccess) {
         this.resetAuthStates();
         this.authFailed = true;
         this.isLoading = false;
         this.errorModal.present();
         if (this.platform.is('android')) {
-          this.navCtrl.back();
+          // await this.navCtrl.back()
         }
       }
     }, 1000);
@@ -209,11 +226,11 @@ export class LoginPage implements OnInit, OnDestroy {
     this.isLoading = true;
     try {
       await this.socketService.verifyloginOTP(
-        this.loginForm.email, 
-        this.loginForm.otp, 
+        this.loginForm.email,
+        this.loginForm.otp,
         this.otpDetails!.verificationToken
       );
-    } catch (error:any) {
+    } catch (error: any) {
       this.handleAuthError(error.message);
     }
   }
@@ -228,12 +245,12 @@ export class LoginPage implements OnInit, OnDestroy {
     this.isLoading = true;
     try {
       await this.socketService.login(this.loginForm.email);
-    } catch (error:any) {
+    } catch (error: any) {
       this.handleAuthError(error.message);
     }
   }
 
-  loginWithGoogle(): void {
+  async loginWithGoogle() {
     this.resetAuthStates();
     this.googleProgress = true;
     this.googleModal.present();
@@ -241,7 +258,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.socketService.initiateGoogleLogin();
   }
 
-  loginWithFacebook(): void {
+  async loginWithFacebook() {
     this.resetAuthStates();
     this.authFailed = false;
     this.facebookModal.present();
@@ -313,7 +330,6 @@ export class LoginPage implements OnInit, OnDestroy {
   private handleSuccessfulLogin(data: any): void {
     this.closeModal();
     this.dashboardService.getDashboardStats().subscribe();
-    this.dashboardService.getRecentActivity().subscribe();
     this.dashboardService.getLeaderboardUser().subscribe();
     this.router.navigate(['/home'], {
       queryParams: { token: data.token },

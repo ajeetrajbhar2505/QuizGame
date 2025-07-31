@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { SocketService } from './socket.service';
+import { filter, map, tap } from 'rxjs/operators';
 
 export interface QuizQuestion {
   _id: string;
@@ -21,8 +22,8 @@ export interface Quiz {
   createdBy: string;
   source: 'openai' | 'manual';
   category?: string;
-  isPublic: boolean,
-  approvalStatus: string,
+  isPublic: boolean;
+  approvalStatus: string;
   difficulty?: string;
 }
 
@@ -30,215 +31,228 @@ export interface Quiz {
   providedIn: 'root'
 })
 export class CreateQuizesService {
+  // State Subjects
+  private quizDraftSubject$ = new BehaviorSubject<Quiz | null>(null);
+  private quizzesDraftSubject$ = new BehaviorSubject<Quiz[]>([]);
+  private quizzesPublishedSubject$ = new BehaviorSubject<Quiz[]>([]);
+  private activeQuizSubject$ = new BehaviorSubject<Quiz | null>(null);
+  private quizResultSubject$ = new BehaviorSubject<{ 
+    correct: boolean, 
+    explanation?: string,
+    questionId?: string,
+    selectedAnswer?: string
+  } | null>(null);
 
-  private quizDraftSubject$ = new Subject<Quiz | null>();
-  private quizzesDraftSubject$ = new Subject<Quiz[]>();
-  private quizzesPublishedSubject$ = new Subject<Quiz[]>();
-  private activeQuizSubject$ = new Subject<Quiz | null>();
-  private quizResultSubject$ = new Subject<{ correct: boolean, explanation?: string } | null>();
-  getCurrentDraft$ = this.quizDraftSubject$.asObservable();
-  getQuizesDraft$ = this.quizzesDraftSubject$.asObservable();
-  getPublishedQuizes$ = this.quizzesPublishedSubject$.asObservable();
-  getActiveQuiz$ = this.activeQuizSubject$.asObservable();
-  getQuizResults$ = this.quizResultSubject$.asObservable();
+  // Public Observables
+  public getCurrentDraft$ = this.quizDraftSubject$.asObservable();
+  public getQuizesDraft$ = this.quizzesDraftSubject$.asObservable();
+  public getPublishedQuizes$ = this.quizzesPublishedSubject$.asObservable();
+  public getActiveQuiz$ = this.activeQuizSubject$.asObservable();
+  public getQuizResults$ = this.quizResultSubject$.asObservable();
+
+  // Value getters for synchronous access
+  get currentDraft(): Quiz | null {
+    return this.quizDraftSubject$.value;
+  }
+
+  get draftQuizzes(): Quiz[] {
+    return this.quizzesDraftSubject$.value;
+  }
+
+  get publishedQuizzes(): Quiz[] {
+    return this.quizzesPublishedSubject$.value;
+  }
+
+  get activeQuiz(): Quiz | null {
+    return this.activeQuizSubject$.value;
+  }
+
   constructor(private socketService: SocketService) {
-    this.setupSocketListeners()
-   }
+    this.setupSocketListeners();
+    this.initializeData();
+  }
 
+  private initializeData(): void {
+    // Load initial data
+    this.getAllQuiz().subscribe();
+    this.getPublishedQuiz().subscribe();
+  }
 
   private setupSocketListeners(): void {
-    // Listener for when quizzes are updated
+    // Quiz list updates
     this.socketService.socket.on('quiz:all:success', (data: { quizes: Quiz[] }) => {
       this.quizzesDraftSubject$.next(data.quizes);
     });
 
-    // Listener for published quizzes updates
+    // Published quizzes updates
     this.socketService.socket.on('quiz:published:success', (data: { quizes: Quiz[] }) => {
       this.quizzesPublishedSubject$.next(data.quizes);
     });
+
+    // Individual quiz updates
+    this.socketService.socket.on('quiz:updated', (quiz: Quiz) => {
+      this.updateQuizInState(quiz);
+    });
+
+    // Quiz deletion
+    this.socketService.socket.on('quiz:deleted', (quizId: string) => {
+      this.removeQuizFromState(quizId);
+    });
   }
 
+  private updateQuizInState(updatedQuiz: Quiz): void {
+    // Update in drafts if exists
+    const currentDrafts = this.quizzesDraftSubject$.value;
+    const draftIndex = currentDrafts.findIndex(q => q._id === updatedQuiz._id);
+    
+    if (draftIndex >= 0) {
+      const updatedDrafts = [...currentDrafts];
+      updatedDrafts[draftIndex] = updatedQuiz;
+      this.quizzesDraftSubject$.next(updatedDrafts);
+    }
+
+    // Update in published if exists
+    const currentPublished = this.quizzesPublishedSubject$.value;
+    const publishedIndex = currentPublished.findIndex(q => q._id === updatedQuiz._id);
+    
+    if (publishedIndex >= 0) {
+      const updatedPublished = [...currentPublished];
+      updatedPublished[publishedIndex] = updatedQuiz;
+      this.quizzesPublishedSubject$.next(updatedPublished);
+    }
+
+    // Update active quiz if it's the one being updated
+    if (this.activeQuiz?._id === updatedQuiz._id) {
+      this.activeQuizSubject$.next(updatedQuiz);
+    }
+
+    // Update current draft if it's the one being updated
+    if (this.currentDraft?._id === updatedQuiz._id) {
+      this.quizDraftSubject$.next(updatedQuiz);
+    }
+  }
+
+  private removeQuizFromState(quizId: string): void {
+    // Remove from drafts
+    this.quizzesDraftSubject$.next(
+      this.draftQuizzes.filter(q => q._id !== quizId)
+    );
+
+    // Remove from published
+    this.quizzesPublishedSubject$.next(
+      this.publishedQuizzes.filter(q => q._id !== quizId)
+    );
+
+    // Clear active quiz if it's the one being deleted
+    if (this.activeQuiz?._id === quizId) {
+      this.activeQuizSubject$.next(null);
+    }
+
+    // Clear current draft if it's the one being deleted
+    if (this.currentDraft?._id === quizId) {
+      this.quizDraftSubject$.next(null);
+    }
+  }
+
+  // Public API Methods
   createQuiz(prompt: string, options?: any): Observable<Quiz> {
     this.socketService.socket.emit('quiz:create', { prompt, options });
 
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:create:success').subscribe({
-        next: (data) => {
-          this.getAllQuiz().toPromise()
-          this.quizDraftSubject$.next(data.quiz);
-          this.getPublishedQuiz().toPromise()
-          observer.next(data.quiz);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:create:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        this.quizDraftSubject$.next(quiz);
+        // Refresh lists
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz().subscribe();
+      })
+    );
   }
 
   getAllQuiz(): Observable<Quiz[]> {
     this.socketService.socket.emit('quiz:all');
-
-    return new Observable<Quiz[]>(observer => {
-      const subscription = this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:all:success').subscribe({
-        next: (data) => {
-          this.quizzesDraftSubject$.next(data.quizes);
-          this.getPublishedQuiz().toPromise()
-          observer.next(data.quizes);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:all:success').pipe(
+      map(data => data.quizes),
+      tap(quizzes => this.quizzesDraftSubject$.next(quizzes))
+    );
   }
 
   getPublishedQuiz(): Observable<Quiz[]> {
     this.socketService.socket.emit('quiz:published');
-
-    return new Observable<Quiz[]>(observer => {
-      const subscription = this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').subscribe({
-        next: (data) => {
-          this.quizzesPublishedSubject$.next(data.quizes);
-          observer.next(data.quizes);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').pipe(
+      map(data => data.quizes),
+      tap(quizzes => this.quizzesPublishedSubject$.next(quizzes))
+    );
   }
 
   getQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:get', quizId);
-
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').subscribe({
-        next: (data) => {
-          observer.next(data.quiz);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:get:success').pipe(
+      map(data => data.quiz)
+    );
   }
 
   updateQuizStatus(quizId: string, publish: boolean, approvalStatus: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:publish', quizId, publish, approvalStatus);
-
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').subscribe({
-        next: (data) => {
-          this.getAllQuiz().toPromise()
-          this.getPublishedQuiz().toPromise()
-          observer.next(data['quiz']);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        // The socket listeners will handle the state updates
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz().subscribe();
+      })
+    );
   }
 
   generateNewQuestion(quizId: string, index: number): Observable<Quiz> {
     this.socketService.socket.emit('quiz:refreshQuestion', quizId, index);
-
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').subscribe({
-        next: (data) => {
-          observer.next(data.quiz);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:refreshQuestion:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => this.updateQuizInState(quiz))
+    );
   }
 
   deleteQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:delete', quizId);
-
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').subscribe({
-        next: (data) => {
-          this.getAllQuiz().toPromise()
-          this.getPublishedQuiz().toPromise()
-          observer.next(data.quiz);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:delete:success').pipe(
+      map(data => data.quiz),
+      tap(() => {
+        // The socket listeners will handle the state updates
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz().subscribe();
+      })
+    );
   }
 
   startQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:start', quizId);
-
-    return new Observable<Quiz>(observer => {
-      const subscription = this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').subscribe({
-        next: (data) => {
-          this.activeQuizSubject$.next(data.quiz);
-          observer.next(data.quiz);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
-    });
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => this.activeQuizSubject$.next(quiz))
+    );
   }
 
-  submitAnswer(questionId: string, answer: string): Observable<{ correct: boolean, explanation?: string }> {
-    if (!true) {
-      return new Observable(observer => {
-        observer.error('No active quiz');
-        observer.complete();
-      });
+  submitAnswer(questionId: string, answer: string): Observable<{ 
+    correct: boolean, 
+    explanation?: string,
+    questionId?: string,
+    selectedAnswer?: string
+  }> {
+    if (!this.activeQuiz) {
+      throw new Error('No active quiz');
     }
 
-    this.socketService.socket.emit('quiz:answer:submit',);
-
-    return new Observable<{ correct: boolean, explanation?: string }>(observer => {
-      const subscription = this.socketService.fromEvent<{ result: any }>('quiz:answer:result').subscribe({
-        next: (data) => {
-          this.quizResultSubject$.next(data.result);
-          observer.next(data.result);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-          observer.complete();
-        }
-      });
-      return () => subscription.unsubscribe();
+    this.socketService.socket.emit('quiz:answer:submit', {
+      quizId: this.activeQuiz._id,
+      questionId,
+      answer
     });
-  }
 
+    return this.socketService.fromEvent<{ result: any }>('quiz:answer:result').pipe(
+      map(data => data.result),
+      tap(result => this.quizResultSubject$.next(result))
+    );
+  }
 
   clearDraft(): void {
     this.quizDraftSubject$.next(null);
@@ -246,5 +260,11 @@ export class CreateQuizesService {
 
   endActiveQuiz(): void {
     this.activeQuizSubject$.next(null);
+    this.quizResultSubject$.next(null);
+  }
+
+  // Helper method to find a quiz by ID
+  findQuizById(id: string): Quiz | undefined {
+    return [...this.draftQuizzes, ...this.publishedQuizzes].find(q => q._id === id);
   }
 }

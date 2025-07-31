@@ -24,8 +24,8 @@
   
     <!-- Login options -->
     <div class="methods">
-      <button class="btn btn-google" (click)="continuewith = false">
-        <div class="btn-content" (click)="loginWithGoogle()">
+      <button class="btn btn-google" (click)="continuewith = false;loginWithGoogle()">
+        <div class="btn-content">
           <i class="fab fa-google"></i>
           Google
         </div>
@@ -260,12 +260,12 @@
           <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
         </div>
 
-        <ion-button [disabled]="this.loginForm.otp == ''" expand="block" shape="round" class="login-btn"
-          (click)="verifyOTP()">
-          Verify
-          <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
-        </ion-button>
 
+        <button class="btn btn-email center" [disabled]="this.loginForm.otp == ''" (click)="verifyOTP()">
+          Verify
+          <ion-icon *ngIf="!isLoading" name="arrow-forward" slot="end"></ion-icon>
+          <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
+          </button>
 
         <p class="resend-text" *ngIf="!canResendOtp">
           Resend OTP in <a (click)="resendOtp()" class="resend-link">{{formattedTimer}}</a>

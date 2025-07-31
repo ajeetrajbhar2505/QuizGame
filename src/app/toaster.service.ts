@@ -38,5 +38,9 @@ export class ToasterService {
     });
     toast.present();
   }
+
+  async dismiss(){
+    const toast  = await this.toastCtrl.dismiss()
+  }
   
 }

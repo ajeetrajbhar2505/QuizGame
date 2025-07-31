@@ -173,6 +173,7 @@
     justify-content: center;
     gap: 10px;
     color: #fff;
+    height: 60px;
     background: #6475fc;
   }
 
@@ -261,3 +262,12 @@
     color: ($accent);
     font-size: 14px;
   }
+
+  .spinner{
+    width: 20px;
+    margin-left: 10px;
+    color: #fff;
+   i {
+    color: #1877F2;
+  }
+}
