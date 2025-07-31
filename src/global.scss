@@ -139,7 +139,6 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     border-radius: 16px;
     object-fit: cover;
     border: 2px solid rgba(255,255,255,0.3);
-    box-shadow: var(--shadow-sm);
   }
   
   .stats-container {
