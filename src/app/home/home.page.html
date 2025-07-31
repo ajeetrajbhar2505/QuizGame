@@ -7,8 +7,12 @@
           <h1>Welcome back, {{currentUser.name}}!</h1>
           <p>Ready to challenge yourself today?</p>
         </div>
-        <img loading="eager" routerLink="/login" (click)="logout()" [src]="currentUser.avatar"
-          alt="User" class="user-avatar">
+
+        <img [src]="currentUser.avatar" 
+     crossorigin="anonymous" class="user-avatar"
+     (error)="avatarError($event)">
+
+    
       </div>
     </div>
 
@@ -148,7 +152,9 @@
           <div class="leaderboard-item" *ngFor="let user of leaderboardUsers;let i = index">
             <div class="rank">{{i+1}}</div>
             <div class="user">
-              <img loading="eager" [src]="user.avatar">
+              <img [src]="user.avatar" 
+              crossorigin="anonymous"
+              (error)="avatarError($event)">
               <div>
                 <div class="name">{{user.name}}</div>
               </div>

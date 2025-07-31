@@ -124,4 +124,10 @@ export class ProfilePage implements OnInit, OnDestroy {
     await Share.share(shareOptions);
 
   }
+
+  avatarError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/user.png'; // Your fallback image
+    img.onerror = null; // Prevent infinite loop if fallback fails
+  }
 }

@@ -39,7 +39,7 @@ export class SocketService implements OnDestroy {
   private loginDataSource = new ReplaySubject<AuthData | null>(1);
   private otpDataSource = new ReplaySubject<AuthData | null>(1);
   private connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
-  
+
   public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
   public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
   public otpSuccess$: Observable<AuthData | null> = this.otpDataSource.asObservable();
@@ -69,7 +69,7 @@ export class SocketService implements OnDestroy {
 
   private initializeSocket(token?: string): void {
     this.cleanupSocket();
-    
+
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
       reconnection: true,
@@ -128,10 +128,10 @@ export class SocketService implements OnDestroy {
     this.socket.on('reconnect_failed', () => {
       this.connectionState$.next('error');
       this.toasterService.presentToast(
-        'Connection failed. Please refresh the page.', 
-        3000, 
-        'bottom', 
-       
+        'Connection failed. Please refresh the page.',
+        3000,
+        'bottom',
+
       );
     });
   }
@@ -148,7 +148,7 @@ export class SocketService implements OnDestroy {
   private handleConnectionError(err: Error): void {
     console.error('Connection error:', err);
     this.connectionState$.next('error');
-    
+
     if (this.connectionAttempts < this.maxReconnectionAttempts) {
       setTimeout(() => {
         this.retryConnection();
@@ -196,7 +196,7 @@ export class SocketService implements OnDestroy {
       error.message || 'Authentication failed',
       3000,
       'bottom',
-     
+
     );
   }
 
@@ -216,6 +216,7 @@ export class SocketService implements OnDestroy {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user?.id) {
         this.socket.emit('auth:logout', user.id);
+        this.router.navigate(['/login']);
       }
     } catch (error) {
       console.error('Logout error:', error);
@@ -223,9 +224,9 @@ export class SocketService implements OnDestroy {
       this.clearAuthData();
       this.router.navigate(['/login']);
       this.toasterService.presentToast(
-        'You have been logged out', 
-        3000, 
-        'bottom', 
+        'You have been logged out',
+        3000,
+        'bottom',
         'dark'
       );
     }
@@ -294,7 +295,7 @@ export class SocketService implements OnDestroy {
     return new Observable<T>(observer => {
       const listener = (data: T) => observer.next(data);
       this.socket.on(eventName, listener);
-      
+
       return () => {
         this.socket.off(eventName, listener);
       };
