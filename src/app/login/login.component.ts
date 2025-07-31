@@ -128,7 +128,7 @@ export class LoginPage implements OnInit, OnDestroy {
         .subscribe(state => {
           this.connectionState = state;
           if (state === 'disconnected') {
-            this.toasterService.presentToast('Connection lost. Trying to reconnect...', 2000, 'bottom', 'warning');
+            this.toasterService.presentToast('Connection lost. Trying to reconnect...', 2000, 'bottom');
           }
         })
     );
@@ -238,11 +238,19 @@ export class LoginPage implements OnInit, OnDestroy {
 
   private validateOtpForm(): boolean {
     if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 3000, 'bottom', 'warning');
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom');
+      return false;
+    }
+    if (this.loginForm.email.toString().length > 320) {
+      this.toasterService.presentToast('Please enter email', 3000, 'bottom');
       return false;
     }
     if (!this.loginForm.otp) {
-      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom', 'warning');
+      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom');
+      return false;
+    }
+    if (this.loginForm.otp.toString().length > 6) {
+      this.toasterService.presentToast('Invalid OTP', 3000, 'bottom');
       return false;
     }
     return true;
@@ -250,7 +258,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   async login(): Promise<void> {
     if (!this.loginForm.email) {
-      this.toasterService.presentToast('Please enter email', 1000, 'bottom', 'warning');
+      this.toasterService.presentToast('Please enter email', 1000, 'bottom');
       return;
     }
 
@@ -354,6 +362,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.loginForm.otp = "";
     this.toasterService.dismiss();
     this.continuewith = false;
+    this.isLoading = false
   }
 
   private async handleSuccessfulLogin(data: any): Promise<void> {

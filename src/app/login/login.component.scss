@@ -35,6 +35,11 @@
     font-weight: 500;
     flex: none;
   }
+  .otp-container{
+    .logo{
+      height: unset !important;
+    }
+  }
 
   .logo {
     width: 100%;
