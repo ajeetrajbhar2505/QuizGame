@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subject, ReplaySubject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
+import { HttpClient } from '@angular/common/http';
 
 export interface AuthData {
   token: string;
@@ -58,7 +59,8 @@ export class SocketService implements OnDestroy {
 
   constructor(
     private router: Router,
-    private toasterService: ToasterService
+    private toasterService: ToasterService,
+    private http: HttpClient
   ) {
     this.initializeSocket(localStorage.getItem('token') || undefined);
   }
@@ -176,12 +178,10 @@ export class SocketService implements OnDestroy {
     });
   }
   private handleAuthSuccess(data: AuthData): void {
-    this.persistAuthData(data);
     this.authDataSource.next(data);
   }
 
-  private handleLoginSuccess(data: AuthData): void {
-    this.persistAuthData(data);
+  private handleLoginSuccess(data: any): void {
     this.loginDataSource.next(data);
   }
 
@@ -203,6 +203,7 @@ export class SocketService implements OnDestroy {
   private persistAuthData(data: AuthData): void {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    this.socket.disconnect()
     this.initializeSocket(data.token);
   }
 
@@ -255,11 +256,39 @@ export class SocketService implements OnDestroy {
   }
 
   public login(payload: string): void {
-    this.socket.emit('auth:login', payload);
+    if (this.socket.connected) {
+      this.socket.emit('auth:login', payload);
+      return
+    }
+    this.httpLogin(payload).subscribe(data => {
+      this.handleLoginSuccess(data)
+    })
+  }
+
+  httpLogin(payload: string): Observable<any> {
+    return this.http.post(environment.apiURL + 'auth/login', payload)
+  }
+
+  httpverifyOTP(email: string, otp: string, verificationToken: string) {
+    return this.http.post(environment.apiURL + 'auth/verifyOtpAndLogin', { email, otp, verificationToken })
+  }
+
+  httpGoogleLogin(payload: string): Observable<any> {
+    return this.http.post(environment.apiURL + 'auth/google/login', payload)
+  }
+
+  httpFacebookLogin(payload: string): Observable<any> {
+    return this.http.post(environment.apiURL + 'auth/facebook/login', payload)
   }
 
   public initiateGoogleLogin(): void {
-    this.socket.emit('auth:google:login');
+    if (this.socket.connected) {
+      this.socket.emit('auth:google:login');
+      return
+    }
+    this.httpGoogleLogin('payload').subscribe(data => {
+      this.handleAuthSuccess(data)
+    })
   }
 
   public handleGoogleCallback(code: string): void {
@@ -267,7 +296,13 @@ export class SocketService implements OnDestroy {
   }
 
   public initiateFacebookLogin(): void {
-    this.socket.emit('auth:facebook:login');
+    if (this.socket.connected) {
+      this.socket.emit('auth:facebook:login');
+      return
+    }
+    this.httpFacebookLogin('payload').subscribe(data => {
+      this.handleAuthSuccess(data)
+    })
   }
 
   public handleFacebookCallback(code: string): void {
@@ -283,7 +318,13 @@ export class SocketService implements OnDestroy {
   }
 
   public verifyLoginOTP(email: string, otp: string, verificationToken: string): void {
-    this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
+    if (this.socket.connected) {
+      this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
+      return
+    }
+    this.httpverifyOTP(email, otp, verificationToken).subscribe((data:any) => {
+      this.handleOtpSuccess(data)
+    })
   }
 
   public getCurrentUser(): void {
