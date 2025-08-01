@@ -174,6 +174,7 @@ export class SocketService implements OnDestroy {
     });
   }
   private handleAuthSuccess(data: AuthData): void {
+    this.persistAuthData(data);
     this.authDataSource.next(data);
   }
 
