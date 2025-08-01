@@ -3,9 +3,7 @@ import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subject, Subscription, timer } from 'rxjs';
 import { ModalController } from '@ionic/angular';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavController } from '@ionic/angular';
-import { Platform } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
@@ -67,9 +65,7 @@ export class LoginPage implements OnInit, OnDestroy {
     private router: Router,
     private socketService: SocketService,
     private modalController: ModalController,
-    private inAppBrowser: InAppBrowser,
     private navCtrl: NavController,
-    private platform: Platform,
     private toasterService: ToasterService,
     private dashboardService: DashboardService
   ) { }
@@ -105,13 +101,13 @@ export class LoginPage implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.socketService.fromEvent<{ url: string }>('auth:google:url')
         .pipe(takeUntil(this.destroy$))
-        .subscribe(data => this.openAuthUrl(data.url))
+        .subscribe(data => this.socketService.openAuthUrl(data.url))
     );
 
     this.subscriptions.push(
       this.socketService.fromEvent<{ url: string }>('auth:facebook:url')
         .pipe(takeUntil(this.destroy$))
-        .subscribe(data => this.openAuthUrl(data.url))
+        .subscribe(data => this.socketService.openAuthUrl(data.url))
     );
 
     this.subscriptions.push(
@@ -132,29 +128,6 @@ export class LoginPage implements OnInit, OnDestroy {
           }
         })
     );
-  }
-
-  private openAuthUrl(url: string): void {
-    if (!this.platform.is('cordova')) {
-      window.open(url, '_blank');
-      return;
-    }
-
-    try {
-      const browser = this.inAppBrowser.create(url, '_system');
-      browser.on('exit').subscribe(() => {
-        this.handleBrowserClose();
-      });
-    } catch (error) {
-      console.error('Error opening browser:', error);
-    }
-  }
-
-  private handleBrowserClose(): void {
-    this.googleProgress = false;
-    this.facebookProgress = false;
-    this.googleModal.dismiss();
-    this.facebookModal.dismiss();
   }
 
   async handleAuthSuccess(data: any) {

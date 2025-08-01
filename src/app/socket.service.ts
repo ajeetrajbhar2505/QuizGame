@@ -5,6 +5,8 @@ import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
 import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 export interface AuthData {
   token: string;
@@ -48,19 +50,13 @@ export class SocketService implements OnDestroy {
 
   private connectionAttempts = 0;
   private maxReconnectionAttempts = 5;
-  private readonly authEvents = [
-    'auth:login:success',
-    'auth:register:success',
-    'auth:google:success',
-    'auth:facebook:success',
-    'auth:otp:verify:success',
-    'auth:error'
-  ];
 
   constructor(
     private router: Router,
     private toasterService: ToasterService,
-    private http: HttpClient
+    private http: HttpClient,
+    private inAppBrowser: InAppBrowser,
+    private platform: Platform
   ) {
     this.initializeSocket(localStorage.getItem('token') || undefined);
   }
@@ -203,7 +199,9 @@ export class SocketService implements OnDestroy {
   private persistAuthData(data: AuthData): void {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    if (this.socket) {
     this.socket.disconnect()
+    }
     this.initializeSocket(data.token);
   }
 
@@ -256,7 +254,7 @@ export class SocketService implements OnDestroy {
   }
 
   public login(payload: string): void {
-    if (this.socket.connected) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('auth:login', payload);
       return
     }
@@ -265,8 +263,8 @@ export class SocketService implements OnDestroy {
     })
   }
 
-  httpLogin(payload: string): Observable<any> {
-    return this.http.post(environment.apiURL + 'auth/login', payload)
+  httpLogin(email: string): Observable<any> {
+    return this.http.post(environment.apiURL + 'auth/login', { email })
   }
 
   httpverifyOTP(email: string, otp: string, verificationToken: string) {
@@ -282,12 +280,12 @@ export class SocketService implements OnDestroy {
   }
 
   public initiateGoogleLogin(): void {
-    if (this.socket.connected) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('auth:google:login');
       return
     }
     this.httpGoogleLogin('payload').subscribe(data => {
-      this.handleAuthSuccess(data)
+      this.openAuthUrl(data.url)
     })
   }
 
@@ -296,12 +294,12 @@ export class SocketService implements OnDestroy {
   }
 
   public initiateFacebookLogin(): void {
-    if (this.socket.connected) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('auth:facebook:login');
       return
     }
     this.httpFacebookLogin('payload').subscribe(data => {
-      this.handleAuthSuccess(data)
+      this.openAuthUrl(data.url)
     })
   }
 
@@ -318,11 +316,11 @@ export class SocketService implements OnDestroy {
   }
 
   public verifyLoginOTP(email: string, otp: string, verificationToken: string): void {
-    if (this.socket.connected) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
       return
     }
-    this.httpverifyOTP(email, otp, verificationToken).subscribe((data:any) => {
+    this.httpverifyOTP(email, otp, verificationToken).subscribe((data: any) => {
       this.handleOtpSuccess(data)
     })
   }
@@ -344,7 +342,7 @@ export class SocketService implements OnDestroy {
   }
 
   public emit(eventName: string, ...args: any[]): void {
-    if (this.socket.connected) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit(eventName, ...args);
     } else {
       console.warn(`Attempted to emit ${eventName} while disconnected`);
@@ -354,6 +352,19 @@ export class SocketService implements OnDestroy {
         'bottom',
         'warning'
       );
+    }
+  }
+
+  openAuthUrl(url: string): void {
+    if (!this.platform.is('cordova')) {
+      window.open(url, '_blank');
+      return;
+    }
+
+    try {
+      this.inAppBrowser.create(url, '_system');
+    } catch (error) {
+      console.error('Error opening browser:', error);
     }
   }
 
