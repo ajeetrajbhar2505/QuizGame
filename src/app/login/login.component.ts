@@ -65,14 +65,12 @@ export class LoginPage implements OnInit, OnDestroy {
     private router: Router,
     private socketService: SocketService,
     private modalController: ModalController,
-    private navCtrl: NavController,
     private toasterService: ToasterService,
     private dashboardService: DashboardService
   ) { }
 
   ngOnInit() {
     this.setupSocketListeners();
-    this.setupConnectionListener();
   }
 
   ngOnDestroy() {
@@ -114,19 +112,6 @@ export class LoginPage implements OnInit, OnDestroy {
       this.socketService.fromEvent<{ message: string }>('auth:error')
         .pipe(takeUntil(this.destroy$))
         .subscribe(error => this.handleAuthError(error.message))
-    );
-  }
-
-  private setupConnectionListener(): void {
-    this.subscriptions.push(
-      this.socketService.connectionState
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(state => {
-          this.connectionState = state;
-          if (state === 'disconnected') {
-            this.toasterService.presentToast('Connection lost. Trying to reconnect...', 2000, 'bottom');
-          }
-        })
     );
   }
 

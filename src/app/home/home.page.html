@@ -8,11 +8,10 @@
           <p>Ready to challenge yourself today?</p>
         </div>
 
-        <img [src]="currentUser.avatar" (click)="logout()"
-     crossorigin="anonymous" class="user-avatar"
-     (error)="avatarError($event)">
+        <img [src]="currentUser.avatar" (click)="logout()" crossorigin="anonymous" class="user-avatar"
+          (error)="avatarError($event)">
 
-    
+
       </div>
     </div>
 
@@ -67,6 +66,58 @@
         <a routerLink="/quizes">View all <i class="fas fa-chevron-right"></i></a>
       </div>
 
+      <div class="quiz-card" *ngIf="publishedQuizzes.length == 0">
+        <div class="ph-item">
+          <div class="ph-col-12">
+            <div class="ph-picture"></div>
+            <div class="ph-row">
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+              <div class="ph-col-2 big"></div>
+              <div class="ph-col-4"></div>
+              <div class="ph-col-8 empty"></div>
+              <div class="ph-col-6"></div>
+              <div class="ph-col-6 empty"></div>
+              <div class="ph-col-12"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-card" *ngIf="publishedQuizzes.length == 0">
+        <div class="ph-item">
+          <div class="ph-col-12">
+            <div class="ph-picture"></div>
+            <div class="ph-row">
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+              <div class="ph-col-2 big"></div>
+              <div class="ph-col-4"></div>
+              <div class="ph-col-8 empty"></div>
+              <div class="ph-col-6"></div>
+              <div class="ph-col-6 empty"></div>
+              <div class="ph-col-12"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-card" *ngIf="publishedQuizzes.length == 0">
+        <div class="ph-item">
+          <div class="ph-col-12">
+            <div class="ph-picture"></div>
+            <div class="ph-row">
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+              <div class="ph-col-2 big"></div>
+              <div class="ph-col-4"></div>
+              <div class="ph-col-8 empty"></div>
+              <div class="ph-col-6"></div>
+              <div class="ph-col-6 empty"></div>
+              <div class="ph-col-12"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="quiz-card" *ngFor="let quiz of publishedQuizzes;let i = index">
         <div class="quiz-header">
           <h3 class="quiz-title">
@@ -110,7 +161,7 @@
             {{quiz.totalQuestions}} Qs
           </span>
         </div>
-        
+
         <div class="quiz-meta">
           <span class="meta-item">
             <i class="fas fa-bolt"></i>
@@ -127,7 +178,7 @@
           </span>
           <span class="meta-item"></span>
         </div>
-        
+
         <div class="quiz-actions">
           <button class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
             Start
@@ -147,14 +198,42 @@
         <a href="#">See ranking <i class="fas fa-chevron-right"></i></a>
       </div>
 
+      <div class="quiz-card" *ngIf="leaderboardUsers?.length == 0">
+        <div class="ph-item">
+          <div class="ph-col-12">
+            <div class="ph-row">
+              <div class="ph-col-2 empty big">
+                <div class="ph-avatar"></div>
+              </div>
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+              <div class="ph-col-6 empty big"> </div>
+              <div class="ph-col-4 empty big"></div>
+              <div class="ph-col-2 empty big"></div>
+              <div class="ph-col-2 empty big">
+                <div class="ph-avatar"></div>
+              </div>
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+              <div class="ph-col-6 empty big"></div>
+              <div class="ph-col-4 empty big"></div>
+              <div class="ph-col-2 empty big"></div>
+              <div class="ph-col-2 empty big">
+                <div class="ph-avatar"></div>
+              </div>
+              <div class="ph-col-6 big"></div>
+              <div class="ph-col-4 big"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="quiz-card">
         <div class="content" style="padding-bottom: 8px;">
           <div class="leaderboard-item" *ngFor="let user of leaderboardUsers;let i = index">
             <div class="rank">{{i+1}}</div>
             <div class="user">
-              <img [src]="user.avatar" 
-              crossorigin="anonymous"
-              (error)="avatarError($event)">
+              <img [src]="user.avatar" crossorigin="anonymous" (error)="avatarError($event)">
               <div>
                 <div class="name">{{user.name}}</div>
               </div>

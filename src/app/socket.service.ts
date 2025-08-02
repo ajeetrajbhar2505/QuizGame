@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { BehaviorSubject, Observable, Subject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, ReplaySubject, of } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
@@ -221,7 +221,6 @@ export class SocketService implements OnDestroy {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      this.clearAuthData();
       this.router.navigate(['/login']);
       this.toasterService.presentToast(
         'You have been logged out',
@@ -259,6 +258,7 @@ export class SocketService implements OnDestroy {
       this.socket.emit('auth:login', payload);
       return
     }
+    this.initializeSocket()
     this.httpLogin(payload).subscribe(data => {
       this.handleLoginSuccess(data)
     })
@@ -285,6 +285,7 @@ export class SocketService implements OnDestroy {
       this.socket.emit('auth:google:login');
       return
     }
+    this.initializeSocket()
     this.httpGoogleLogin('payload').subscribe(data => {
       this.openAuthUrl(data.url)
     })
@@ -299,6 +300,7 @@ export class SocketService implements OnDestroy {
       this.socket.emit('auth:facebook:login');
       return
     }
+    this.initializeSocket()
     this.httpFacebookLogin('payload').subscribe(data => {
       this.openAuthUrl(data.url)
     })
@@ -332,14 +334,19 @@ export class SocketService implements OnDestroy {
 
   // Socket utility methods
   public fromEvent<T>(eventName: string): Observable<T> {
-    return new Observable<T>(observer => {
-      const listener = (data: T) => observer.next(data);
-      this.socket.on(eventName, listener);
-
-      return () => {
-        this.socket.off(eventName, listener);
-      };
-    });
+    try {
+      return new Observable<T>(observer => {
+        const listener = (data: T) => observer.next(data);
+        this.socket.on(eventName, listener);
+  
+        return () => {
+          this.socket.off(eventName, listener);
+        };
+      });
+    } catch (error) {
+      return of()
+    }
+ 
   }
 
   public emit(eventName: string, ...args: any[]): void {

@@ -62,6 +62,59 @@
         </div>
 
         <div class="tab-content {{activeTab == 'quizzes'?'active':''}}">
+
+            <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
+                <div class="ph-item">
+                  <div class="ph-col-12">
+                    <div class="ph-picture"></div>
+                    <div class="ph-row">
+                      <div class="ph-col-6 big"></div>
+                      <div class="ph-col-4 big"></div>
+                      <div class="ph-col-2 big"></div>
+                      <div class="ph-col-4"></div>
+                      <div class="ph-col-8 empty"></div>
+                      <div class="ph-col-6"></div>
+                      <div class="ph-col-6 empty"></div>
+                      <div class="ph-col-12"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
+                <div class="ph-item">
+                  <div class="ph-col-12">
+                    <div class="ph-picture"></div>
+                    <div class="ph-row">
+                      <div class="ph-col-6 big"></div>
+                      <div class="ph-col-4 big"></div>
+                      <div class="ph-col-2 big"></div>
+                      <div class="ph-col-4"></div>
+                      <div class="ph-col-8 empty"></div>
+                      <div class="ph-col-6"></div>
+                      <div class="ph-col-6 empty"></div>
+                      <div class="ph-col-12"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
+                <div class="ph-item">
+                  <div class="ph-col-12">
+                    <div class="ph-picture"></div>
+                    <div class="ph-row">
+                      <div class="ph-col-6 big"></div>
+                      <div class="ph-col-4 big"></div>
+                      <div class="ph-col-2 big"></div>
+                      <div class="ph-col-4"></div>
+                      <div class="ph-col-8 empty"></div>
+                      <div class="ph-col-6"></div>
+                      <div class="ph-col-6 empty"></div>
+                      <div class="ph-col-12"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
                 <div class="quiz-header">
                 <h3 class="quiz-title">

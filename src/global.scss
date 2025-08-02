@@ -969,3 +969,21 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   margin-top: 20px;
 }
 
+
+
+
+.ph-item{
+  padding: unset !important;
+  margin: unset !important;
+  border: unset !important;
+}
+.ph-avatar{
+  width: 35px;
+  height: 35px;
+  min-width: unset;
+  margin: unset;
+}
+
+.ph-row div{
+  height: unset;
+}

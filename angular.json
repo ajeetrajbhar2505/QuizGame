@@ -31,7 +31,9 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss",
+            "node_modules/placeholder-loading/src/scss/placeholder-loading.scss"
+          ],
             "scripts": []
           },
           "configurations": {
@@ -117,7 +119,11 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+              "src/global.scss", 
+              "src/theme/variables.scss",
+              "node_modules/placeholder-loading/src/scss/placeholder-loading.scss"
+            ],
             "scripts": []
           },
           "configurations": {
