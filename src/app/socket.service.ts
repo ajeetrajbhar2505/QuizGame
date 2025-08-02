@@ -108,6 +108,10 @@ export class SocketService implements OnDestroy {
     this.socket.on('connect', () => {
       this.connectionAttempts = 0;
       this.connectionState$.next('connected');
+      if (localStorage.getItem('token')) {
+        this.socket.emit('quiz:all');
+        this.socket.emit('quiz:published');
+      }
     });
 
     this.socket.on('disconnect', (reason: Socket.DisconnectReason) => {

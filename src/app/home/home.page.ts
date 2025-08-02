@@ -29,7 +29,9 @@ export class HomePage implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer
-  ) {}
+  ) {
+    this.currentUser = this.dashboardService.getUser();
+  }
 
   ngOnInit(): void {
     this.initializeData();
