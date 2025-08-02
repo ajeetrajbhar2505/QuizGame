@@ -28,9 +28,13 @@ export class HomePage implements OnInit, OnDestroy {
   constructor(
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
+    // Current user
     this.currentUser = this.dashboardService.getUser();
+    if (this.currentUser.avatar) {
+      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
+    }
   }
 
   ngOnInit(): void {
@@ -62,11 +66,7 @@ export class HomePage implements OnInit, OnDestroy {
       })
     );
 
-    // Current user
-    this.currentUser = this.dashboardService.getUser();
-    if (this.currentUser.avatar) {
-      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
-    }
+
 
     // Quiz data subscription
     this.subscriptions.add(

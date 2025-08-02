@@ -66,7 +66,6 @@ export class SocketService implements OnDestroy {
   }
 
   private initializeSocket(token?: string): void {
-    this.cleanupSocket();
 
     this.socket = io(environment.apiURL, {
       transports: ['websocket'],
@@ -205,7 +204,7 @@ export class SocketService implements OnDestroy {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     if (this.socket) {
-    this.socket.disconnect()
+      this.socket.disconnect()
     }
     this.initializeSocket(data.token);
   }
@@ -216,15 +215,18 @@ export class SocketService implements OnDestroy {
   }
 
   public async logout(): Promise<void> {
+    this.toasterService.dismiss()
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user?.id) {
         this.socket.emit('auth:logout', user.id);
         this.router.navigate(['/login']);
+        localStorage.clear()
       }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      localStorage.clear()
       this.router.navigate(['/login']);
       this.toasterService.presentToast(
         'You have been logged out',
@@ -342,7 +344,7 @@ export class SocketService implements OnDestroy {
       return new Observable<T>(observer => {
         const listener = (data: T) => observer.next(data);
         this.socket.on(eventName, listener);
-  
+
         return () => {
           this.socket.off(eventName, listener);
         };
@@ -350,7 +352,7 @@ export class SocketService implements OnDestroy {
     } catch (error) {
       return of()
     }
- 
+
   }
 
   public emit(eventName: string, ...args: any[]): void {
