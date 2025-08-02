@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -40,6 +40,12 @@ library.add(fas);
     WebService,
     InAppBrowser,
     SocketService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (socket: SocketService) => () => socket.connect(localStorage.getItem('token') || ''),
+      deps: [SocketService],
+      multi: true
+    },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: interceptorInterceptor, multi: true }
   ],

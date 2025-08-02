@@ -31,7 +31,10 @@ export class HomePage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
   ) {
     // Current user
-    this.currentUser = this.dashboardService.getUser();
+    const User: any = localStorage.getItem('user')
+    if (User) {
+      this.currentUser = JSON.parse(User)
+    }
     if (this.currentUser.avatar) {
       this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
     }

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { BehaviorSubject, Observable, Subject, ReplaySubject, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, of, fromEvent } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
@@ -33,6 +33,10 @@ export interface RegisterPayload {
 
 type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting' | 'error';
 
+const MAX_RECONNECTION_ATTEMPTS = 5;
+const BASE_RECONNECTION_DELAY = 1000;
+const MAX_RECONNECTION_DELAY = 10000;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,14 +46,12 @@ export class SocketService implements OnDestroy {
   private loginDataSource = new ReplaySubject<AuthData | null>(1);
   private otpDataSource = new ReplaySubject<AuthData | null>(1);
   private connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
-
-  public authData$: Observable<AuthData | null> = this.authDataSource.asObservable();
-  public loginData$: Observable<AuthData | null> = this.loginDataSource.asObservable();
-  public otpSuccess$: Observable<AuthData | null> = this.otpDataSource.asObservable();
-  public connectionState: Observable<ConnectionState> = this.connectionState$.asObservable();
-
   private connectionAttempts = 0;
-  private maxReconnectionAttempts = 5;
+
+  public readonly authData$ = this.authDataSource.asObservable();
+  public readonly loginData$ = this.loginDataSource.asObservable();
+  public readonly otpSuccess$ = this.otpDataSource.asObservable();
+  public readonly connectionState = this.connectionState$.asObservable();
 
   constructor(
     private router: Router,
@@ -58,7 +60,7 @@ export class SocketService implements OnDestroy {
     private inAppBrowser: InAppBrowser,
     private platform: Platform
   ) {
-    this.initializeSocket(localStorage.getItem('token') || undefined);
+    this.initializeSocket(localStorage.getItem('token') || undefined)
   }
 
   ngOnDestroy(): void {
@@ -66,25 +68,29 @@ export class SocketService implements OnDestroy {
   }
 
   private initializeSocket(token?: string): void {
+    this.cleanupSocket();
 
-    this.socket = io(environment.apiURL, {
-      transports: ['websocket'],
-      reconnection: true,
-      autoConnect: true,
-      auth: token ? { token } : undefined,
-      reconnectionDelay: this.calculateReconnectionDelay(),
-      reconnectionAttempts: this.maxReconnectionAttempts
-    });
+    try {
+      this.socket = io(environment.apiURL, {
+        transports: ['websocket'],
+        reconnection: true,
+        autoConnect: true,
+        auth: token ? { token } : undefined,
+        reconnectionDelay: this.calculateReconnectionDelay(),
+        reconnectionAttempts: MAX_RECONNECTION_ATTEMPTS
+      });
 
-    this.setupConnectionMonitoring();
-    this.registerAuthEvents();
+      this.setupConnectionMonitoring();
+      this.registerAuthEvents();
+    } catch (error) {
+      console.error('Socket initialization error:', error);
+      this.connectionState$.next('error');
+    }
   }
 
   private calculateReconnectionDelay(): number {
     // Exponential backoff with jitter
-    const baseDelay = 1000;
-    const maxDelay = 10000;
-    const delay = Math.min(baseDelay * Math.pow(2, this.connectionAttempts), maxDelay);
+    const delay = Math.min(BASE_RECONNECTION_DELAY * Math.pow(2, this.connectionAttempts), MAX_RECONNECTION_DELAY);
     return delay + Math.random() * delay;
   }
 
@@ -107,9 +113,10 @@ export class SocketService implements OnDestroy {
     this.socket.on('connect', () => {
       this.connectionAttempts = 0;
       this.connectionState$.next('connected');
+
       if (localStorage.getItem('token')) {
-        this.socket.emit('quiz:all');
-        this.socket.emit('quiz:published');
+        this.emit('quiz:all');
+        this.emit('quiz:published');
       }
     });
 
@@ -128,12 +135,7 @@ export class SocketService implements OnDestroy {
 
     this.socket.on('reconnect_failed', () => {
       this.connectionState$.next('error');
-      this.toasterService.presentToast(
-        'Connection failed. Please refresh the page.',
-        3000,
-        'bottom',
-
-      );
+      this.showToast('Connection failed. Please refresh the page.');
     });
   }
 
@@ -150,38 +152,40 @@ export class SocketService implements OnDestroy {
     console.error('Connection error:', err);
     this.connectionState$.next('error');
 
-    if (this.connectionAttempts < this.maxReconnectionAttempts) {
-      setTimeout(() => {
-        this.retryConnection();
-      }, this.calculateReconnectionDelay());
+    if (this.connectionAttempts < MAX_RECONNECTION_ATTEMPTS) {
+      setTimeout(() => this.retryConnection(), this.calculateReconnectionDelay());
     }
   }
 
   private registerAuthEvents(): void {
-    this.socket.on('auth:login:success', this.handleLoginSuccess.bind(this));
-    this.socket.on('auth:register:success', this.handleAuthSuccess.bind(this));
-    this.socket.on('auth:google:success', this.handleAuthSuccess.bind(this));
-    this.socket.on('auth:facebook:success', this.handleAuthSuccess.bind(this));
-    this.socket.on('auth:otp:verify:success', this.handleOtpSuccess.bind(this));
-    this.socket.on('auth:google:callback', this.handleGoogleCallback.bind(this));
-    this.socket.on('auth:facebook:callback', this.handleFacebookCallback.bind(this));
+    const authEvents = {
+      'auth:login:success': this.handleLoginSuccess.bind(this),
+      'auth:register:success': this.handleAuthSuccess.bind(this),
+      'auth:google:success': this.handleAuthSuccess.bind(this),
+      'auth:facebook:success': this.handleAuthSuccess.bind(this),
+      'auth:otp:verify:success': this.handleOtpSuccess.bind(this),
+      'auth:google:callback': this.handleGoogleCallback.bind(this),
+      'auth:facebook:callback': this.handleFacebookCallback.bind(this),
+      'auth:error': (error: { message: string }) => {
+        console.error('Authentication error:', error.message);
+        this.showToast(error.message || 'Authentication failed');
+      },
+      'receiveLogin': (data: { token: string }) => {
+        localStorage.setItem('token', data.token);
+      }
+    };
 
-    // Auth error events
-    this.socket.on('auth:error', (error) => {
-      console.error('Authentication error:', error.message);
-    });
-
-    // Global login notification
-    this.socket.on('receiveLogin', (data: { token: string }) => {
-      localStorage.setItem('token', data.token);
+    Object.entries(authEvents).forEach(([event, handler]) => {
+      this.socket.on(event, handler);
     });
   }
+
   private handleAuthSuccess(data: AuthData): void {
     this.persistAuthData(data);
     this.authDataSource.next(data);
   }
 
-  private handleLoginSuccess(data: any): void {
+  private handleLoginSuccess(data: AuthData): void {
     this.loginDataSource.next(data);
   }
 
@@ -190,199 +194,152 @@ export class SocketService implements OnDestroy {
     this.otpDataSource.next(data);
   }
 
-  private handleAuthError(error: { message: string }): void {
-    console.error('Authentication error:', error.message);
-    this.toasterService.presentToast(
-      error.message || 'Authentication failed',
-      3000,
-      'bottom',
-
-    );
-  }
-
   private persistAuthData(data: AuthData): void {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    if (this.socket) {
-      this.socket.disconnect()
-    }
+    this.cleanupSocket();
     this.initializeSocket(data.token);
+  }
+
+  private showToast(message: string, duration = 3000, position = 'bottom', color = 'dark'): void {
+    this.toasterService.presentToast(message, duration, position, color);
   }
 
   public retryConnection(token?: string): void {
     this.connectionState$.next('connecting');
-    this.initializeSocket(token || undefined);
+    if (!this.socket.connected) {
+      this.initializeSocket(token || undefined);
+    }
   }
 
   public async logout(): Promise<void> {
-    this.toasterService.dismiss()
+    this.toasterService.dismiss();
+
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user?.id) {
-        this.socket.emit('auth:logout', user.id);
-        this.router.navigate(['/login']);
-        localStorage.clear()
+        this.emit('auth:logout', user.id);
       }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.clear()
+      localStorage.clear();
       this.router.navigate(['/login']);
-      this.toasterService.presentToast(
-        'You have been logged out',
-        3000,
-        'bottom',
-        'dark'
-      );
+      this.showToast('You have been logged out');
     }
   }
 
-  private clearAuthData(): void {
-    localStorage.clear();
-    this.authDataSource.next(null);
-    this.retryConnection();
-  }
-
   private handleUnauthorized(): void {
-    this.clearAuthData();
+    localStorage.clear();
     this.router.navigate(['/login']);
-    this.toasterService.presentToast(
-      'Session expired. Please login again.',
-      3000,
-      'bottom',
-      'warning'
-    );
+    this.showToast('Session expired. Please login again.', 3000, 'bottom', 'warning');
   }
 
   // Authentication methods
   public register(payload: RegisterPayload): void {
-    this.socket.emit('auth:register', payload);
+    this.emit('auth:register', payload);
   }
 
   public login(payload: string): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('auth:login', payload);
-      return
+    if (this.socket?.connected) {
+      this.emit('auth:login', payload);
+    } else {
+      this.httpLogin(payload).subscribe(data => this.handleLoginSuccess(data));
     }
-    this.initializeSocket()
-    this.httpLogin(payload).subscribe(data => {
-      this.handleLoginSuccess(data)
-    })
   }
 
   httpLogin(email: string): Observable<any> {
-    return this.http.post(environment.apiURL + 'auth/login', { email })
+    return this.http.post(`${environment.apiURL}auth/login`, { email });
   }
 
   httpverifyOTP(email: string, otp: string, verificationToken: string) {
-    return this.http.post(environment.apiURL + 'auth/verifyOtpAndLogin', { email, otp, verificationToken })
+    return this.http.post(`${environment.apiURL}auth/verifyOtpAndLogin`, { email, otp, verificationToken });
   }
 
   httpGoogleLogin(payload: string): Observable<any> {
-    return this.http.post(environment.apiURL + 'auth/google/login', payload)
+    return this.http.post(`${environment.apiURL}auth/google/login`, payload);
   }
 
   httpFacebookLogin(payload: string): Observable<any> {
-    return this.http.post(environment.apiURL + 'auth/facebook/login', payload)
+    return this.http.post(`${environment.apiURL}auth/facebook/login`, payload);
   }
 
   public initiateGoogleLogin(): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('auth:google:login');
-      return
+    if (this.socket?.connected) {
+      this.emit('auth:google:login');
+    } else {
+      this.httpGoogleLogin('payload').subscribe(data => this.openAuthUrl(data.url));
     }
-    this.initializeSocket()
-    this.httpGoogleLogin('payload').subscribe(data => {
-      this.openAuthUrl(data.url)
-    })
   }
 
   public handleGoogleCallback(code: string): void {
-    this.socket.emit('auth:google:callback', code);
+    this.emit('auth:google:callback', code);
   }
 
   public initiateFacebookLogin(): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('auth:facebook:login');
-      return
+    if (this.socket?.connected) {
+      this.emit('auth:facebook:login');
+    } else {
+      this.httpFacebookLogin('payload').subscribe(data => this.openAuthUrl(data.url));
     }
-    this.initializeSocket()
-    this.httpFacebookLogin('payload').subscribe(data => {
-      this.openAuthUrl(data.url)
-    })
   }
 
   public handleFacebookCallback(code: string): void {
-    this.socket.emit('auth:facebook:callback', code);
+    this.emit('auth:facebook:callback', code);
   }
 
   public sendOTP(email: string): void {
-    this.socket.emit('auth:otp:send', email);
+    this.emit('auth:otp:send', email);
   }
 
   public verifyOTP(email: string, otp: string): void {
-    this.socket.emit('auth:otp:verify', email, otp);
+    this.emit('auth:otp:verify', email, otp);
   }
 
   public verifyLoginOTP(email: string, otp: string, verificationToken: string): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('auth:verify:loginOTP', email, otp, verificationToken);
-      return
+    if (this.socket?.connected) {
+      this.emit('auth:verify:loginOTP', email, otp, verificationToken);
+    } else {
+      this.httpverifyOTP(email, otp, verificationToken).subscribe((data: any) => this.handleOtpSuccess(data));
     }
-    this.httpverifyOTP(email, otp, verificationToken).subscribe((data: any) => {
-      this.handleOtpSuccess(data)
-    })
-  }
-
-  public getCurrentUser(): void {
-    this.socket.emit('auth:me');
   }
 
   // Socket utility methods
   public fromEvent<T>(eventName: string): Observable<T> {
     try {
-      return new Observable<T>(observer => {
-        const listener = (data: T) => observer.next(data);
-        this.socket.on(eventName, listener);
-
-        return () => {
-          this.socket.off(eventName, listener);
-        };
-      });
+      return fromEvent(this.socket, eventName) as Observable<T>;
     } catch (error) {
-      return of()
+      console.error(`Error listening to event ${eventName}:`, error);
+      return of();
     }
-
   }
 
   public emit(eventName: string, ...args: any[]): void {
-    if (this.socket && this.socket.connected) {
+    if (this.socket?.connected) {
       this.socket.emit(eventName, ...args);
     } else {
       console.warn(`Attempted to emit ${eventName} while disconnected`);
-      this.toasterService.presentToast(
-        'Connection lost. Trying to reconnect...',
-        2000,
-        'bottom',
-        'warning'
-      );
+      this.showToast('Connection lost. Trying to reconnect...', 2000, 'bottom', 'warning');
     }
   }
 
   openAuthUrl(url: string): void {
-    if (!this.platform.is('cordova')) {
-      window.open(url, '_blank');
-      return;
-    }
-
     try {
-      this.inAppBrowser.create(url, '_system');
+      if (!this.platform.is('cordova')) {
+        window.open(url, '_blank');
+        return;
+      }
+      this.inAppBrowser.create(url, '_blank');
     } catch (error) {
       console.error('Error opening browser:', error);
     }
   }
-
+  public connect(token?: string): void {
+    if (!this.socket?.connected) {
+      this.initializeSocket(token);
+    }
+  }
   public disconnect(): void {
-    this.socket.disconnect();
+    this.socket?.disconnect();
   }
 }
