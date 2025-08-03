@@ -13,7 +13,7 @@ export class VerifyQuizComponent implements OnInit {
   isLoading: boolean = true;
   rejecting: boolean = false
   approving: boolean = false
-
+  currenttndex:number = 0
   constructor(
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
@@ -51,11 +51,10 @@ export class VerifyQuizComponent implements OnInit {
   }
 
   refreshQuestion(index: number): void {
+    this.currenttndex = index
     this.quizService.generateNewQuestion(this.quiz._id,index).subscribe({
       next: (newQuestion: any) => {
-        console.log({});
-        
-        this.quiz.questions[index] = newQuestion;
+        this.quiz.questions[this.currenttndex] = newQuestion;
       },
       error: (err: any) => {
         this.toasterService.error('Failed to refresh question')
