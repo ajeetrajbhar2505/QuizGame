@@ -519,3 +519,16 @@
             grid-template-columns: repeat(2, 1fr);
         }
     }
+
+
+    .difficulty-badge {
+        text-transform: lowercase;
+        padding: 5px 15px;
+        border-radius: 16px;
+        font-size: 10px;
+        position: absolute;
+        top: -6px;  
+        right: -7px;
+        border-radius: unset;
+        border-bottom-left-radius: 22px;
+    }

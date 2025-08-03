@@ -62,13 +62,12 @@ export class CreatePage implements OnInit, OnDestroy {
     );
   }
 
-  IsAdminTemplate(source: string): boolean {
-    switch (source.toLowerCase()) {
-      case 'gemini': return false;
-      case 'admin-template': return true;
-      default: return false;
-    }
+  IsAdminTemplate(quiz: Quiz): boolean {
+    return quiz.source?.toLowerCase() === 'admin-template' && 
+           !quiz.isPublic && 
+           quiz.approvalStatus !== 'rejected';
   }
+
 
   private handleQuizStateUpdate(currentDraft: Quiz | null, draftQuizzes: Quiz[]): void {
     // Handle quiz creation completion

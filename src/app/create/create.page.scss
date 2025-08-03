@@ -61,7 +61,8 @@
         position: relative;
         border: 1px solid rgba(0, 0, 0, 0.03);
     }
-    .cancel{
+
+    .cancel {
         position: absolute;
         top: 60px;
         right: 23px;
@@ -128,7 +129,7 @@
         transform: translateY(0);
     }
 
-        .floating-action {
+    .floating-action {
         position: fixed;
         bottom: 90px;
         right: 30px;
@@ -179,28 +180,33 @@
         color: #fff;
     }
 
-    button:disabled{
+    button:disabled {
         background-color: #6c5ce78f;
     }
 
 
-    .loading{
-          animation: spin 1s linear infinite;
+    .loading {
+        animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
         0% {
-          transform: rotate(0deg);
+            transform: rotate(0deg);
         }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
 
-      .difficulty-badge {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .difficulty-badge {
         text-transform: lowercase;
-        padding: 6px 12px;
+        padding: 5px 15px;
         border-radius: 16px;
-        font-size: 0.8rem;
-        background-color: lightgoldenrodyellow;
-      }
+        font-size: 10px;
+        position: absolute;
+        top: -6px;  
+        right: -7px;
+        border-radius: unset;
+        border-bottom-left-radius: 22px;
+    }

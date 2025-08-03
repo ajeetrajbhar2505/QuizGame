@@ -125,6 +125,13 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   }
 
+  IsAdminTemplate(quiz: Quiz): boolean {
+    return quiz.source?.toLowerCase() === 'admin-template' && 
+           !quiz.isPublic && 
+           quiz.approvalStatus !== 'rejected';
+  }
+
+
   avatarError(event: Event) {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/user.png'; // Your fallback image
