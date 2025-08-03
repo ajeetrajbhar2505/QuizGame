@@ -62,6 +62,14 @@ export class CreatePage implements OnInit, OnDestroy {
     );
   }
 
+  IsAdminTemplate(source: string): boolean {
+    switch (source.toLowerCase()) {
+      case 'gemini': return false;
+      case 'admin-template': return true;
+      default: return false;
+    }
+  }
+
   private handleQuizStateUpdate(currentDraft: Quiz | null, draftQuizzes: Quiz[]): void {
     // Handle quiz creation completion
     if (currentDraft && this.isCreating) {

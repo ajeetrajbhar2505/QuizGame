@@ -20,7 +20,7 @@ export interface Quiz {
   estimatedTime: number;
   totalQuestions: number;
   createdBy: string;
-  source: 'openai' | 'manual';
+  source: 'openai' | 'admin-template';
   category?: string;
   isPublic: boolean;
   approvalStatus: string;

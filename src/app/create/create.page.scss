@@ -196,3 +196,11 @@
           transform: rotate(360deg);
         }
       }
+
+      .difficulty-badge {
+        text-transform: lowercase;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        background-color: lightgoldenrodyellow;
+      }
