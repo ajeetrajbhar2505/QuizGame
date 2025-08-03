@@ -41,17 +41,21 @@ const MAX_RECONNECTION_DELAY = 10000;
   providedIn: 'root'
 })
 export class SocketService implements OnDestroy {
-  socket!: Socket;
+  public socket!: Socket;
   private authDataSource = new ReplaySubject<AuthData | null>(1);
   private loginDataSource = new ReplaySubject<AuthData | null>(1);
   private otpDataSource = new ReplaySubject<AuthData | null>(1);
+  private authErrorSource = new ReplaySubject<any | null>(1);
   private connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
   private connectionAttempts = 0;
+  private urlSubject = new ReplaySubject<{url: string}>(1); // New subject for URL events
 
   public readonly authData$ = this.authDataSource.asObservable();
   public readonly loginData$ = this.loginDataSource.asObservable();
   public readonly otpSuccess$ = this.otpDataSource.asObservable();
   public readonly connectionState = this.connectionState$.asObservable();
+  public readonly authError$ = this.authErrorSource.asObservable();
+  public readonly url$ = this.urlSubject.asObservable(); // Expose URL observable
 
   constructor(
     private router: Router,
@@ -60,59 +64,66 @@ export class SocketService implements OnDestroy {
     private inAppBrowser: InAppBrowser,
     private platform: Platform
   ) {
-    this.initializeSocket(localStorage.getItem('token') || undefined)
+    this.initializeSocket(localStorage.getItem('token') || undefined);
   }
 
   ngOnDestroy(): void {
-    this.cleanup();
+    this.cleanupSocket();
   }
 
   private initializeSocket(token?: string): void {
-    this.cleanupSocket();
-
     try {
+      this.connectionState$.next('connecting');
+      
       this.socket = io(environment.apiURL, {
         transports: ['websocket'],
         reconnection: true,
         autoConnect: true,
         auth: token ? { token } : undefined,
         reconnectionDelay: this.calculateReconnectionDelay(),
-        reconnectionAttempts: MAX_RECONNECTION_ATTEMPTS
+        reconnectionAttempts: MAX_RECONNECTION_ATTEMPTS,
+        forceNew: true // Ensure new connection instance
       });
 
       this.setupConnectionMonitoring();
       this.registerAuthEvents();
+      this.registerUrlEvents(); // Register URL-specific events
     } catch (error) {
       console.error('Socket initialization error:', error);
       this.connectionState$.next('error');
     }
   }
 
+  private registerUrlEvents(): void {
+    this.socket.on('auth:google:url', (data: {url: string}) => {
+      this.urlSubject.next(data); // Emit URL data
+      this.openAuthUrl(data); // Also open URL if needed
+    });
+
+    this.socket.on('auth:facebook:url', (data: {url: string}) => {
+      this.urlSubject.next(data); // Emit URL data
+      this.openAuthUrl(data); // Also open URL if needed
+    });
+  }
+
   private calculateReconnectionDelay(): number {
-    // Exponential backoff with jitter
     const delay = Math.min(BASE_RECONNECTION_DELAY * Math.pow(2, this.connectionAttempts), MAX_RECONNECTION_DELAY);
     return delay + Math.random() * delay;
   }
 
   private cleanupSocket(): void {
     if (this.socket) {
-      this.socket.removeAllListeners();
+      this.socket.off();
       this.socket.disconnect();
+      this.socket.removeAllListeners();
     }
-  }
-
-  private cleanup(): void {
-    this.cleanupSocket();
-    this.authDataSource.complete();
-    this.loginDataSource.complete();
-    this.otpDataSource.complete();
-    this.connectionState$.complete();
   }
 
   private setupConnectionMonitoring(): void {
     this.socket.on('connect', () => {
       this.connectionAttempts = 0;
       this.connectionState$.next('connected');
+      console.log('Socket connected');
 
       if (localStorage.getItem('token')) {
         this.emit('quiz:all');
@@ -131,6 +142,7 @@ export class SocketService implements OnDestroy {
     this.socket.on('reconnect_attempt', () => {
       this.connectionAttempts++;
       this.connectionState$.next('reconnecting');
+      console.log(`Reconnection attempt ${this.connectionAttempts}`);
     });
 
     this.socket.on('reconnect_failed', () => {
@@ -166,10 +178,7 @@ export class SocketService implements OnDestroy {
       'auth:otp:verify:success': this.handleOtpSuccess.bind(this),
       'auth:google:callback': this.handleGoogleCallback.bind(this),
       'auth:facebook:callback': this.handleFacebookCallback.bind(this),
-      'auth:error': (error: { message: string }) => {
-        console.error('Authentication error:', error.message);
-        this.showToast(error.message || 'Authentication failed');
-      },
+      'auth:error': this.handleAuthError.bind(this),
       'receiveLogin': (data: { token: string }) => {
         localStorage.setItem('token', data.token);
       }
@@ -178,6 +187,10 @@ export class SocketService implements OnDestroy {
     Object.entries(authEvents).forEach(([event, handler]) => {
       this.socket.on(event, handler);
     });
+  }
+
+  handleAuthError(error: any) {
+    this.authErrorSource.next(error.message);
   }
 
   private handleAuthSuccess(data: AuthData): void {
@@ -207,7 +220,8 @@ export class SocketService implements OnDestroy {
 
   public retryConnection(token?: string): void {
     this.connectionState$.next('connecting');
-    if (!this.socket.connected) {
+    if (!this.socket?.connected) {
+      this.cleanupSocket();
       this.initializeSocket(token || undefined);
     }
   }
@@ -268,7 +282,10 @@ export class SocketService implements OnDestroy {
     if (this.socket?.connected) {
       this.emit('auth:google:login');
     } else {
-      this.httpGoogleLogin('payload').subscribe(data => this.openAuthUrl(data.url));
+      this.httpGoogleLogin('payload').subscribe(data => {
+        this.urlSubject.next(data); // Emit URL data
+        this.openAuthUrl(data);
+      });
     }
   }
 
@@ -280,7 +297,10 @@ export class SocketService implements OnDestroy {
     if (this.socket?.connected) {
       this.emit('auth:facebook:login');
     } else {
-      this.httpFacebookLogin('payload').subscribe(data => this.openAuthUrl(data.url));
+      this.httpFacebookLogin('payload').subscribe(data => {
+        this.urlSubject.next(data); // Emit URL data
+        this.openAuthUrl(data);
+      });
     }
   }
 
@@ -316,29 +336,35 @@ export class SocketService implements OnDestroy {
 
   public emit(eventName: string, ...args: any[]): void {
     if (this.socket?.connected) {
+      console.log(`Emitting event: ${eventName}`, args);
       this.socket.emit(eventName, ...args);
     } else {
       console.warn(`Attempted to emit ${eventName} while disconnected`);
       this.showToast('Connection lost. Trying to reconnect...', 2000, 'bottom', 'warning');
+      this.retryConnection();
     }
   }
 
-  openAuthUrl(url: string): void {
+  openAuthUrl(data: {url: string}): void {
     try {
+      console.log('Opening URL:', data.url);
       if (!this.platform.is('cordova')) {
-        window.open(url, '_blank');
+        window.open(data.url, '_blank');
         return;
       }
-      this.inAppBrowser.create(url, '_blank');
+      this.inAppBrowser.create(data.url, '_blank');
     } catch (error) {
       console.error('Error opening browser:', error);
     }
   }
+
   public connect(token?: string): void {
     if (!this.socket?.connected) {
+      this.cleanupSocket();
       this.initializeSocket(token);
     }
   }
+
   public disconnect(): void {
     this.socket?.disconnect();
   }

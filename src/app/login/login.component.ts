@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subject, Subscription, timer } from 'rxjs';
 import { ModalController } from '@ionic/angular';
-import { NavController } from '@ionic/angular';
 import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
@@ -71,13 +70,31 @@ export class LoginPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.setupSocketListeners();
+    this.listenForSocialUrls();
   }
 
   ngOnDestroy() {
     this.cleanup();
   }
 
+  private listenForSocialUrls(): void {
+    this.subscriptions.push(
+      this.socketService.url$.subscribe(({url}) => {
+        console.log('Received social login URL:', url);
+        // Handle the URL - it will be automatically opened by the SocketService
+        // You can add additional logic here if needed
+      })
+    );
+  }
+
   private setupSocketListeners(): void {
+    this.subscriptions.push(
+      this.socketService.connectionState.subscribe(state => {
+        this.connectionState = state;
+        console.log('Connection state changed:', state);
+      })
+    );
+
     this.subscriptions.push(
       this.socketService.authData$
         .pipe(takeUntil(this.destroy$))
@@ -97,21 +114,9 @@ export class LoginPage implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
-      this.socketService.fromEvent<{ url: string }>('auth:google:url')
+      this.socketService.authError$
         .pipe(takeUntil(this.destroy$))
-        .subscribe(data => this.socketService.openAuthUrl(data.url))
-    );
-
-    this.subscriptions.push(
-      this.socketService.fromEvent<{ url: string }>('auth:facebook:url')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(data => this.socketService.openAuthUrl(data.url))
-    );
-
-    this.subscriptions.push(
-      this.socketService.fromEvent<{ message: string }>('auth:error')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(error => this.handleAuthError(error.message))
+        .subscribe(data => this.handleAuthError(data))
     );
   }
 
@@ -200,7 +205,6 @@ export class LoginPage implements OnInit, OnDestroy {
       return false;
     }
 
-
     if (!emailRegex.test(this.loginForm.email)) {
       this.toasterService.presentToast('Please enter valid email', 3000, 'bottom');
       return false;
@@ -215,7 +219,6 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   async login(): Promise<void> {
-
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!this.loginForm.email) {
       this.toasterService.presentToast('Please enter email', 3000, 'bottom');
@@ -327,7 +330,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.loginForm.otp = "";
     this.toasterService.dismiss();
     this.continuewith = false;
-    this.isLoading = false
+    this.isLoading = false;
   }
 
   private async handleSuccessfulLogin(data: any): Promise<void> {
