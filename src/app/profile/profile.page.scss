@@ -228,7 +228,8 @@
     .tab-content {
         display: none;
     }
-    .tab-content .quiz-card{
+
+    .tab-content .quiz-card {
         animation: unset;
     }
 
@@ -305,6 +306,7 @@
     .quiz-title {
         font-weight: 600;
         margin-bottom: 8px;
+        width: 280px;
     }
 
     .quiz-category {
@@ -527,7 +529,7 @@
         border-radius: 16px;
         font-size: 10px;
         position: absolute;
-        top: -6px;  
+        top: -6px;
         right: -7px;
         border-radius: unset;
         border-bottom-left-radius: 22px;
