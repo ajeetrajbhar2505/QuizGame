@@ -124,7 +124,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 6px;
-    width: 300px;
+    word-break: break-word;
   }
   
   .user-greeting p {
@@ -137,6 +137,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   .user-avatar {
     width: 52px;
     height: 52px;
+    margin-left: 5px;
     border-radius: 16px;
     object-fit: cover;
     border: 2px solid rgba(255,255,255,0.3);

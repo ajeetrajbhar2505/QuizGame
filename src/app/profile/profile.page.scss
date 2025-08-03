@@ -306,7 +306,7 @@
     .quiz-title {
         font-weight: 600;
         margin-bottom: 8px;
-        width: 280px;
+        word-break: break-word;
     }
 
     .quiz-category {
@@ -328,6 +328,7 @@
         display: flex;
         align-items: center;
         gap: 4px;
+        margin-left: 10px;
     }
 
     .quiz-actions {
