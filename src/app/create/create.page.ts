@@ -138,14 +138,15 @@ export class CreatePage implements OnInit, OnDestroy {
     this.isLoadingQuizzes = true;
     this.quizSubscriptions.add(
       this.quizService.getAllQuiz().subscribe({
-        complete: () => this.isLoadingQuizzes = false,
         error: (err) => {
-          this.isLoadingQuizzes = false;
           this.toasterService.error('Failed to load drafts');
           console.error('Error loading quizzes:', err);
         }
       })
     );
+    setTimeout(() => {
+      this.isLoadingQuizzes = false;
+    }, 1000);
   }
 
   verifyQuiz(quizId: string): void {

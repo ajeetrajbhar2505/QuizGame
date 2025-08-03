@@ -5,7 +5,8 @@
             <label for="quiz-input" class="input-label">Enter your topic or questions</label>
             <textarea [readOnly]="quizPromptDraft" id="quiz-input" [(ngModel)]="quizPrompt" class="big-input"
                 [placeholder]="waitingMessage"></textarea>
-            <button class="action-btn reject-btn cancel" *ngIf="quizPromptDraft" slot="right" (click)="cancelQuizGeneration()">
+            <button class="action-btn reject-btn cancel" *ngIf="quizPromptDraft" slot="right"
+                (click)="cancelQuizGeneration()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -76,56 +77,56 @@
 
             <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
                 <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
+                    <div class="ph-col-12">
+                        <div class="ph-picture"></div>
+                        <div class="ph-row">
+                            <div class="ph-col-6 big"></div>
+                            <div class="ph-col-4 big"></div>
+                            <div class="ph-col-2 big"></div>
+                            <div class="ph-col-4"></div>
+                            <div class="ph-col-8 empty"></div>
+                            <div class="ph-col-6"></div>
+                            <div class="ph-col-6 empty"></div>
+                            <div class="ph-col-12"></div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
+            </div>
+            <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
                 <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
+                    <div class="ph-col-12">
+                        <div class="ph-picture"></div>
+                        <div class="ph-row">
+                            <div class="ph-col-6 big"></div>
+                            <div class="ph-col-4 big"></div>
+                            <div class="ph-col-2 big"></div>
+                            <div class="ph-col-4"></div>
+                            <div class="ph-col-8 empty"></div>
+                            <div class="ph-col-6"></div>
+                            <div class="ph-col-6 empty"></div>
+                            <div class="ph-col-12"></div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
+            </div>
+            <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
                 <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
+                    <div class="ph-col-12">
+                        <div class="ph-picture"></div>
+                        <div class="ph-row">
+                            <div class="ph-col-6 big"></div>
+                            <div class="ph-col-4 big"></div>
+                            <div class="ph-col-2 big"></div>
+                            <div class="ph-col-4"></div>
+                            <div class="ph-col-8 empty"></div>
+                            <div class="ph-col-6"></div>
+                            <div class="ph-col-6 empty"></div>
+                            <div class="ph-col-12"></div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              
+            </div>
+
             <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
                 <h3 class="quiz-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,11 +202,13 @@
         </div>
 
         <div class="floating-action" (click)="loadDraftQuizzes()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 4v6h-6"/>
-                <path d="M1 20v-6h6"/>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-              </svg>
+            <svg [class]="(isLoadingQuizzes ? 'loading' : '')" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M23 4v6h-6" />
+                <path d="M1 20v-6h6" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
         </div>
     </div>
 </ion-content>
