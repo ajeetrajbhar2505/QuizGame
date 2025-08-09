@@ -24,7 +24,7 @@ export interface Quiz {
   category?: string;
   isPublic: boolean;
   approvalStatus: string;
-  difficulty?: string;
+  difficulty?: any;
 }
 
 @Injectable({
