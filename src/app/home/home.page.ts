@@ -3,6 +3,7 @@ import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
+import { RefresherCustomEvent } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -70,6 +71,13 @@ export class HomePage implements OnInit {
 
   trackByUserId(index: number, user: LeaderboardUser): string {
     return user.userId; // Assuming LeaderboardUser has an id property
+  }
+
+  handleRefresh(event: RefresherCustomEvent) {
+    this.loadInitialData()
+    setTimeout(() => {
+      event.target.complete();
+    }, 0);
   }
  
 }

@@ -2,8 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DashboardService, LeaderboardUser } from '../dashboard.service';
+import { user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { RefresherCustomEvent } from '@ionic/angular';
+
+
 
 @Component({
   selector: 'app-quizes',
@@ -12,14 +15,26 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class QuizesPage implements OnInit {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
-  @Input() ParentInjected:boolean = false
+  @Input() ParentInjected: boolean = false
+  isLoadingQuizzes: boolean = false;
+  currentUser: user = {
+    id: "",
+    name: "",
+    email: "",
+    avatar: "",
+    role: "",
+    isVerified: false
+  };
 
   constructor(
     private quizService: CreateQuizesService,
-    private dashboardService:DashboardService,
-    protected router:Router,
+    protected router: Router,
     private sanitizer: DomSanitizer
   ) {
+    const User: any = localStorage.getItem('user')
+    if (User) {
+      this.currentUser = JSON.parse(User)
+    }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
   }
 
@@ -27,7 +42,11 @@ export class QuizesPage implements OnInit {
     this.loadInitialData();
   }
 
-  private loadInitialData(): void {
+  protected loadInitialData(): void {
+    this.isLoadingQuizzes = true;
+    setTimeout(() => {
+      this.isLoadingQuizzes = false;
+    }, 2000);
     this.quizService.getPublishedQuiz().subscribe();
   }
 

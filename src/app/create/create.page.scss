@@ -129,51 +129,7 @@
         transform: translateY(0);
     }
 
-    .floating-action {
-        position: fixed;
-        bottom: 90px;
-        right: 30px;
-        width: 56px;
-        height: 56px;
-        background-color: $primary;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
-        cursor: pointer;
-        transition: all 0.3s;
-        z-index: 10;
-    }
 
-    .floating-action:hover {
-        transform: scale(1.1);
-    }
-
-    .floating-action svg {
-        width: 24px;
-        height: 24px;
-        color: white;
-    }
-
-    @media (max-width: 480px) {
-        .phone {
-            padding: 16px;
-        }
-
-        .input-container {
-            padding: 16px;
-        }
-
-        .big-input {
-            min-height: 140px;
-            padding: 14px;
-        }
-
-        .quiz-card {
-            padding: 16px;
-        }
-    }
 
     .section-title .spinner {
         width: 20px;
@@ -185,19 +141,7 @@
     }
 
 
-    .loading {
-        animation: spin 1s linear infinite;
-    }
 
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
 
     .difficulty-badge {
         text-transform: lowercase;
