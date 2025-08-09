@@ -57,13 +57,6 @@ export class HomePage implements OnInit {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
-  startQuiz(quizId: string): void {
-    // Quiz start logic
-  }
-
-  logout(): void {
-    this.dashboardService.logout();
-  }
 
   avatarError(event: Event) {
     const img = event.target as HTMLImageElement;
@@ -71,12 +64,12 @@ export class HomePage implements OnInit {
     img.onerror = null;
   }
 
-  // TrackBy functions for ngFor performance
-  trackByQuizId(index: number, quiz: Quiz): string {
-    return quiz._id; // Assuming Quiz has an _id property
+  logout(): void {
+    this.dashboardService.logout();
   }
 
   trackByUserId(index: number, user: LeaderboardUser): string {
     return user.userId; // Assuming LeaderboardUser has an id property
   }
+ 
 }
