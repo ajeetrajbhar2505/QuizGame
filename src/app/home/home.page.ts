@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
 
     // Initialize observables
     this.userStats$ = this.dashboardService.getUserStats$;
-    this.leaderboardUsers$ = this.dashboardService.leaderboard$;
+    this.leaderboardUsers$ = this.dashboardService.leaderboard$
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
   }
 
