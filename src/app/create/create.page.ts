@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
-import { Observable, Subscription, interval, map, take, combineLatest, filter } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { CreateQuizesService, Quiz } from '../create-quizes.service';
+import { Observable, combineLatest, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
 
@@ -9,11 +9,10 @@ import { ToasterService } from '../toaster.service';
   templateUrl: './create.page.html',
   styleUrls: ['./create.page.scss'],
 })
-export class CreatePage implements OnInit, OnDestroy {
+export class CreatePage implements OnInit {
   quizPrompt: string = '';
   quizPromptDraft: string = '';
   isCreating: boolean = false;
-  draftQuizzes: Quiz[] = [];
   waitingMessage: string = "e.g. 'Algebra basics' or paste questions here...";
   isLoadingQuizzes: boolean = false;
 
@@ -24,42 +23,28 @@ export class CreatePage implements OnInit, OnDestroy {
     "Applying difficulty settings...",
     "Quality checking...",
   ];
-  private messageSubscription?: Subscription;
-  private quizSubscriptions = new Subscription();
+
+  // Combined observable for view
+  viewModel$: Observable<{
+    currentDraft: Quiz | null;
+    draftQuizzes: Quiz[];
+  }>;
 
   constructor(
     private quizService: CreateQuizesService,
     private toasterService: ToasterService,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.setupQuizSubscriptions();
-    this.loadDraftQuizzes();
-  }
-
-  ngOnDestroy(): void {
-    this.quizSubscriptions.unsubscribe();
-  }
-
-  private setupQuizSubscriptions(): void {
-    // Combine draft and current quiz state
-    const quizState$ = combineLatest([
+  ) {
+    this.viewModel$ = combineLatest([
       this.quizService.getCurrentDraft$,
       this.quizService.getQuizesDraft$
-    ]);
-
-    this.quizSubscriptions.add(
-      quizState$.subscribe({
-        next: ([currentDraft, draftQuizzes]) => {
-          this.handleQuizStateUpdate(currentDraft, draftQuizzes);
-        },
-        error: (err) => {
-          this.toasterService.error('Error loading quiz data');
-          console.error('Quiz state error:', err);
-        }
-      })
+    ]).pipe(
+      map(([currentDraft, draftQuizzes]) => ({ currentDraft, draftQuizzes }))
     );
+  }
+
+  ngOnInit(): void {
+    this.loadDraftQuizzes();
   }
 
   IsAdminTemplate(quiz: Quiz): boolean {
@@ -68,36 +53,15 @@ export class CreatePage implements OnInit, OnDestroy {
            quiz.approvalStatus !== 'rejected';
   }
 
-
-  private handleQuizStateUpdate(currentDraft: Quiz | null, draftQuizzes: Quiz[]): void {
-    // Handle quiz creation completion
-    if (currentDraft && this.isCreating) {
-      this.isCreating = false;
-      this.toasterService.success('Quiz created successfully!');
-      this.resetPromptFields();
-    }
-
-    // Update draft quizzes list
-    this.draftQuizzes = draftQuizzes;
-  }
-
-  private resetPromptFields(): void {
-    this.quizPrompt = '';
-    this.quizPromptDraft = '';
-    this.messageSubscription?.unsubscribe();
-  }
-
   createQuiz(): void {
     if (!this.validateQuizPrompt()) return;
 
     this.prepareForQuizCreation();
     this.startLoadingAnimation();
     
-    this.quizSubscriptions.add(
-      this.quizService.createQuiz(this.quizPromptDraft).subscribe({
-        error: (err) => this.handleCreationError(err)
-      })
-    );
+    this.quizService.createQuiz(this.quizPromptDraft).subscribe({
+      error: (err) => this.handleCreationError(err)
+    });
   }
   
   private handleCreationError(err: any): void {
@@ -122,17 +86,21 @@ export class CreatePage implements OnInit, OnDestroy {
   }
 
   private startLoadingAnimation(): void {
-    this.messageSubscription = interval(3000).pipe(
-      map(index => this.loadingMessages[index % this.loadingMessages.length]),
-      take(this.loadingMessages.length * 2) // Show all messages twice max
-    ).subscribe({
-      next: (message) => this.quizPrompt = message,
-      complete: () => {
+    let counter = 0;
+    const maxMessages = this.loadingMessages.length * 2;
+    
+    const intervalId = setInterval(() => {
+      if (counter >= maxMessages || !this.isCreating) {
+        clearInterval(intervalId);
         if (this.isCreating) {
           this.quizPrompt = "Almost there...";
         }
+        return;
       }
-    });
+      
+      this.quizPrompt = this.loadingMessages[counter % this.loadingMessages.length];
+      counter++;
+    }, 3000);
   }
 
   cancelQuizGeneration(): void {
@@ -141,37 +109,32 @@ export class CreatePage implements OnInit, OnDestroy {
     this.resetPromptFields();
   }
 
+  private resetPromptFields(): void {
+    this.quizPrompt = '';
+    this.quizPromptDraft = '';
+  }
+
   loadDraftQuizzes(): void {
     this.isLoadingQuizzes = true;
-    this.quizSubscriptions.add(
-      this.quizService.getAllQuiz().subscribe({
-        error: (err) => {
-          this.toasterService.error('Failed to load drafts');
-          console.error('Error loading quizzes:', err);
-        }
-      })
-    );
     setTimeout(() => {
       this.isLoadingQuizzes = false;
-    }, 1000);
+    }, 2000);
+    this.quizService.getAllQuiz().subscribe();
   }
 
   verifyQuiz(quizId: string): void {
     this.router.navigate(['/verify-quiz'], { 
-      queryParams: { id: quizId },
-      state: { quiz: this.draftQuizzes.find(q => q._id === quizId) }
+      queryParams: { id: quizId }
     });
   }
 
   deleteQuiz(quizId: string): void {
-    this.quizSubscriptions.add(
-      this.quizService.deleteQuiz(quizId).subscribe({
-        error: (err) => {
-          this.toasterService.error(err.error?.message || 'Failed to delete quiz');
-          console.error('Delete failed:', err);
-        }
-      })
-    );
+    this.quizService.deleteQuiz(quizId).subscribe({
+      error: (err) => {
+        this.toasterService.error(err.error?.message || 'Failed to delete quiz');
+        console.error('Delete failed:', err);
+      }
+    });
   }
 
   trackByQuizId(index: number, quiz: Quiz): string {

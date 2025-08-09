@@ -1,24 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DashboardService, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
-import { Subscription } from 'rxjs';
 import { Share } from '@capacitor/share';
+import { Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit, OnDestroy {
-  userStats?: UserStats;
-  currentUser: user;
-  userActivities: any[] = [];
-  draftQuizzes: Quiz[] = [];
+export class ProfilePage implements OnInit {
   activeTab: string = 'quizzes'; // Default active tab
+  currentUser: user;
 
-  private subscriptions: Subscription[] = [];
+  // Combined view model observable
+  viewModel$: Observable<{
+    userStats: UserStats | null;
+    draftQuizzes: Quiz[];
+  }>;
 
   constructor(
     private dashboardService: DashboardService,
@@ -27,51 +29,28 @@ export class ProfilePage implements OnInit, OnDestroy {
     private toasterService: ToasterService
   ) {
     this.currentUser = this.dashboardService.getUser();
+    
+    // Combine all needed observables
+    this.viewModel$ = combineLatest([
+      this.dashboardService.getUserStats$,
+      this.quizService.getQuizesDraft$
+    ]).pipe(
+      map(([userStats, draftQuizzes]) => ({ userStats, draftQuizzes }))
+    );
   }
 
   ngOnInit(): void {
-    this.setupDataSubscriptions();
     this.loadInitialData();
   }
 
-  ngOnDestroy(): void {
-    this.cleanupSubscriptions();
-  }
-
-  private setupDataSubscriptions(): void {
-    this.subscriptions.push(
-      this.dashboardService.getUserStats$.subscribe({
-        next: (stats: any) => this.userStats = stats,
-        error: (err) => console.error('Error loading user stats:', err)
-      })
-    );
-
-    this.subscriptions.push(
-      this.quizService.getQuizesDraft$.subscribe({
-        next: (quizzes: Quiz[]) => this.draftQuizzes = quizzes,
-        error: (err) => {
-          console.error('Failed to fetch quizzes:', err);
-          this.toasterService.error('Failed to load your quizzes');
-        }
-      })
-    );
-  }
-
-  private cleanupSubscriptions(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    this.subscriptions = [];
-  }
-
   private loadInitialData(): void {
-    if (!this.userStats) {
-      this.subscriptions.push(
-        this.dashboardService.getDashboardStats().subscribe({
-          error: (err) => console.error('Failed to load dashboard stats:', err)
-        })
-      );
-    }
+    this.dashboardService.getDashboardStats().subscribe({
+      error: (err) => console.error('Failed to load dashboard stats:', err)
+    });
 
-    this.loadQuizzes();
+    this.quizService.getAllQuiz().subscribe({
+      error: (err) => console.error('Error loading quizzes:', err)
+    });
   }
 
   changeTab(tab: string): void {
@@ -83,26 +62,15 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   deleteQuiz(quizId: string): void {
-    this.subscriptions.push(
-      this.quizService.deleteQuiz(quizId).subscribe({
-        next: () => {
-          this.draftQuizzes = this.draftQuizzes.filter(quiz => quiz._id !== quizId);
-          this.toasterService.success('Quiz deleted successfully');
-        },
-        error: (err) => {
-          this.toasterService.error('Failed to delete quiz');
-          console.error('Delete quiz error:', err);
-        }
-      })
-    );
-  }
-
-  private loadQuizzes(): void {
-    this.subscriptions.push(
-      this.quizService.getAllQuiz().subscribe({
-        error: (err) => console.error('Error loading quizzes:', err)
-      })
-    );
+    this.quizService.deleteQuiz(quizId).subscribe({
+      next: () => {
+        this.toasterService.success('Quiz deleted successfully');
+      },
+      error: (err) => {
+        this.toasterService.error('Failed to delete quiz');
+        console.error('Delete quiz error:', err);
+      }
+    });
   }
 
   trackByQuizId(index: number, quiz: Quiz): string {
@@ -122,7 +90,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       dialogTitle: 'Challenge Your Friends',
     };
     await Share.share(shareOptions);
-
   }
 
   IsAdminTemplate(quiz: Quiz): boolean {
@@ -131,10 +98,9 @@ export class ProfilePage implements OnInit, OnDestroy {
            quiz.approvalStatus !== 'rejected';
   }
 
-
   avatarError(event: Event) {
     const img = event.target as HTMLImageElement;
-    img.src = 'assets/user.png'; // Your fallback image
-    img.onerror = null; // Prevent infinite loop if fallback fails
+    img.src = 'assets/user.png';
+    img.onerror = null;
   }
 }

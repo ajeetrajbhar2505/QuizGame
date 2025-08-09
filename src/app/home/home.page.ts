@@ -1,20 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit, OnDestroy {
-  userStats?: UserStats;
-  leaderboardUsers?: LeaderboardUser[];
-  userActivity?: any;
-  publishedQuizzes: Quiz[] = [];
-  private subscriptions = new Subscription();
+export class HomePage implements OnInit {
+  userStats$: Observable<UserStats | null>;
+  leaderboardUsers$: Observable<LeaderboardUser[]>;
+  publishedQuizzes$: Observable<Quiz[]>;
 
   currentUser: user = {
     id: "",
@@ -38,57 +36,20 @@ export class HomePage implements OnInit, OnDestroy {
     if (this.currentUser.avatar) {
       this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
     }
+
+    // Initialize observables
+    this.userStats$ = this.dashboardService.getUserStats$;
+    this.leaderboardUsers$ = this.dashboardService.leaderboard$;
+    this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
   }
 
   ngOnInit(): void {
-    this.initializeData();
     this.loadInitialData();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  private initializeData(): void {
-    // User stats subscription
-    this.subscriptions.add(
-      this.dashboardService.getUserStats$.subscribe((data: UserStats | null) => {
-        if (data) {
-          this.userStats = data;
-        }
-      })
-    );
-
-    // Leaderboard subscription with avatar processing
-    this.subscriptions.add(
-      this.dashboardService.leaderboard$.subscribe((data: any[]) => {
-        this.leaderboardUsers = data.map(user => ({
-          ...user,
-          avatar: user.avatar ? this.makeSafeUrl(user.avatar) : null
-        }));
-      })
-    );
-
-
-
-    // Quiz data subscription
-    this.subscriptions.add(
-      this.quizService.getPublishedQuizes$.subscribe(quizzes => {
-        this.publishedQuizzes = quizzes;
-      })
-    );
-  }
-
   private loadInitialData(): void {
-    // Only fetch if not already loaded
-    if (!this.userStats) {
-      this.dashboardService.getDashboardStats().subscribe();
-    }
-
-    if (!this.leaderboardUsers?.length) {
-      this.dashboardService.getLeaderboardUser().subscribe();
-    }
-
+    this.dashboardService.getDashboardStats().subscribe();
+    this.dashboardService.getLeaderboardUser().subscribe();
     this.quizService.getPublishedQuiz().subscribe();
   }
 
@@ -106,7 +67,16 @@ export class HomePage implements OnInit, OnDestroy {
 
   avatarError(event: Event) {
     const img = event.target as HTMLImageElement;
-    img.src = 'assets/user.png'; // Your fallback image
-    img.onerror = null; // Prevent infinite loop if fallback fails
+    img.src = 'assets/user.png';
+    img.onerror = null;
+  }
+
+  // TrackBy functions for ngFor performance
+  trackByQuizId(index: number, quiz: Quiz): string {
+    return quiz._id; // Assuming Quiz has an _id property
+  }
+
+  trackByUserId(index: number, user: LeaderboardUser): string {
+    return user.userId; // Assuming LeaderboardUser has an id property
   }
 }

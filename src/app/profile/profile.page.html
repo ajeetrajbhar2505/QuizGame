@@ -1,301 +1,212 @@
 <ion-content [fullscreen]="true">
     <div class="phone">
-        <div class="profile-header">
-            <div class="avatar-container">
-                <img [src]="currentUser.avatar" 
-                crossorigin="anonymous" class="profile-avatar"
-                (error)="avatarError($event)">
-                <div class="edit-avatar" *ngIf="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                </div>
-            </div>
-            <h1 class="profile-name">{{currentUser.name}}</h1>
-            <p class="profile-username">{{currentUser.email}}</p>
-
-            <div class="profile-stats">
-                <div class="stat-item">
-                    <div class="stat-value">{{userStats?.points || 0}}</div>
-                    <div class="stat-label">XP Points</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{userStats?.rank || 0}}</div>
-                    <div class="stat-label">Rank</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{userStats?.streak?.current || 0}}</div>
-                    <div class="stat-label">Streak</div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" routerLink="/create">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
-                    Create Quiz
-                </button>
-                <button class="btn btn-outline" (click)="shareApp()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="18" cy="5" r="3"></circle>
-                        <circle cx="6" cy="12" r="3"></circle>
-                        <circle cx="18" cy="19" r="3"></circle>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                    Share
-                </button>
-            </div>
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="avatar-container">
+          <img [src]="currentUser.avatar" 
+               crossorigin="anonymous" 
+               class="profile-avatar"
+               (error)="avatarError($event)">
+          <div class="edit-avatar" *ngIf="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
         </div>
-
-
-        <div class="tabs">
-            <div class="tab {{activeTab == 'quizzes'?'active':''}}" (click)="activeTab = 'quizzes'">My Quizzes</div>
-            <div class="tab {{activeTab == 'stats'?'active':''}}" (click)="activeTab = 'stats'">Stats</div>
+        <h1 class="profile-name">{{currentUser.name}}</h1>
+        <p class="profile-username">{{currentUser.email}}</p>
+  
+        <!-- Stats -->
+        <div class="profile-stats" *ngIf="viewModel$ | async as vm">
+          <div class="stat-item">
+            <div class="stat-value">{{vm.userStats?.points || 0}}</div>
+            <div class="stat-label">XP Points</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{vm.userStats?.rank || 0}}</div>
+            <div class="stat-label">Rank</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{vm.userStats?.streak?.current || 0}}</div>
+            <div class="stat-label">Streak</div>
+          </div>
         </div>
-
+  
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-primary" routerLink="/create">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            Create Quiz
+          </button>
+          <button class="btn btn-outline" (click)="shareApp()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Share
+          </button>
+        </div>
+      </div>
+  
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab {{activeTab == 'quizzes'?'active':''}}" (click)="activeTab = 'quizzes'">My Quizzes</div>
+        <div class="tab {{activeTab == 'stats'?'active':''}}" (click)="activeTab = 'stats'">Stats</div>
+      </div>
+  
+      <!-- Tab Content -->
+      <ng-container *ngIf="viewModel$ | async as vm">
+        <!-- Quizzes Tab -->
         <div class="tab-content {{activeTab == 'quizzes'?'active':''}}">
-
-            <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
-                <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
-                    </div>
+          <!-- Loading State -->
+          <ng-container *ngIf="vm.draftQuizzes.length === 0">
+            <div class="quiz-card">
+              <div class="ph-item">
+                <div class="ph-col-12">
+                  <div class="ph-picture"></div>
+                  <div class="ph-row">
+                    <div class="ph-col-6 big"></div>
+                    <div class="ph-col-4 big"></div>
+                    <div class="ph-col-2 big"></div>
+                    <div class="ph-col-4"></div>
+                    <div class="ph-col-8 empty"></div>
+                    <div class="ph-col-6"></div>
+                    <div class="ph-col-6 empty"></div>
+                    <div class="ph-col-12"></div>
                   </div>
                 </div>
               </div>
-              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
-                <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="quiz-card" *ngIf="draftQuizzes.length == 0">
-                <div class="ph-item">
-                  <div class="ph-col-12">
-                    <div class="ph-picture"></div>
-                    <div class="ph-row">
-                      <div class="ph-col-6 big"></div>
-                      <div class="ph-col-4 big"></div>
-                      <div class="ph-col-2 big"></div>
-                      <div class="ph-col-4"></div>
-                      <div class="ph-col-8 empty"></div>
-                      <div class="ph-col-6"></div>
-                      <div class="ph-col-6 empty"></div>
-                      <div class="ph-col-12"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            <div class="quiz-card" *ngFor="let quiz of draftQuizzes;let i = index">
-                <div class="quiz-header">
-                <h3 class="quiz-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
-                            fill="currentColor" />
-                        <path
-                            d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z"
-                            fill="currentColor" />
-                    </svg>
-                    {{quiz.title}}
-                </h3>
-                <div class="quiz-meta">
-                    <span class="quiz-meta-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        1.2K
-                    </span>
-                </div>
-                </div>
-                <p class="quiz-description">{{quiz.description}}</p>
-                <div class="quiz-meta">
-                    <span class="meta-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        {{ quiz.estimatedTime / 60 }} min
-                    </span>
-                    <span class="meta-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                        {{quiz.difficulty}}
-                    </span>
-                    <span class="meta-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M8 10H8.01M12 10H12.01M16 10H16.01M8 14H8.01M12 14H12.01M16 14H16.01M8 18H8.01M12 18H12.01M16 18H16.01M7 4H17C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18V6C5 4.89543 5.89543 4 7 4Z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        {{quiz.totalQuestions}} Qs
-                    </span>
-                </div>
-                <div class="quiz-actions">
-                    <ion-chip *ngIf="IsAdminTemplate(quiz)" class="difficulty-badge">
-                        template
-                      </ion-chip>
-                    <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus != 'pending'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor"
-                                *ngIf="quiz.approvalStatus == 'rejected'" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M5 13L9 17L19 7" stroke="currentColor" *ngIf="quiz.approvalStatus == 'approved'"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        {{quiz.approvalStatus}}
-                    </button>
-                    <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus == 'pending'"
-                        (click)="verifyQuiz(quiz._id)">
-                        Verify
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <button class="action-btn reject-btn" *ngIf="quiz.approvalStatus != 'pending'"
-                        (click)="deleteQuiz(quiz._id)">
-                        Delete
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z"
-                                fill="currentColor" />
-                        </svg>
-                    </button>
-                </div>
             </div>
+          </ng-container>
+  
+          <!-- Quizzes List -->
+          <div class="quiz-card" *ngFor="let quiz of vm.draftQuizzes; trackBy: trackByQuizId">
+            <div class="quiz-header">
+              <h3 class="quiz-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
+                    fill="currentColor" />
+                  <path
+                    d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z"
+                    fill="currentColor" />
+                </svg>
+                {{quiz.title}}
+              </h3>
+              <div class="quiz-meta">
+                <span class="quiz-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  1.2K
+                </span>
+              </div>
+            </div>
+            <p class="quiz-description">{{quiz.description}}</p>
+            <div class="quiz-meta">
+              <span class="meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {{ quiz.estimatedTime / 60 }} min
+              </span>
+              <span class="meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                {{quiz.difficulty}}
+              </span>
+              <span class="meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8 10H8.01M12 10H12.01M16 10H16.01M8 14H8.01M12 14H12.01M16 14H16.01M8 18H8.01M12 18H12.01M16 18H16.01M7 4H17C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18V6C5 4.89543 5.89543 4 7 4Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {{quiz.totalQuestions}} Qs
+              </span>
+            </div>
+            <div class="quiz-actions">
+              <ion-chip *ngIf="IsAdminTemplate(quiz)" class="difficulty-badge">
+                template
+              </ion-chip>
+              <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus != 'pending'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor"
+                    *ngIf="quiz.approvalStatus == 'rejected'" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path d="M5 13L9 17L19 7" stroke="currentColor" *ngIf="quiz.approvalStatus == 'approved'"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {{quiz.approvalStatus}}
+              </button>
+              <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus == 'pending'"
+                (click)="verifyQuiz(quiz._id)">
+                Verify
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button class="action-btn reject-btn" *ngIf="quiz.approvalStatus != 'pending'"
+                (click)="deleteQuiz(quiz._id)">
+                Delete
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z"
+                    fill="currentColor" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
-
+  
+        <!-- Stats Tab -->
         <div class="tab-content {{activeTab == 'stats'?'active':''}}">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="20" x2="12" y2="10"></line>
-                            <line x1="18" y1="20" x2="18" y2="4"></line>
-                            <line x1="6" y1="20" x2="6" y2="16"></line>
-                        </svg>
-                        Weekly Activity
-                    </div>
-                    <div class="stat-card-value">87%</div>
-                    <div class="stat-card-change positive">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        12% from last week
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        Followers
-                    </div>
-                    <div class="stat-card-value">248</div>
-                    <div class="stat-card-change positive">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        8 new this week
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M8.85 8.85a3.999 3.999 0 0 1 5.69-.01"></path>
-                            <path d="M16 12c0 .37-.21.71-.53.88"></path>
-                            <path d="M11.93 16a3.999 3.999 0 0 1 3.42-1.96"></path>
-                            <path d="M12 17.93v1.96"></path>
-                            <path d="M10.88 16.53c.17-.32.51-.53.88-.53"></path>
-                            <path d="M12 12v-1.93"></path>
-                            <path d="M13.96 11.93c.65.1 1.25.35 1.74.73"></path>
-                            <path d="M16.83 10.88c.24-.43.37-.93.37-1.45"></path>
-                        </svg>
-                        Questions Answered
-                    </div>
-                    <div class="stat-card-value">1,024</div>
-                    <div class="stat-card-change positive">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                        5% accuracy increase
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        Avg. Time
-                    </div>
-                    <div class="stat-card-value">32s</div>
-                    <div class="stat-card-change negative">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                        2s slower
-                    </div>
-                </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="20" x2="12" y2="10"></line>
+                  <line x1="18" y1="20" x2="18" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+                Weekly Activity
+              </div>
+              <div class="stat-card-value">87%</div>
+              <div class="stat-card-change positive">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                  <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+                12% from last week
+              </div>
             </div>
+  
+            <!-- Other stat cards -->
+            <!-- ... -->
+          </div>
         </div>
+      </ng-container>
     </div>
-</ion-content>
+  </ion-content>
