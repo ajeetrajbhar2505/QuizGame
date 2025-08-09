@@ -49,7 +49,7 @@ export class HomePage implements OnInit {
 
   private loadInitialData(): void {
     this.dashboardService.getDashboardStats().subscribe();
-    this.dashboardService.getLeaderboardUser().subscribe();
+    this.dashboardService.getLeaderboardUser(3).subscribe();
     this.quizService.getPublishedQuiz().subscribe();
   }
 

@@ -12,7 +12,6 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class QuizesPage implements OnInit {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
-  @Input() leaderboardUsers$: Observable<LeaderboardUser[]>;
   @Input() ParentInjected:boolean = false
 
   constructor(
@@ -22,7 +21,6 @@ export class QuizesPage implements OnInit {
     private sanitizer: DomSanitizer
   ) {
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
-    this.leaderboardUsers$ = this.dashboardService.leaderboard$
   }
 
   ngOnInit(): void {
@@ -31,14 +29,11 @@ export class QuizesPage implements OnInit {
 
   private loadInitialData(): void {
     this.quizService.getPublishedQuiz().subscribe();
-    this.dashboardService.getLeaderboardUser().subscribe();
   }
 
   startQuiz(quizId: string): void {
     // Quiz start logic
   }
-
-
 
   protected makeSafeUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);

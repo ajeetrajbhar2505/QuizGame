@@ -73,8 +73,8 @@ export class DashboardService {
   }
 
 
-  getLeaderboardUser() {
-    this.socketService.socket.emit('dashboard:leaderboardUser:get');
+  getLeaderboardUser(limit:number) {
+    this.socketService.socket.emit('dashboard:leaderboardUser:get',limit);
     return new Observable<LeaderboardUser[]>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:leaderboardUser:success').subscribe({
         next: (data: any) => {
