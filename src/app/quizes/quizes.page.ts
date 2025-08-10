@@ -15,6 +15,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
 })
 export class QuizesPage implements OnDestroy {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
+  @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
   @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter(false)
@@ -38,6 +39,7 @@ export class QuizesPage implements OnDestroy {
       this.currentUser = JSON.parse(User)
     }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
+    this.liveQuizes$ = this.quizService.liveQuizes$
     this.loadInitialData(0)
   }
 
@@ -55,6 +57,7 @@ export class QuizesPage implements OnDestroy {
     }, 2000);
     this.handleRefresh.emit(true)
     this.quizService.getPublishedQuiz(limit).subscribe();
+    this.quizService.getActiveQuizes(limit).subscribe();
   }
 
   startQuiz(quizId: string): void {

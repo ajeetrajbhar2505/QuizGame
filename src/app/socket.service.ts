@@ -127,7 +127,7 @@ export class SocketService implements OnDestroy {
 
       if (localStorage.getItem('token')) {
         this.emit('quiz:all');
-        this.emit('quiz:published');
+        this.emit('quiz:published',3);
       }
     });
 
