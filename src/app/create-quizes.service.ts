@@ -68,20 +68,8 @@ export class CreateQuizesService {
     return this.activeQuizSubject$.value;
   }
 
-  constructor(private socketService: SocketService, private router: Router) {
+  constructor(private socketService: SocketService) {
     this.setupSocketListeners();
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        // Store current route without query params
-        if (event && (event.urlAfterRedirects.split('?')[0] == '/home' || event.urlAfterRedirects.split('?')[0] == '/quizes')) {
-          let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
-          if (event) {
-            this.initializeData(limit);
-          }
-        }
-
-      });
   }
 
   public initializeData(limit: number): void {
@@ -176,7 +164,7 @@ export class CreateQuizesService {
         this.quizDraftSubject$.next(quiz);
         // Refresh lists
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(0).subscribe();
+        this.getPublishedQuiz(3).subscribe();
       })
     );
   }
@@ -190,6 +178,7 @@ export class CreateQuizesService {
   }
 
   getPublishedQuiz(limit: number): Observable<Quiz[]> {
+    console.log(limit);
     this.socketService.socket.emit('quiz:published', limit);
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').pipe(
       map(data => data.quizes),
@@ -211,7 +200,7 @@ export class CreateQuizesService {
       tap(quiz => {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(0).subscribe();
+        this.getPublishedQuiz(3).subscribe();
       })
     );
   }
@@ -231,7 +220,7 @@ export class CreateQuizesService {
       tap(() => {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(0).subscribe();
+        this.getPublishedQuiz(3).subscribe();
       })
     );
   }

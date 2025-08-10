@@ -13,11 +13,11 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage implements OnInit {
+export class QuizesPage {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
-  @Output() handleRefresh:EventEmitter<boolean> = new EventEmitter(false)
+  @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter(false)
 
   currentUser: user = {
     id: "",
@@ -40,9 +40,6 @@ export class QuizesPage implements OnInit {
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
   }
 
-  ngOnInit(): void {
-    this.loadInitialData();
-  }
 
   protected loadInitialData(): void {
     this.isLoadingQuizzes = true;
@@ -50,7 +47,8 @@ export class QuizesPage implements OnInit {
       this.isLoadingQuizzes = false;
     }, 2000);
     this.handleRefresh.emit(true)
-    this.quizService.getPublishedQuiz(0).subscribe();
+    let limit = this.ParentInjected ? 3 : 0
+    this.quizService.getPublishedQuiz(limit).subscribe();
   }
 
   startQuiz(quizId: string): void {

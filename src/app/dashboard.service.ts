@@ -50,20 +50,7 @@ export class DashboardService {
   private leaderboardSubject = new ReplaySubject<LeaderboardUser[]>(1);
   public leaderboard$ = this.leaderboardSubject.asObservable();
 
-  constructor(private socketService: SocketService, private router: Router) {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        // Store current route without query params
-        if (event && (event.urlAfterRedirects.split('?')[0] == '/home' || event.urlAfterRedirects.split('?')[0] == '/users')) {
-          let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
-          if (event) {
-          this.getLeaderboardUser(limit)
-        }
-        }
-    
-      });
-  }
+  constructor(private socketService: SocketService) {}
 
   getDashboardStats() {
     this.socketService.socket.emit('dashboard:stats:get');
@@ -86,6 +73,7 @@ export class DashboardService {
 
 
   getLeaderboardUser(limit:number) {
+    console.log(limit);
     this.socketService.socket.emit('dashboard:leaderboardUser:get', limit);
     return new Observable<LeaderboardUser[]>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:leaderboardUser:success').subscribe({
