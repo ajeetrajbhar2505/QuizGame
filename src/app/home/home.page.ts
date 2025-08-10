@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -10,7 +10,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit,OnDestroy {
   userStats$: Observable<UserStats | null>;
   leaderboardUsers$: Observable<LeaderboardUser[]>;
   publishedQuizzes$: Observable<Quiz[]>;
@@ -72,5 +72,10 @@ export class HomePage implements OnInit {
   handleRefresh(event: any) {
     this.loadInitialData()
   }
+
+  ngOnDestroy(): void {
+    this.dashboardService.getLeaderboardUser(0).subscribe();
+  }
+  
 
 }
