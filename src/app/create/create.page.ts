@@ -119,7 +119,9 @@ export class CreatePage implements OnInit {
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
-    this.quizService.getAllQuiz().subscribe();
+    this.quizService.getAllQuiz().subscribe(()=>{
+      this.isCreating = false
+    });
   }
 
   verifyQuiz(quizId: string): void {

@@ -17,7 +17,7 @@ export class UsersComponent  implements OnDestroy {
     private sanitizer: DomSanitizer
   ) {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
-    this.loadLeaderboardData(0)
+    this.loadLeaderboardData(3)
   }
   
 

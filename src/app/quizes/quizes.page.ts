@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -40,7 +40,7 @@ export class QuizesPage implements OnDestroy {
     }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
     this.liveQuizes$ = this.quizService.liveQuizes$
-    this.loadInitialData(0)
+    this.loadInitialData(3)
   }
 
 

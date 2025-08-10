@@ -50,7 +50,7 @@
     
   
     <!-- Combined async state for quizzes -->
-    <ng-container *ngIf="liveQuizes$ | async as quizzes; else livequizzesLoading">
+    <ng-container *ngIf="liveQuizes$ | async as quizzes;">
       <ng-container *ngIf="quizzes.length > 0; else noliveQuizzes">
         <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
           <div class="quiz-header">
@@ -111,7 +111,7 @@
             <span class="meta-item"></span>
           </div>
   
-          <div class="quiz-actions" *ngIf="currentUser.role != 'user'">
+          <div class="quiz-actions" *ngIf="currentUser.role == 'user'">
             <button class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
               Join
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -143,27 +143,6 @@
         </div>
       </ng-template>
     </ng-container>
-  
-    <ng-template #livequizzesLoading>
-      <div class="quiz-card">
-        <div class="ph-item">
-          <div class="ph-col-12">
-            <div class="ph-picture"></div>
-            <div class="ph-row">
-              <div class="ph-col-6 big"></div>
-              <div class="ph-col-4 big"></div>
-              <div class="ph-col-2 big"></div>
-              <div class="ph-col-4"></div>
-              <div class="ph-col-8 empty"></div>
-              <div class="ph-col-6"></div>
-              <div class="ph-col-6 empty"></div>
-              <div class="ph-col-12"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-
 
   <!-- Featured Quizzes -->
   <div class="section-title">
@@ -172,7 +151,7 @@
   </div>
 
   <!-- Combined async state for quizzes -->
-  <ng-container *ngIf="publishedQuizzes$ | async as quizzes; else quizzesLoading">
+  <ng-container *ngIf="publishedQuizzes$ | async as quizzes;">
     <ng-container *ngIf="quizzes.length > 0; else noQuizzes">
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
         <div class="quiz-header">
@@ -258,25 +237,8 @@
     </ng-template>
   </ng-container>
 
-  <ng-template #quizzesLoading>
-    <div class="quiz-card">
-      <div class="ph-item">
-        <div class="ph-col-12">
-          <div class="ph-picture"></div>
-          <div class="ph-row">
-            <div class="ph-col-6 big"></div>
-            <div class="ph-col-4 big"></div>
-            <div class="ph-col-2 big"></div>
-            <div class="ph-col-4"></div>
-            <div class="ph-col-8 empty"></div>
-            <div class="ph-col-6"></div>
-            <div class="ph-col-6 empty"></div>
-            <div class="ph-col-12"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
+
+
 
   <!-- Coming Leaderboard content here using ng-content -->
   <ng-content></ng-content>
