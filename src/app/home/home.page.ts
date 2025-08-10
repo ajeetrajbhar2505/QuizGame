@@ -41,7 +41,7 @@ export class HomePage {
   private loadInitialData(): void {
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getLeaderboardUser(3).subscribe();
-    this.quizService.initializeData(3);
+    this.quizService.initializeData();
   }
 
   protected makeSafeUrl(url: string): SafeUrl {

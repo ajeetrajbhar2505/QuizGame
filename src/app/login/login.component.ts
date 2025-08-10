@@ -341,7 +341,7 @@ export class LoginPage implements OnInit, OnDestroy {
     // Load initial data
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getLeaderboardUser(3).subscribe();
-    this.createQuizesService.initializeData(3);
+    this.createQuizesService.initializeData();
 
     // Navigate to home
     this.router.navigate(['/home'], {

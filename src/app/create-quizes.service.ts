@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { SocketService } from './socket.service';
-import { filter, map, tap } from 'rxjs/operators';
-import { NavigationEnd, Router } from '@angular/router';
+import { map, tap } from 'rxjs/operators';
 
 export interface QuizQuestion {
   _id: string;
@@ -72,10 +71,10 @@ export class CreateQuizesService {
     this.setupSocketListeners();
   }
 
-  public initializeData(limit: number): void {
+  public initializeData(): void {
     // Load initial data
     this.getAllQuiz().subscribe();
-    this.getPublishedQuiz(limit).subscribe();
+    this.getPublishedQuiz(3).subscribe();
   }
 
   private setupSocketListeners(): void {
