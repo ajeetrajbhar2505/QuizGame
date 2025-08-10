@@ -42,7 +42,7 @@ const MAX_RECONNECTION_DELAY = 10000;
 })
 export class SocketService implements OnDestroy {
   public socket!: Socket;
-  private authDataSource = new ReplaySubject<AuthData | null>(1);
+  public authDataSource = new ReplaySubject<AuthData | null>(1);
   private loginDataSource = new ReplaySubject<AuthData | null>(1);
   private otpDataSource = new ReplaySubject<AuthData | null>(1);
   private authErrorSource = new ReplaySubject<any | null>(1);
@@ -205,6 +205,8 @@ export class SocketService implements OnDestroy {
   private handleOtpSuccess(data: AuthData): void {
     this.persistAuthData(data);
     this.otpDataSource.next(data);
+    this.authDataSource.next(data);
+
   }
 
   private persistAuthData(data: AuthData): void {
