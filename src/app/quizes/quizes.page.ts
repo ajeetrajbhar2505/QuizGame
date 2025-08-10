@@ -50,7 +50,7 @@ export class QuizesPage implements OnInit {
       this.isLoadingQuizzes = false;
     }, 2000);
     this.handleRefresh.emit(true)
-    this.quizService.getPublishedQuiz().subscribe();
+    this.quizService.getPublishedQuiz(0).subscribe();
   }
 
   startQuiz(quizId: string): void {

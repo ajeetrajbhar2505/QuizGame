@@ -1,7 +1,7 @@
 <div [class]="ParentInjected?'section-n-padding':'section'">
 <div class="section-title">
   <h2>Top Learners</h2>
-  <a *ngIf="ParentInjected" (click)="loadLeaderboardData(0)" routerLink="/users">See ranking <i class="fas fa-chevron-right"></i></a>
+  <a *ngIf="ParentInjected" routerLink="/users">See ranking <i class="fas fa-chevron-right"></i></a>
 </div>
 
 <ng-container *ngIf="leaderboardUsers$ | async as leaderboardUsers; else leaderboardLoading">

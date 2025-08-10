@@ -10,7 +10,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit,OnDestroy {
+export class HomePage {
   userStats$: Observable<UserStats | null>;
   leaderboardUsers$: Observable<LeaderboardUser[]>;
   publishedQuizzes$: Observable<Quiz[]>;
@@ -44,14 +44,10 @@ export class HomePage implements OnInit,OnDestroy {
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
   }
 
-  ngOnInit(): void {
-    this.loadInitialData();
-  }
-
   private loadInitialData(): void {
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getLeaderboardUser(3).subscribe();
-    this.quizService.getPublishedQuiz().subscribe();
+    this.quizService.initializeData(3);
   }
 
   protected makeSafeUrl(url: string): SafeUrl {
@@ -73,9 +69,6 @@ export class HomePage implements OnInit,OnDestroy {
     this.loadInitialData()
   }
 
-  ngOnDestroy(): void {
-    this.dashboardService.getLeaderboardUser(0).subscribe();
-  }
-  
+
 
 }

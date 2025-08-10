@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SocketService } from './socket.service';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject, filter } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 
 export interface user {
   id: string;
@@ -24,10 +25,10 @@ export class UserStats {
     longest: number;
     lastUpdated: Date;
   } = {
-    current: 0,
-    longest: 0,
-    lastUpdated: new Date(0)
-  };
+      current: 0,
+      longest: 0,
+      lastUpdated: new Date(0)
+    };
 }
 
 export class LeaderboardUser {
@@ -44,13 +45,19 @@ export class LeaderboardUser {
 })
 export class DashboardService {
 
-  private userStatsSubject = new BehaviorSubject<UserStats | null>(null);
+  private userStatsSubject = new ReplaySubject<UserStats | null>(1);
   getUserStats$ = this.userStatsSubject.asObservable()
-  private leaderboardSubject = new BehaviorSubject<LeaderboardUser[]>([]);
+  private leaderboardSubject = new ReplaySubject<LeaderboardUser[]>(1);
   public leaderboard$ = this.leaderboardSubject.asObservable();
 
-  constructor(private socketService: SocketService) { 
-
+  constructor(private socketService: SocketService, private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        // Store current route without query params
+        let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
+        this.getLeaderboardUser(limit)
+      });
   }
 
   getDashboardStats() {
@@ -74,7 +81,7 @@ export class DashboardService {
 
 
   getLeaderboardUser(limit:number) {
-    this.socketService.socket.emit('dashboard:leaderboardUser:get',limit);
+    this.socketService.socket.emit('dashboard:leaderboardUser:get', limit);
     return new Observable<LeaderboardUser[]>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:leaderboardUser:success').subscribe({
         next: (data: any) => {
@@ -92,7 +99,7 @@ export class DashboardService {
     });
   }
 
-  getUser(){
+  getUser() {
     const User: any = localStorage.getItem('user')
     if (User) {
       return JSON.parse(User)

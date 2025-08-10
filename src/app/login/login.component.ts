@@ -7,6 +7,7 @@ import { IonModal } from '@ionic/angular';
 import { ToasterService } from '../toaster.service';
 import { DashboardService } from '../dashboard.service';
 import { takeUntil } from 'rxjs/operators';
+import { CreateQuizesService } from '../create-quizes.service';
 
 interface OtpDetails {
   success: boolean;
@@ -65,7 +66,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private socketService: SocketService,
     private modalController: ModalController,
     private toasterService: ToasterService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private createQuizesService: CreateQuizesService
   ) { }
 
   ngOnInit() {
@@ -79,7 +81,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   private listenForSocialUrls(): void {
     this.subscriptions.push(
-      this.socketService.url$.subscribe(({url}) => {
+      this.socketService.url$.subscribe(({ url }) => {
         console.log('Received social login URL:', url);
         // Handle the URL - it will be automatically opened by the SocketService
         // You can add additional logic here if needed
@@ -122,7 +124,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   async handleAuthSuccess(data: any) {
     if (!data) return;
-    
+
     this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
     this.loginSuccess = true;
     this.isLoading = false;
@@ -152,11 +154,11 @@ export class LoginPage implements OnInit, OnDestroy {
     this.showOtpModal = true;
     this.isLoading = false;
     this.otpSuccess = false;
-    
+
     try {
       await this.otpModal.present();
       const { data } = await this.otpModal.onDidDismiss();
-      
+
       if (!data) {
         this.resetForm();
       }
@@ -209,12 +211,12 @@ export class LoginPage implements OnInit, OnDestroy {
       this.toasterService.presentToast('Please enter valid email', 3000, 'bottom');
       return false;
     }
-    
+
     if (!this.loginForm.otp) {
       this.toasterService.presentToast('Invalid OTP', 3000, 'bottom');
       return false;
     }
-  
+
     return true;
   }
 
@@ -243,7 +245,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.resetAuthStates();
     this.googleProgress = true;
     this.errorModalStatus = 'auth:google:error';
-    
+
     try {
       await this.googleModal.present();
       this.socketService.initiateGoogleLogin();
@@ -257,7 +259,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.resetAuthStates();
     this.facebookProgress = true;
     this.errorModalStatus = 'auth:facebook:error';
-    
+
     try {
       await this.facebookModal.present();
       this.socketService.initiateFacebookLogin();
@@ -285,7 +287,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.stopOtpTimer();
     this.otpTimer = 120;
     this.canResendOtp = false;
-    
+
     this.timerSubscription = timer(0, 1000).subscribe(() => {
       this.otpTimer--;
       if (this.otpTimer <= 0) {
@@ -335,11 +337,12 @@ export class LoginPage implements OnInit, OnDestroy {
 
   private async handleSuccessfulLogin(data: any): Promise<void> {
     await this.closeModal();
-    
+
     // Load initial data
     this.dashboardService.getDashboardStats().subscribe();
     this.dashboardService.getLeaderboardUser(3).subscribe();
-    
+    this.createQuizesService.initializeData(3);
+
     // Navigate to home
     this.router.navigate(['/home'], {
       queryParams: { token: data.token },

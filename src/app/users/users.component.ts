@@ -8,7 +8,7 @@ import { DashboardService, LeaderboardUser } from '../dashboard.service';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent implements OnDestroy {
+export class UsersComponent  {
   @Input() leaderboardUsers$: Observable<LeaderboardUser[]>;
   @Input() ParentInjected: boolean = false;
 
@@ -19,13 +19,6 @@ export class UsersComponent implements OnDestroy {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
 
-  ngOnDestroy(): void {
-    this.loadLeaderboardData(3);
-  }
-
-  protected loadLeaderboardData(limit: number): void {
-    this.dashboardService.getLeaderboardUser(limit).subscribe();
-  }
 
   makeSafeUrl(url: string): SafeUrl | string {
     if (!url) {

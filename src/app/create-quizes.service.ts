@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { SocketService } from './socket.service';
 import { filter, map, tap } from 'rxjs/operators';
+import { NavigationEnd, Router } from '@angular/router';
 
 export interface QuizQuestion {
   _id: string;
@@ -36,8 +37,8 @@ export class CreateQuizesService {
   private quizzesDraftSubject$ = new BehaviorSubject<Quiz[]>([]);
   private quizzesPublishedSubject$ = new BehaviorSubject<Quiz[]>([]);
   private activeQuizSubject$ = new BehaviorSubject<Quiz | null>(null);
-  private quizResultSubject$ = new BehaviorSubject<{ 
-    correct: boolean, 
+  private quizResultSubject$ = new BehaviorSubject<{
+    correct: boolean,
     explanation?: string,
     questionId?: string,
     selectedAnswer?: string
@@ -67,15 +68,22 @@ export class CreateQuizesService {
     return this.activeQuizSubject$.value;
   }
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService, private router: Router) {
     this.setupSocketListeners();
-    this.initializeData();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        // Store current route without query params
+        let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
+        window.scroll()
+        this.initializeData(limit);
+      });
   }
 
-  private initializeData(): void {
+  public initializeData(limit: number): void {
     // Load initial data
     this.getAllQuiz().subscribe();
-    this.getPublishedQuiz().subscribe();
+    this.getPublishedQuiz(limit).subscribe();
   }
 
   private setupSocketListeners(): void {
@@ -104,7 +112,7 @@ export class CreateQuizesService {
     // Update in drafts if exists
     const currentDrafts = this.quizzesDraftSubject$.value;
     const draftIndex = currentDrafts.findIndex(q => q._id === updatedQuiz._id);
-    
+
     if (draftIndex >= 0) {
       const updatedDrafts = [...currentDrafts];
       updatedDrafts[draftIndex] = updatedQuiz;
@@ -114,7 +122,7 @@ export class CreateQuizesService {
     // Update in published if exists
     const currentPublished = this.quizzesPublishedSubject$.value;
     const publishedIndex = currentPublished.findIndex(q => q._id === updatedQuiz._id);
-    
+
     if (publishedIndex >= 0) {
       const updatedPublished = [...currentPublished];
       updatedPublished[publishedIndex] = updatedQuiz;
@@ -164,7 +172,7 @@ export class CreateQuizesService {
         this.quizDraftSubject$.next(quiz);
         // Refresh lists
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz().subscribe();
+        this.getPublishedQuiz(0).subscribe();
       })
     );
   }
@@ -177,8 +185,8 @@ export class CreateQuizesService {
     );
   }
 
-  getPublishedQuiz(): Observable<Quiz[]> {
-    this.socketService.socket.emit('quiz:published');
+  getPublishedQuiz(limit: number): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:published', limit);
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').pipe(
       map(data => data.quizes),
       tap(quizzes => this.quizzesPublishedSubject$.next(quizzes))
@@ -199,7 +207,7 @@ export class CreateQuizesService {
       tap(quiz => {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz().subscribe();
+        this.getPublishedQuiz(0).subscribe();
       })
     );
   }
@@ -219,7 +227,7 @@ export class CreateQuizesService {
       tap(() => {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz().subscribe();
+        this.getPublishedQuiz(0).subscribe();
       })
     );
   }
@@ -232,8 +240,8 @@ export class CreateQuizesService {
     );
   }
 
-  submitAnswer(questionId: string, answer: string): Observable<{ 
-    correct: boolean, 
+  submitAnswer(questionId: string, answer: string): Observable<{
+    correct: boolean,
     explanation?: string,
     questionId?: string,
     selectedAnswer?: string
