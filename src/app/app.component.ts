@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SocketService } from './socket.service';
-import { DashboardService } from './dashboard.service';
-import { CreateQuizesService } from './create-quizes.service';
 
 @Component({
   selector: 'app-root',
@@ -18,25 +16,10 @@ export class AppComponent implements OnInit {
   constructor(
     private socketService: SocketService,
     private router: Router,
-    private dashboardService: DashboardService,
-    private quizService: CreateQuizesService
   ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        if (event.url == '/home' || event.url == '/quizes') {
-          let limit = event.url == '/home' ? 3 : 0
-          if (event) {
-            this.quizService.initializeData(limit);
-          }
-        }
-
-        if (event.url == '/home' || event.url == '/users') {
-          let limit = event.url == '/home' ? 3 : 0
-          if (event) {
-            this.dashboardService.getLeaderboardUser(limit)
-          }
-        }
         this.currentRoute = event.url;
         window.scroll({
           top: 0,

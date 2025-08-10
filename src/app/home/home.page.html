@@ -13,9 +13,9 @@
   </div>
 
   <!-- Main content section -->
-  <app-quizes [ParentInjected]="true" (handleRefresh)="handleRefresh($event)"  [publishedQuizzes$]="publishedQuizzes$">
+  <app-quizes [ParentInjected]="true" (handleRefresh)="handleRefresh($event)">
     <!-- Leaderboard using ng-content -->
-    <app-users [ParentInjected]="true"  [leaderboardUsers$]="leaderboardUsers$"></app-users>
+    <app-users [ParentInjected]="true"></app-users>
   </app-quizes>
 
 

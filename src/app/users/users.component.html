@@ -1,28 +1,27 @@
 <div [class]="ParentInjected?'section-n-padding':'section'">
-<div class="section-title">
-  <h2>Top Learners</h2>
-  <a *ngIf="ParentInjected" routerLink="/users">See ranking <i class="fas fa-chevron-right"></i></a>
-</div>
-
-<ng-container *ngIf="leaderboardUsers$ | async as leaderboardUsers; else leaderboardLoading">
-  <div *ngIf="leaderboardUsers.length > 0; else emptyLeaderboard">
-    <div class="content" style="padding-bottom: 8px;">
-      <div class="leaderboard-item" *ngFor="let user of leaderboardUsers; trackBy: trackByUserId">
-        <div class="rank">{{leaderboardUsers.indexOf(user) + 1}}</div>
-        <div class="user">
-          <img [src]="user.avatar" 
-               crossorigin="anonymous" 
-               (error)="handleAvatarError($event)">
-          <div>
-            <div class="name">{{user.name}}</div>
-          </div>
-        </div>
-        <div class="points">{{user.points}}</div>
-      </div>
-    </div>
+  <div class="section-title">
+    <h2>Top Learners</h2>
+    <a *ngIf="ParentInjected" (click)="loadLeaderboardData(0)" routerLink="/users">See ranking <i
+        class="fas fa-chevron-right"></i></a>
   </div>
 
-  <ng-template #emptyLeaderboard>
+  <ng-container *ngIf="leaderboardUsers$ | async as leaderboardUsers; else leaderboardLoading">
+    <div *ngIf="leaderboardUsers.length > 0; else emptyLeaderboard">
+      <div class="content" style="padding-bottom: 8px;">
+        <div class="leaderboard-item" *ngFor="let user of leaderboardUsers; trackBy: trackByUserId">
+          <div class="rank">{{leaderboardUsers.indexOf(user) + 1}}</div>
+          <div class="user">
+            <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
+            <div>
+              <div class="name">{{user.name}}</div>
+            </div>
+          </div>
+          <div class="points">{{user.points}}</div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyLeaderboard>
       <div class="ph-item">
         <div class="ph-col-12">
           <div class="ph-row">
@@ -35,25 +34,25 @@
           </div>
         </div>
       </div>
-  </ng-template>
-</ng-container>
+    </ng-template>
+  </ng-container>
 
-<ng-template #leaderboardLoading>
-  <div class="quiz-card">
-    <div class="ph-item">
-      <div class="ph-col-12">
-        <div class="ph-row">
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
-          <div class="ph-col-12 big"></div>
+  <ng-template #leaderboardLoading>
+    <div class="quiz-card">
+      <div class="ph-item">
+        <div class="ph-col-12">
+          <div class="ph-row">
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+            <div class="ph-col-12 big"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
 </div>

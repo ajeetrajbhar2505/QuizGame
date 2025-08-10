@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage {
+export class QuizesPage implements OnDestroy {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
@@ -38,16 +38,22 @@ export class QuizesPage {
       this.currentUser = JSON.parse(User)
     }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
+    this.loadInitialData(0)
   }
 
 
-  protected loadInitialData(): void {
+  ngOnDestroy(): void {
+    this.loadInitialData(3)
+  }
+  
+
+
+  protected loadInitialData(limit:number): void {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
     this.handleRefresh.emit(true)
-    let limit = this.ParentInjected ? 3 : 0
     this.quizService.getPublishedQuiz(limit).subscribe();
   }
 

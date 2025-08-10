@@ -45,7 +45,7 @@
   <!-- Featured Quizzes -->
   <div class="section-title" *ngIf="ParentInjected">
     <h2>Featured Quizzes</h2>
-    <a routerLink="/quizes">View all <i class="fas fa-chevron-right"></i></a>
+    <a (click)="loadInitialData(0)" routerLink="/quizes">View all <i class="fas fa-chevron-right"></i></a>
   </div>
 
   <!-- Combined async state for quizzes -->
@@ -161,7 +161,7 @@
 </div>
 
 <!-- Refresh Button -->
-<div class="floating-action" (click)="loadInitialData()">
+<div class="floating-action" (click)="loadInitialData(ParentInjected?3:0)">
   <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M23 4v6h-6" />

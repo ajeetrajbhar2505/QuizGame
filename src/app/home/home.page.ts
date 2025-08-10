@@ -11,10 +11,6 @@ import { RefresherCustomEvent } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  userStats$: Observable<UserStats | null>;
-  leaderboardUsers$: Observable<LeaderboardUser[]>;
-  publishedQuizzes$: Observable<Quiz[]>;
-
   currentUser: user = {
     id: "",
     name: "",
@@ -39,9 +35,7 @@ export class HomePage {
     }
 
     // Initialize observables
-    this.userStats$ = this.dashboardService.getUserStats$;
-    this.leaderboardUsers$ = this.dashboardService.leaderboard$
-    this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
+    this.loadInitialData()
   }
 
   private loadInitialData(): void {
@@ -68,7 +62,6 @@ export class HomePage {
   handleRefresh(event: any) {
     this.loadInitialData()
   }
-
 
 
 }

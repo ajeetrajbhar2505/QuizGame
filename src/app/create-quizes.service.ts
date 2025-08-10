@@ -178,9 +178,16 @@ export class CreateQuizesService {
   }
 
   getPublishedQuiz(limit: number): Observable<Quiz[]> {
-    console.log(limit);
     this.socketService.socket.emit('quiz:published', limit);
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').pipe(
+      map(data => data.quizes),
+      tap(quizzes => this.quizzesPublishedSubject$.next(quizzes))
+    );
+  }
+
+  getActiveQuizes(limit: number): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:active', limit);
+    return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:active:success').pipe(
       map(data => data.quizes),
       tap(quizzes => this.quizzesPublishedSubject$.next(quizzes))
     );
