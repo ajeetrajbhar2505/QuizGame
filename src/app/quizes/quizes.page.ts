@@ -13,7 +13,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage implements OnDestroy {
+export class QuizesPage implements OnInit, OnDestroy {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
@@ -40,7 +40,10 @@ export class QuizesPage implements OnDestroy {
     }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
     this.liveQuizes$ = this.quizService.liveQuizes$
-    this.loadInitialData(3)
+  }
+
+  ngOnInit(): void {
+    this.loadInitialData(0)
   }
 
 
