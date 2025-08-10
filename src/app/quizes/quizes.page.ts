@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -17,6 +17,8 @@ export class QuizesPage implements OnInit {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
+  @Output() handleRefresh:EventEmitter<boolean> = new EventEmitter(false)
+
   currentUser: user = {
     id: "",
     name: "",
@@ -47,6 +49,7 @@ export class QuizesPage implements OnInit {
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
+    this.handleRefresh.emit(true)
     this.quizService.getPublishedQuiz().subscribe();
   }
 

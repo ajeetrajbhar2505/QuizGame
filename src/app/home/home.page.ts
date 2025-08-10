@@ -69,15 +69,8 @@ export class HomePage implements OnInit {
     this.dashboardService.logout();
   }
 
-  trackByUserId(index: number, user: LeaderboardUser): string {
-    return user.userId; // Assuming LeaderboardUser has an id property
+  handleRefresh(event: any) {
+    this.loadInitialData()
   }
 
-  handleRefresh(event: RefresherCustomEvent) {
-    this.loadInitialData()
-    setTimeout(() => {
-      event.target.complete();
-    }, 0);
-  }
- 
 }
