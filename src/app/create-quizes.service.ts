@@ -74,9 +74,13 @@ export class CreateQuizesService {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         // Store current route without query params
-        let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
-        window.scroll()
-        this.initializeData(limit);
+        if (event && (event.urlAfterRedirects.split('?')[0] == '/home' || event.urlAfterRedirects.split('?')[0] == '/quizes')) {
+          let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
+          if (event) {
+            this.initializeData(limit);
+          }
+        }
+
       });
   }
 

@@ -19,6 +19,11 @@ export class AppComponent implements OnInit {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentRoute = event.url;
+        window.scroll({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        });
       });
   }
 

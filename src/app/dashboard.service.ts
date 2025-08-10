@@ -55,8 +55,13 @@ export class DashboardService {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         // Store current route without query params
-        let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
-        this.getLeaderboardUser(limit)
+        if (event && (event.urlAfterRedirects.split('?')[0] == '/home' || event.urlAfterRedirects.split('?')[0] == '/users')) {
+          let limit = event.urlAfterRedirects.split('?')[0] == '/home' ? 3 : 0
+          if (event) {
+          this.getLeaderboardUser(limit)
+        }
+        }
+    
       });
   }
 
