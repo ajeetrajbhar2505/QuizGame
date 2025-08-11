@@ -11,7 +11,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './live-quizes.component.html',
   styleUrls: ['./live-quizes.component.scss'],
 })
-export class LiveQuizesComponent {
+export class LiveQuizesComponent implements OnInit{
   @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
@@ -39,6 +39,14 @@ export class LiveQuizesComponent {
     this.liveQuizes$ = this.quizService.liveQuizes$
   }
 
+
+  ngOnInit(): void {
+    this.quizService.isQuizesRefreshed.subscribe(data=>{
+      if (data) {
+        this.loadInitialData(0)
+      }
+    })
+  }
 
   async loadInitialData(limit:number) {
     this.isLoadingQuizzes = true;

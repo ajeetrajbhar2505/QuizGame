@@ -12,7 +12,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage {
+export class QuizesPage implements OnInit {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
@@ -37,6 +37,14 @@ export class QuizesPage {
       this.currentUser = JSON.parse(User)
     }
     this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
+  }
+
+  ngOnInit(): void {
+    this.quizService.isQuizesRefreshed.subscribe(data=>{
+      if (data) {
+        this.loadInitialData(0)
+      }
+    })
   }
 
 

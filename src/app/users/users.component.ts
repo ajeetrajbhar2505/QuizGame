@@ -2,23 +2,33 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { DashboardService, LeaderboardUser } from '../dashboard.service';
+import { CreateQuizesService } from '../create-quizes.service';
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent  implements  OnDestroy {
+export class UsersComponent  implements  OnInit,OnDestroy {
   @Input() leaderboardUsers$: Observable<LeaderboardUser[]>;
   @Input() ParentInjected: boolean = false;
 
   constructor(
     private dashboardService: DashboardService,
+    private quizService:CreateQuizesService,
     private sanitizer: DomSanitizer
   ) {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
   
+
+  ngOnInit(): void {
+    this.quizService.isQuizesRefreshed.subscribe(data=>{
+      if (data) {
+        this.loadLeaderboardData(0)
+      }
+    })
+  }
   
 
   ngOnDestroy(): void {

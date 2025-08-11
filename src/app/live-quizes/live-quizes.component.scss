@@ -1,4 +1,49 @@
+.mb {
+  margin-bottom: 15%;
+}
 
-.mb{
-    margin-bottom: 15%;
+/* live-badge.component.scss */
+.live-badge-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px 2px 6px;
+  border-radius: 16px;
+  background-color: #ff0000;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  position: absolute;
+  top: 13px;
+  left: 13px;
+
+  svg {
+    animation: pulse 1.5s infinite
   }
+}
+
+.live-text {
+  letter-spacing: 0.5px;
+}
+
+.quiz-header {
+  margin-top: 10%;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

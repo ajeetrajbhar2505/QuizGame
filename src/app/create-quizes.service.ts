@@ -26,6 +26,7 @@ export interface Quiz {
   approvalStatus: string;
   difficulty?: any;
   participants?:any[],
+  status?:string,
   remainingParticipants?:number
 }
 
@@ -45,6 +46,8 @@ export class CreateQuizesService {
     questionId?: string,
     selectedAnswer?: string
   } | null>(null);
+  private refreshedQuizes$ = new BehaviorSubject<true | null>(null);
+  isQuizesRefreshed = this.refreshedQuizes$.asObservable();
 
   // Public Observables
   public getCurrentDraft$ = this.quizDraftSubject$.asObservable();
@@ -239,13 +242,33 @@ export class CreateQuizesService {
     );
   }
 
+  startWatingQuiz(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:waiting', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:waiting:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        this.refreshedQuizes$.next(true)
+      })
+    );
+  }
+
+  joinQuiz(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:join', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:join:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        this.activeQuizSubject$.next(quiz),
+        this.refreshedQuizes$.next(true)
+      })
+    );
+  }
+
   startQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:start', quizId);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').pipe(
       map(data => data.quiz),
       tap(quiz => {
-        this.activeQuizSubject$.next(quiz),
-        this.getActiveQuizes(3).subscribe()
+        this.refreshedQuizes$.next(true)
       })
     );
   }
@@ -268,7 +291,10 @@ export class CreateQuizesService {
 
     return this.socketService.fromEvent<{ result: any }>('quiz:answer:result').pipe(
       map(data => data.result),
-      tap(result => this.quizResultSubject$.next(result))
+      tap(result => {
+        this.quizResultSubject$.next(result),
+        this.refreshedQuizes$.next(true)
+      })
     );
   }
 

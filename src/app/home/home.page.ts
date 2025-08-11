@@ -37,8 +37,13 @@ export class HomePage implements OnInit {
     // Initialize observables
   }
 
- async ngOnInit() {
-   await this.loadInitialData()
+  ngOnInit() {
+    this.loadInitialData()
+    this.quizService.isQuizesRefreshed.subscribe(data=>{
+      if (data) {
+        this.loadInitialData()
+      }
+    })
   }
 
   async loadInitialData() {
