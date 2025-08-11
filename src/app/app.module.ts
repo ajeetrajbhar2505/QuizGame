@@ -29,11 +29,12 @@ import { CategoriesPage } from './categories/categories.page';
 import { QuizesPage } from './quizes/quizes.page';
 import { VerifyQuizComponent } from './verify-quiz/verify-quiz.component';
 import { UsersComponent } from './users/users.component';
+import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
 
 library.add(fas);
 
 @NgModule({
-  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage,VerifyQuizComponent,UsersComponent],
+  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage,VerifyQuizComponent,UsersComponent,LiveQuizesComponent],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [
     GoogleadsService,

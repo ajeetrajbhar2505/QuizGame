@@ -43,14 +43,9 @@ export class ProfilePage implements OnInit {
     this.loadInitialData();
   }
 
-  private loadInitialData(): void {
-    this.dashboardService.getDashboardStats().subscribe({
-      error: (err) => console.error('Failed to load dashboard stats:', err)
-    });
-
-    this.quizService.getAllQuiz().subscribe({
-      error: (err) => console.error('Error loading quizzes:', err)
-    });
+  async loadInitialData() {
+    this.dashboardService.getDashboardStats().toPromise()
+    this.quizService.getAllQuiz().toPromise()
   }
 
   changeTab(tab: string): void {

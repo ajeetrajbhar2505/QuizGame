@@ -75,10 +75,10 @@ export class CreateQuizesService {
     this.setupSocketListeners();
   }
 
-  public initializeData(): void {
+  async initializeData() {
     // Load initial data
-    this.getAllQuiz().subscribe();
-    this.getPublishedQuiz(3).subscribe();
+    await this.getAllQuiz().toPromise();
+    await this.getPublishedQuiz(3).toPromise();
   }
 
   private setupSocketListeners(): void {

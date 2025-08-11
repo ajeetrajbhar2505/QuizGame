@@ -8,7 +8,7 @@ import { DashboardService, LeaderboardUser } from '../dashboard.service';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent  implements OnInit, OnDestroy {
+export class UsersComponent  implements  OnDestroy {
   @Input() leaderboardUsers$: Observable<LeaderboardUser[]>;
   @Input() ParentInjected: boolean = false;
 
@@ -19,9 +19,7 @@ export class UsersComponent  implements OnInit, OnDestroy {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
   
-  ngOnInit(): void {
-    this.loadLeaderboardData(0)
-  }
+  
 
   ngOnDestroy(): void {
     this.loadLeaderboardData(3)

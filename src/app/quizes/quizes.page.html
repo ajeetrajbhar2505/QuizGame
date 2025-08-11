@@ -1,5 +1,6 @@
 <div class="section">
   <!-- Search bar -->
+<div *ngIf="!ParentInjected">
   <div class="search-bar">
     <i class="fas fa-search"></i>
     <input type="text" placeholder="Search quizzes, topics...">
@@ -42,107 +43,7 @@
     </div>
   </div>
 
-    <!-- Featured Quizzes -->
-    <div class="section-title">
-      <h2>Live Quizzes</h2>
-      <a *ngIf="ParentInjected" (click)="loadInitialData(0)" routerLink="/quizes">View all <i class="fas fa-chevron-right"></i></a>
-    </div>
-    
-  
-    <!-- Combined async state for quizzes -->
-    <ng-container *ngIf="liveQuizes$ | async as quizzes;">
-      <ng-container *ngIf="quizzes.length > 0; else noliveQuizzes">
-        <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
-          <div class="quiz-header">
-            <h3 class="quiz-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
-                  fill="currentColor" />
-                <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z"
-                  fill="currentColor" />
-              </svg>
-              {{quiz.title}}
-            </h3>
-          </div>
-          <p class="quiz-description">{{quiz.description}}</p>
-          <div class="quiz-meta">
-            <span class="meta-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              {{ quiz.estimatedTime / 60 }} min
-            </span>
-            <span class="meta-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-              {{quiz.difficulty}}
-            </span>
-            <span class="meta-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M8 10H8.01M12 10H12.01M16 10H16.01M8 14H8.01M12 14H12.01M16 14H16.01M8 18H8.01M12 18H12.01M16 18H16.01M7 4H17C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18V6C5 4.89543 5.89543 4 7 4Z"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              {{quiz.totalQuestions}} Qs
-            </span>
-          </div>
-  
-          <div class="quiz-meta">
-            <span class="meta-item">
-              <i class="fas fa-bolt"></i>
-              50 XP
-            </span>
-            <span class="meta-item">
-              <div class="meta">
-                <div class="participants">
-                  <img *ngFor="let user of quiz.participants;" [src]="user.profilePic" crossorigin="anonymous" (error)="avatarError($event)">
-                  <span>{{quiz.remainingParticipants?  '+ ' + quiz.remainingParticipants + ' playing':' joined' }}</span>
-                </div>
-              </div>
-            </span>
-            <span class="meta-item"></span>
-          </div>
-  
-          <div class="quiz-actions" *ngIf="currentUser.role == 'user'">
-            <button class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
-              Join
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </ng-container>
-  
-      <ng-template #noliveQuizzes>
-        <div class="quiz-card">
-          <div class="ph-item">
-            <div class="ph-col-12">
-              <div class="ph-picture"></div>
-              <div class="ph-row">
-                <div class="ph-col-6 big"></div>
-                <div class="ph-col-4 big"></div>
-                <div class="ph-col-2 big"></div>
-                <div class="ph-col-4"></div>
-                <div class="ph-col-8 empty"></div>
-                <div class="ph-col-6"></div>
-                <div class="ph-col-6 empty"></div>
-                <div class="ph-col-12"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </ng-container>
+</div>
 
   <!-- Featured Quizzes -->
   <div class="section-title">

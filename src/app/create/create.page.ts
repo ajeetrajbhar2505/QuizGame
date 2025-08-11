@@ -114,14 +114,12 @@ export class CreatePage implements OnInit {
     this.quizPromptDraft = '';
   }
 
-  loadDraftQuizzes(): void {
+ async loadDraftQuizzes() {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
-    this.quizService.getAllQuiz().subscribe(()=>{
-      this.isCreating = false
-    });
+   await this.quizService.getAllQuiz().toPromise()
   }
 
   verifyQuiz(quizId: string): void {

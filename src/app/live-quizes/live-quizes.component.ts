@@ -6,18 +6,15 @@ import { user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
-
 @Component({
-  selector: 'app-quizes',
-  templateUrl: './quizes.page.html',
-  styleUrls: ['./quizes.page.scss'],
+  selector: 'app-live-quizes',
+  templateUrl: './live-quizes.component.html',
+  styleUrls: ['./live-quizes.component.scss'],
 })
-export class QuizesPage {
-  @Input() publishedQuizzes$: Observable<Quiz[]>;
+export class LiveQuizesComponent {
+  @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
-  @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter(false)
-
   currentUser: user = {
     id: "",
     name: "",
@@ -36,7 +33,10 @@ export class QuizesPage {
     if (User) {
       this.currentUser = JSON.parse(User)
     }
-    this.publishedQuizzes$ = this.quizService.getPublishedQuizes$;
+    if (this.currentUser.avatar) {
+      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
+    }
+    this.liveQuizes$ = this.quizService.liveQuizes$
   }
 
 
@@ -45,8 +45,7 @@ export class QuizesPage {
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
-    this.handleRefresh.emit(true)
-   await this.quizService.getPublishedQuiz(limit).toPromise();
+   await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
   startQuiz(quizId: string): void {

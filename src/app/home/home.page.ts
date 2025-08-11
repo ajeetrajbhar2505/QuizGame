@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { RefresherCustomEvent } from '@ionic/angular';
 
 @Component({
@@ -10,7 +10,7 @@ import { RefresherCustomEvent } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   currentUser: user = {
     id: "",
     name: "",
@@ -35,13 +35,20 @@ export class HomePage {
     }
 
     // Initialize observables
+  }
+
+  ngOnInit(): void {
     this.loadInitialData()
   }
 
-  private loadInitialData(): void {
-    this.dashboardService.getDashboardStats().subscribe();
-    this.dashboardService.getLeaderboardUser(3).subscribe();
-    this.quizService.initializeData();
+  async loadInitialData() {
+   await forkJoin([
+      this.dashboardService.getLeaderboardUser(3),
+      this.quizService.getActiveQuizes(3)
+    ]).toPromise()
+    
+    this.dashboardService.getDashboardStats();
+     this.quizService.initializeData();
   }
 
   protected makeSafeUrl(url: string): SafeUrl {

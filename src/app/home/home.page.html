@@ -13,12 +13,13 @@
   </div>
 
   <!-- Main content section -->
+  <app-live-quizes [ParentInjected]="true"></app-live-quizes>
   <app-quizes [ParentInjected]="true" (handleRefresh)="handleRefresh($event)">
     <!-- Leaderboard using ng-content -->
     <app-users [ParentInjected]="true"></app-users>
   </app-quizes>
 
 
-  
-    
+
+
 </ion-content>
