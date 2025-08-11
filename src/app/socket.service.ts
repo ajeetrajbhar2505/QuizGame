@@ -113,9 +113,7 @@ export class SocketService implements OnDestroy {
 
   private cleanupSocket(): void {
     if (this.socket) {
-      this.socket.off();
       this.socket.disconnect();
-      this.socket.removeAllListeners();
     }
   }
 
@@ -213,7 +211,10 @@ export class SocketService implements OnDestroy {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     this.cleanupSocket();
-    this.initializeSocket(data.token);
+    this.socket.auth = {
+      token : data.token || localStorage.getItem('token')
+    }
+    this.socket.connect()
   }
 
   private showToast(message: string, duration = 3000, position = 'bottom', color = 'dark'): void {
@@ -224,7 +225,10 @@ export class SocketService implements OnDestroy {
     this.connectionState$.next('connecting');
     if (!this.socket?.connected) {
       this.cleanupSocket();
-      this.initializeSocket(token || undefined);
+      this.socket.auth = {
+        token : token || localStorage.getItem('token')
+      }
+      this.socket.connect()
     }
   }
 
@@ -361,10 +365,11 @@ export class SocketService implements OnDestroy {
   }
 
   public connect(token?: string): void {
-    if (!this.socket?.connected) {
       this.cleanupSocket();
-      this.initializeSocket(token);
-    }
+      this.socket.auth = {
+        token : token || localStorage.getItem('token')
+      }
+      this.socket.connect()
   }
 
   public disconnect(): void {
