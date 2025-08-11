@@ -37,8 +37,8 @@ export class HomePage implements OnInit {
     // Initialize observables
   }
 
-  ngOnInit(): void {
-    this.loadInitialData()
+ async ngOnInit() {
+   await this.loadInitialData()
   }
 
   async loadInitialData() {

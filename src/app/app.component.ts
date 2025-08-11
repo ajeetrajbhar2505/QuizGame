@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SocketService } from './socket.service';
+import { CreateQuizesService } from './create-quizes.service';
+import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +18,9 @@ export class AppComponent implements OnInit {
   constructor(
     private socketService: SocketService,
     private router: Router,
+    private createQuizesService:CreateQuizesService,
+    private dashboardService:DashboardService
+    
   ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -27,6 +32,16 @@ export class AppComponent implements OnInit {
           behavior: 'smooth'
         });
       });
+  }
+
+  navigateTopage(page:string){
+  this.router.navigate([page])
+  this.__runInitializers()
+  }
+
+ async __runInitializers(){
+   this.createQuizesService.initializeData()
+   await this.dashboardService.getLeaderboardUser(3).toPromise()
   }
 
   ngOnInit(): void {

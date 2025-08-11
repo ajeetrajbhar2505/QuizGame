@@ -47,6 +47,7 @@ export class QuizesPage {
     }, 2000);
     this.handleRefresh.emit(true)
    await this.quizService.getPublishedQuiz(limit).toPromise();
+   await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
   startQuiz(quizId: string): void {

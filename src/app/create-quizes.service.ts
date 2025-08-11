@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
 import { SocketService } from './socket.service';
 import { map, tap } from 'rxjs/operators';
 
@@ -77,8 +77,12 @@ export class CreateQuizesService {
 
   async initializeData() {
     // Load initial data
-    await this.getAllQuiz().toPromise();
-    await this.getPublishedQuiz(3).toPromise();
+    await forkJoin([
+      this.getAllQuiz().toPromise(),
+      this.getActiveQuizes(3).toPromise(),
+      this.getPublishedQuiz(3).toPromise()
+    ]).toPromise()
+
   }
 
   private setupSocketListeners(): void {

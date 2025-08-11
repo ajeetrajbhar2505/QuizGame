@@ -25,8 +25,8 @@ export class UsersComponent  implements  OnDestroy {
     this.loadLeaderboardData(3)
   }
 
-  protected loadLeaderboardData(limit:number): void {
-    this.dashboardService.getLeaderboardUser(limit).subscribe();
+  protected async loadLeaderboardData(limit:number) {
+   await this.dashboardService.getLeaderboardUser(limit).toPromise();
   }
 
   makeSafeUrl(url: string): SafeUrl | string {
