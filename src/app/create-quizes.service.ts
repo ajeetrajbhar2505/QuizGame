@@ -5,7 +5,7 @@ import { map, tap } from 'rxjs/operators';
 
 export interface QuizQuestion {
   _id: string;
-  questionText: string;
+  question: string;
   options: string[];
   correctAnswer: string;
   points: number;

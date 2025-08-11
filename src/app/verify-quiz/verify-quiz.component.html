@@ -39,7 +39,7 @@
             Refresh
           </button>
         </div>
-        <div class="question-text">{{ question.questionText }}</div>
+        <div class="question-text">{{ question.question }}</div>
         
         <div class="options-list">
           <div *ngFor="let option of question.options; let i = index" class="option-item">
@@ -47,6 +47,7 @@
             <div class="option-text">{{ option }}</div>
           </div>
         </div>
+        <div class="question-text">Correct Answer :  {{ question.correctAnswer }}</div>
       </div>
     </div>
 

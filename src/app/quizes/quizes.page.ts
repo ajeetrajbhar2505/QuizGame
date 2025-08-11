@@ -62,6 +62,12 @@ export class QuizesPage implements OnInit {
     // Quiz start logic
   }
 
+  verifyQuiz(quizId: string): void {
+    this.router.navigate(['/verify-quiz'], { 
+      queryParams: { id: quizId }
+    });
+  }
+
   protected makeSafeUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
