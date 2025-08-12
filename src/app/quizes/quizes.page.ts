@@ -40,7 +40,7 @@ export class QuizesPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.quizService.isQuizesRefreshed.subscribe(data=>{
+    this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData(0)
       }
@@ -48,22 +48,23 @@ export class QuizesPage implements OnInit {
   }
 
 
-  async loadInitialData(limit:number) {
+  async loadInitialData(limit: number) {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
     this.handleRefresh.emit(true)
-   await this.quizService.getPublishedQuiz(limit).toPromise();
-   await this.quizService.getActiveQuizes(limit).toPromise();
+    await this.quizService.getPublishedQuiz(limit).toPromise();
+    await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
-  startQuiz(quizId: string): void {
+  async startQuiz(quizId: string) {
     // Quiz start logic
+    await this.quizService.startWatingQuiz(quizId).toPromise();
   }
 
   verifyQuiz(quizId: string): void {
-    this.router.navigate(['/verify-quiz'], { 
+    this.router.navigate(['/verify-quiz'], {
       queryParams: { id: quizId }
     });
   }

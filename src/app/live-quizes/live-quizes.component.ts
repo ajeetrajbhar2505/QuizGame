@@ -56,8 +56,9 @@ export class LiveQuizesComponent implements OnInit{
    await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
-  startQuiz(quizId: string): void {
+  async joinQuiz(quizId:any) {
     // Quiz start logic
+    await this.quizService.joinQuiz(quizId).toPromise();
   }
 
   protected makeSafeUrl(url: string): SafeUrl {

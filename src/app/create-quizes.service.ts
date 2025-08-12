@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
 import { SocketService } from './socket.service';
 import { map, tap } from 'rxjs/operators';
+import { ToasterService } from './toaster.service';
 
 export interface QuizQuestion {
   _id: string;
@@ -27,6 +28,7 @@ export interface Quiz {
   difficulty?: any;
   participants?:any[],
   status?:string,
+  quizId?:any,
   remainingParticipants?:number
 }
 
@@ -74,7 +76,7 @@ export class CreateQuizesService {
     return this.activeQuizSubject$.value;
   }
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService,private toastr:ToasterService) {
     this.setupSocketListeners();
   }
 
@@ -108,6 +110,53 @@ export class CreateQuizesService {
     this.socketService.socket.on('quiz:deleted', (quizId: string) => {
       this.removeQuizFromState(quizId);
     });
+
+    // error listners
+    this.socketService.socket.on('quiz:create:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:refreshQuestion:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:published:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:all:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:active:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:get:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:delete:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:publish:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:waiting:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:join:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:start:error', (data) => {
+      this.toastr.success(data.error)
+    });
+    this.socketService.socket.on('quiz:submit:error', (data) => {
+      this.toastr.success(data.error)
+    });
+
+    this.socketService.socket.on('quiz:answer:error', (data) => {
+      this.toastr.success(data.error)
+    });
+
+    this.socketService.socket.on('refreshpage', (data) => {
+      this.refreshedQuizes$.next(true)
+    });
+ 
   }
 
   private updateQuizInState(updatedQuiz: Quiz): void {
@@ -238,6 +287,7 @@ export class CreateQuizesService {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
         this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -248,6 +298,9 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -259,6 +312,9 @@ export class CreateQuizesService {
       tap(quiz => {
         this.activeQuizSubject$.next(quiz),
         this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -269,6 +325,9 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -294,6 +353,9 @@ export class CreateQuizesService {
       tap(result => {
         this.quizResultSubject$.next(result),
         this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
       })
     );
   }

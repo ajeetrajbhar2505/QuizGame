@@ -106,10 +106,10 @@
             <i class="fas fa-bolt"></i>
             50 XP
           </span>
-          <span class="meta-item">
+          <span class="meta-item" *ngIf="quiz.participants?.length">
             <div class="meta">
               <div class="participants">
-                <img *ngFor="let user of quiz.participants;" [src]="user.profilePic" crossorigin="anonymous"
+                <img *ngFor="let user of quiz.participants;" [src]="user.avatar" crossorigin="anonymous"
                   (error)="avatarError($event)">
                 <span>{{quiz.remainingParticipants? '+ ' + quiz.remainingParticipants + ' playing':' joined' }}</span>
               </div>
@@ -120,7 +120,7 @@
 
 
         <div class="quiz-actions" *ngIf="currentUser.role == 'user'">
-          <button class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
+          <button class="action-btn approve-btn" (click)="joinQuiz(quiz.quizId)">
             Join
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
