@@ -29,7 +29,7 @@ export interface Quiz {
   participants?:any[],
   status?:string,
   quizId?:any,
-  remainingParticipants?:number
+  participantCount?:number
 }
 
 @Injectable({
@@ -40,6 +40,7 @@ export class CreateQuizesService {
   private quizDraftSubject$ = new BehaviorSubject<Quiz | null>(null);
   private quizzesDraftSubject$ = new BehaviorSubject<Quiz[]>([]);
   private quizzesPublishedSubject$ = new BehaviorSubject<Quiz[]>([]);
+  private quizzesParticipantsSubject$ = new BehaviorSubject<Quiz[]>([]);
   private activeQuizSubject$ = new BehaviorSubject<Quiz | null>(null);
   private liveQuizesSubject$ = new BehaviorSubject<Quiz[]>([]);
   private quizResultSubject$ = new BehaviorSubject<{
@@ -58,6 +59,7 @@ export class CreateQuizesService {
   public getActiveQuiz$ = this.activeQuizSubject$.asObservable();
   public liveQuizes$ = this.liveQuizesSubject$.asObservable();
   public getQuizResults$ = this.quizResultSubject$.asObservable();
+  public getParticipants$ = this.quizzesParticipantsSubject$.asObservable();
 
   // Value getters for synchronous access
   get currentDraft(): Quiz | null {
@@ -329,6 +331,14 @@ export class CreateQuizesService {
         this.getPublishedQuiz(3).subscribe();
         this.getActiveQuizes(3).subscribe()
       })
+    );
+  }
+
+  getQuizParticipant(quizId: string): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:participants', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz[] }>('quiz:participants:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => this.quizzesParticipantsSubject$.next(quiz))
     );
   }
 

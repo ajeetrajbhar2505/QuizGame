@@ -13,6 +13,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class LiveQuizesComponent implements OnInit{
   @Input() liveQuizes$: Observable<Quiz[]>;
+  @Input() quizParticipants$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
   currentUser: user = {
@@ -37,6 +38,7 @@ export class LiveQuizesComponent implements OnInit{
       this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
     }
     this.liveQuizes$ = this.quizService.liveQuizes$
+    this.quizParticipants$ = this.quizService.getParticipants$
   }
 
 
@@ -60,6 +62,12 @@ export class LiveQuizesComponent implements OnInit{
     // Quiz start logic
     await this.quizService.joinQuiz(quizId).toPromise();
   }
+
+  async getQuizParticipant(quizId:any) {
+    // Quiz start logic
+    await this.quizService.getQuizParticipant(quizId).toPromise();
+  }
+
 
   protected makeSafeUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);

@@ -70,6 +70,16 @@
             </div>
             {{quiz.title}}
           </h3>
+          <div class="quiz-meta">
+            <span class="quiz-meta-item" (click)="getQuizParticipant(quiz.quizId)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              {{quiz.participantCount}}
+            </span>
+          </div>
         </div>
         <p class="quiz-description">{{quiz.description}}</p>
         <div class="quiz-meta">
@@ -106,16 +116,6 @@
             <i class="fas fa-bolt"></i>
             50 XP
           </span>
-          <span class="meta-item" *ngIf="quiz.participants?.length">
-            <div class="meta">
-              <div class="participants">
-                <img *ngFor="let user of quiz.participants;" [src]="user.avatar" crossorigin="anonymous"
-                  (error)="avatarError($event)">
-                <span>{{quiz.remainingParticipants? '+ ' + quiz.remainingParticipants + ' playing':' joined' }}</span>
-              </div>
-            </div>
-          </span>
-          <span class="meta-item"></span>
         </div>
 
 

@@ -951,15 +951,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   align-items: center;
 }
 
-.approve-btn {
-  background-color: rgba(0, 184, 148, 0.1);
-  color: $success;
-}
-
-.approve-btn:hover {
-  background-color: rgba(0, 184, 148, 0.2);
-}
-
 .reject-btn {
   background-color: rgba(214, 48, 49, 0.1);
   color: $danger;

@@ -27,8 +27,21 @@
   letter-spacing: 0.5px;
 }
 
+
 .quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 10%;
+  margin-bottom: 12px;
+}
+
+
+.quiz-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
 }
 
 @keyframes pulse {
