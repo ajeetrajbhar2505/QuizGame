@@ -11,6 +11,7 @@ export interface QuizQuestion {
   correctAnswer: string;
   points: number;
   explanation?: string;
+  isloading?:boolean
 }
 
 export interface Quiz {

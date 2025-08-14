@@ -72,7 +72,7 @@
   
 
   <!-- Google Verification Modal -->
-  <ion-modal #googleModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #googleModal [initialBreakpoint]="0.45" [breakpoints]="[0.45, 0.5]">
     <ng-template>
       <div class="verification-container">
         <!-- Success State -->
@@ -109,6 +109,7 @@
           <p *ngIf="authFailed" [innerHTML]="errorMessage"></p>
           <p *ngIf="!googleProgress && !authFailed">Logged in successfully</p>
         </div>
+        
 
         <!-- Action Buttons (shown only on failure) -->
         <br>
@@ -129,7 +130,7 @@
   </ion-modal>
 
   <!-- Facebook Verification Modal -->
-  <ion-modal #facebookModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #facebookModal [initialBreakpoint]="0.45" [breakpoints]="[0.45, 0.5]">
     <ng-template>
       <div class="verification-container">
         <!-- Success State -->
@@ -186,7 +187,7 @@
   </ion-modal>
 
   <!-- Error Modal -->
-  <ion-modal #errorModal [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #errorModal [initialBreakpoint]="0.75" [breakpoints]="[0.45, 0.5]">
     <ng-template>
       <div class="verification-container">
         <!-- Failure State -->
@@ -244,15 +245,6 @@
       </div>
 
       <div class="otp-container" *ngIf="!otpSuccess && showOtpModal">
-        <div class="logo">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-              stroke="#4a90e2" stroke-width="2" />
-            <path d="M12 16V12M12 8H12.01" stroke="#4a90e2" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </div>
-
         <h1>Verify your account</h1>
         <p class="subtitle">We've sent otp code to <a class="resend-link">{{loginForm.email}}</a></p>
 

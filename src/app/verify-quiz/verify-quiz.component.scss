@@ -75,7 +75,7 @@ $light-gray: #f5f5f5;
   margin-bottom: 16px;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   transition: all 0.3s ease;
-  
+
 
   .question-header {
     display: flex;
@@ -86,8 +86,7 @@ $light-gray: #f5f5f5;
 
   .question-number {
     font-size: 0.9rem;
-    color: var(--ion-color-primary);
-    font-weight: 500;
+    font-weight: 700;
   }
 
   .refresh-btn {
@@ -146,7 +145,6 @@ $light-gray: #f5f5f5;
     }
 
     .option-text {
-      color: var(--ion-color-medium);
       font-size: 0.95rem;
       line-height: 1.4;
     }
@@ -163,7 +161,7 @@ $light-gray: #f5f5f5;
   background: white;
   padding: 12px;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn {
@@ -181,7 +179,7 @@ $light-gray: #f5f5f5;
   &.approve-btn {
     background-color: rgba($success, 0.1);
     color: $success;
-    
+
     &:hover {
       background-color: rgba($success, 0.2);
     }
@@ -190,9 +188,23 @@ $light-gray: #f5f5f5;
   &.reject-btn {
     background-color: rgba($danger, 0.1);
     color: $danger;
-    
+
     &:hover {
       background-color: rgba($danger, 0.2);
     }
   }
 }
+
+.option-item {
+  transition: all 0.3s ease;
+
+  &.correct-answer {
+    background-color: #2ecc71;
+
+    .option-bullet {
+      background-color: #fff !important;
+    }
+  }
+
+}
+

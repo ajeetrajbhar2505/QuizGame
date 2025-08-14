@@ -134,7 +134,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   private handleOtpSuccess(data: any): void {
-    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
+    // this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
     this.loginSuccess = true;
     this.isLoading = false;
     this.otpSuccess = true;
@@ -147,7 +147,7 @@ export class LoginPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'success');
+    // this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'success');
     this.loginSuccess = true;
     this.startOtpTimer();
     this.otpDetails = otpDetails;
