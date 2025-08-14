@@ -49,7 +49,6 @@ export class CreatePage implements OnInit {
 
   IsAdminTemplate(quiz: Quiz): boolean {
     return quiz.source?.toLowerCase() === 'admin-template' && 
-           !quiz.isPublic && 
            quiz.approvalStatus !== 'rejected';
   }
 

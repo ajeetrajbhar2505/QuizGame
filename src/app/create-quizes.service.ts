@@ -24,7 +24,6 @@ export interface Quiz {
   createdBy: string;
   source: 'openai' | 'admin-template';
   category?: string;
-  isPublic: boolean;
   approvalStatus: string;
   difficulty?: any;
   participants?:any[],
@@ -262,8 +261,8 @@ export class CreateQuizesService {
     );
   }
 
-  updateQuizStatus(quizId: string, publish: boolean, approvalStatus: string): Observable<Quiz> {
-    this.socketService.socket.emit('quiz:publish', quizId, publish, approvalStatus);
+  updateQuizStatus(quizId: string, approvalStatus: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:publish', quizId, approvalStatus);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').pipe(
       map(data => data.quiz),
       tap(quiz => {

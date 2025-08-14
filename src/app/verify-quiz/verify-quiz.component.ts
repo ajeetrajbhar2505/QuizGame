@@ -93,7 +93,7 @@ export class VerifyQuizComponent implements OnInit {
     if (this.approving) return;
     
     this.approving = true;
-    this.quizService.updateQuizStatus(quizId, true, 'approved').pipe(
+    this.quizService.updateQuizStatus(quizId, 'approved').pipe(
       tap(() => {
         this.toasterService.success('Quiz Approved');
         // Refresh the quiz data after approval
@@ -116,7 +116,7 @@ export class VerifyQuizComponent implements OnInit {
     if (this.rejecting) return;
     
     this.rejecting = true;
-    this.quizService.updateQuizStatus(quizId, false, 'rejected').pipe(
+    this.quizService.updateQuizStatus(quizId, 'rejected').pipe(
       tap(() => {
         this.toasterService.success('Quiz Rejected');
         // Refresh the quiz data after rejection

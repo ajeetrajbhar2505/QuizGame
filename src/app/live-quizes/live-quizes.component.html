@@ -70,7 +70,7 @@
             </div>
             {{quiz.title}}
           </h3>
-          <div class="quiz-meta">
+          <div class="quiz-meta" *ngIf="quiz.participantCount">
             <span class="quiz-meta-item" (click)="getQuizParticipant(quiz.quizId)">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
