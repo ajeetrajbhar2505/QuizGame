@@ -58,9 +58,22 @@ export class QuizesPage implements OnInit {
     await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
+  async BeginQuiz(quizId: string) {
+    // Quiz start logic
+    await this.quizService.BeginQuiz(quizId).toPromise();
+  }
+
+
   async startQuiz(quizId: string) {
     // Quiz start logic
-    await this.quizService.startWatingQuiz(quizId).toPromise();
+    await this.quizService.startQuiz(quizId).toPromise();
+  }
+
+
+
+  async EndQuiz(quizId: string) {
+    // Quiz start logic
+    await this.quizService.submitQuiz(quizId).toPromise();
   }
 
   verifyQuiz(quizId: string): void {

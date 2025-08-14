@@ -29,6 +29,7 @@ export interface Quiz {
   participants?:any[],
   status?:string,
   quizId?:any,
+  isLive?:boolean,
   participantCount?:number
 }
 
@@ -294,7 +295,7 @@ export class CreateQuizesService {
     );
   }
 
-  startWatingQuiz(quizId: string): Observable<Quiz> {
+  BeginQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:waiting', quizId);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:waiting:success').pipe(
       map(data => data.quiz),
@@ -324,6 +325,19 @@ export class CreateQuizesService {
   startQuiz(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:start', quizId);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:start:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
+      })
+    );
+  }
+
+  submitQuiz(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:submit', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:submit:success').pipe(
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
