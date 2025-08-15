@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } fro
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { user } from '../dashboard.service';
+import { LeaderboardUser, user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
@@ -11,11 +11,12 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './live-quizes.component.html',
   styleUrls: ['./live-quizes.component.scss'],
 })
-export class LiveQuizesComponent implements OnInit{
+export class LiveQuizesComponent implements OnInit {
   @Input() liveQuizes$: Observable<Quiz[]>;
-  @Input() quizParticipants$: Observable<Quiz[]>;
+  @Input() quizParticipants$: Observable<Quiz | null>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
+  openModel: boolean = false
   currentUser: user = {
     id: "",
     name: "",
@@ -43,27 +44,27 @@ export class LiveQuizesComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.quizService.isQuizesRefreshed.subscribe(data=>{
+    this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData(0)
       }
     })
   }
 
-  async loadInitialData(limit:number) {
+  async loadInitialData(limit: number) {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
-   await this.quizService.getActiveQuizes(limit).toPromise();
+    await this.quizService.getActiveQuizes(limit).toPromise();
   }
 
-  async joinQuiz(quizId:any) {
+  async joinQuiz(quizId: any) {
     // Quiz start logic
     await this.quizService.joinQuiz(quizId).toPromise();
   }
 
-  async getQuizParticipant(quizId:any) {
+  async getQuizParticipant(quizId: any) {
     // Quiz start logic
     await this.quizService.getQuizParticipant(quizId).toPromise();
   }
@@ -82,6 +83,25 @@ export class LiveQuizesComponent implements OnInit{
   // TrackBy functions for ngFor performance
   trackByQuizId(index: number, quiz: Quiz): string {
     return quiz._id; // Assuming Quiz has an _id property
+  }
+
+  showDialog() {
+    this.openModel = true
+  }
+
+  closeDialog() {
+    this.openModel = false
+  }
+
+
+  handleAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/user.png';
+    img.onerror = null; // Prevent infinite loop
+  }
+
+  trackByUserId(index: number, user: LeaderboardUser): string {
+    return user.userId;
   }
 
 

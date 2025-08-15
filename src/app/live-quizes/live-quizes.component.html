@@ -56,34 +56,31 @@
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
         <div class="quiz-header">
           <h3 class="quiz-title">
-            <div class="status-badge-container" 
-            [class.waiting]="quiz.status === 'waiting'"
-            [class.live]="quiz.status === 'in-progress'"
-            [class.completed]="quiz.status === 'completed'">
-         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <!-- Waiting/Live: Double Ring Icon -->
-           <path *ngIf="quiz.status !== 'completed'"
-             d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
-             fill="currentColor" />
-           <path *ngIf="quiz.status !== 'completed'"
-             d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z"
-             fill="currentColor" />
-           
-           <!-- Completed: Checkmark Icon -->
-           <path *ngIf="quiz.status === 'completed'"
-             d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
-             fill="currentColor" />
-         </svg>
-         <span class="status-text">
-           {{ quiz.status === 'waiting' ? 'Starting soon' : 
-              quiz.status === 'in-progress' ? 'LIVE NOW' : 
-              'Completed' }}
-         </span>
-       </div>
+            <div class="status-badge-container" [class.waiting]="quiz.status === 'waiting'"
+              [class.live]="quiz.status === 'in-progress'" [class.completed]="quiz.status === 'completed'">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Waiting/Live: Double Ring Icon -->
+                <path *ngIf="quiz.status !== 'completed'"
+                  d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
+                  fill="currentColor" />
+                <path *ngIf="quiz.status !== 'completed'"
+                  d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z"
+                  fill="currentColor" />
+
+                <!-- Completed: Checkmark Icon -->
+                <path *ngIf="quiz.status === 'completed'" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                  fill="currentColor" />
+              </svg>
+              <span class="status-text">
+                {{ quiz.status === 'waiting' ? 'Starting soon' :
+                quiz.status === 'in-progress' ? 'LIVE NOW' :
+                'Completed' }}
+              </span>
+            </div>
             {{quiz.title}}
           </h3>
-          <div class="quiz-meta" *ngIf="quiz.participantCount">
-            <span class="quiz-meta-item" (click)="getQuizParticipant(quiz.quizId)">
+          <div class="quiz-meta" *ngIf="quiz.participantCount" (click)="showDialog()">
+            <span class="quiz-meta-item" (click)="getQuizParticipant(quiz._id);">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -163,5 +160,84 @@
       </div>
     </ng-template>
   </ng-container>
+
+
+
+  <div class="modal-overlay" *ngIf="openModel">
+    <div class="modal">
+      <article class="modal-container">
+        <header class="modal-container-header">
+          <span class="modal-container-title">
+            {{(quizParticipants$ | async)?.title }}
+          </span>
+          <button class="icon-button" (click)="closeDialog()">
+            <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z" fill="currentColor"></path>
+            </svg>
+          </button>
+        </header>
+        <section class="modal-container-body rtf">
+          <ng-container *ngIf="quizParticipants$ | async as leaderboardUsers; else leaderboardLoading">
+            <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
+              <div class="content" style="padding-bottom: 8px;">
+                <div class="leaderboard-item" *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId">
+                  <div class="rank">{{leaderboardUsers.participants.indexOf(user) + 1}}</div>
+                  <div class="user">
+                    <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
+                    <div>
+                      <div class="name">{{user.name}}</div>
+                    </div>
+                  </div>
+                  <div class="points">{{user.points}}</div>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #emptyLeaderboard>
+              <div class="ph-item">
+                <div class="ph-col-12">
+                  <div class="ph-row">
+                    <div class="ph-col-12 big"></div>
+                    <div class="ph-col-12 big"></div>
+                    <div class="ph-col-12 big"></div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+
+
+          <ng-template #leaderboardLoading>
+            <div class="quiz-card">
+              <div class="ph-item">
+                <div class="ph-col-12">
+                  <div class="ph-row">
+                    <div class="ph-col-12 big"></div>
+                    <div class="ph-col-12 big"></div>
+                    <div class="ph-col-12 big"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+
+        </section>
+        <footer class="modal-container-footer">
+          <div class="host-container">
+            <div class="host-data">
+              <img [src]="(quizParticipants$ | async)?.host.avatar" class="host-avatar" alt="Host avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
+              <div>
+                <span class="host-label">Hosted by</span>
+                <span class="host-name">{{ (quizParticipants$ | async)?.host.name }}</span>
+              </div>
+    
+            </div>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+
 
 </div>
