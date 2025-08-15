@@ -1,15 +1,15 @@
 <div class="section {{!ParentInjected && 'mb'}}">
   <!-- Search bar -->
-  <div class="search-bar">
+  <div class="search-bar" *ngIf="!ParentInjected">
     <i class="fas fa-search"></i>
     <input type="text" placeholder="Search quizzes, topics...">
   </div>
 
   <!-- Categories -->
-  <div class="section-title">
+  <div class="section-title" *ngIf="!ParentInjected">
     <h2>Categories</h2>
   </div>
-  <div class="category-scroll skeleton-value">
+  <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
     <div class="category-card active">
       <div class="icon-wrapper">
         <i class="fas fa-calculator"></i>
@@ -226,7 +226,7 @@
         <footer class="modal-container-footer">
           <div class="host-container">
             <div class="host-data">
-              <img [src]="(quizParticipants$ | async)?.host.avatar" class="host-avatar" alt="Host avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
+              <img *ngIf="false" [src]="(quizParticipants$ | async)?.host.avatar" class="host-avatar" alt="Host avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
               <div>
                 <span class="host-label">Hosted by</span>
                 <span class="host-name">{{ (quizParticipants$ | async)?.host.name }}</span>

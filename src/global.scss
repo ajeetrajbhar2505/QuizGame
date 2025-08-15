@@ -467,8 +467,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .leaderboard-item {
   display: flex;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--light-gray);
+  padding: 10px 5px;
 }
 
 .leaderboard-item:last-child {
