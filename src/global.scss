@@ -216,7 +216,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .section-title a {
   font-size: 14px;
   font-weight: 500;
-  color: var(--primary);
+  color: var(--dark);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -313,7 +313,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   background-color: $card-bg;
   border-radius: 16px;
   padding: 18px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   transition: all 0.3s;
   position: relative;
   overflow: hidden;

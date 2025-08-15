@@ -128,7 +128,7 @@
         </div>
 
 
-        <div class="quiz-actions" *ngIf="currentUser.role == 'user' && quiz.status == 'waiting'">
+        <div class="quiz-actions" *ngIf="quiz.status == 'waiting'">
           <button class="action-btn approve-btn" (click)="joinQuiz(quiz.quizId)">
             Join
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

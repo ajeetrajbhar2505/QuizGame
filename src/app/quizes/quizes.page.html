@@ -107,28 +107,28 @@
             </svg>
           </button>
           <button *ngIf="currentUser.role != 'user'" class="action-btn approve-btn" (click)="verifyQuiz(quiz._id)">
-            See Quiz
+            Review
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                  stroke-linejoin="round" />
              </svg>
            </button>
           <button *ngIf="currentUser.role != 'user' && !quiz.isLive && quiz.status == 'inactive'" class="action-btn reject-btn" (click)="BeginQuiz(quiz._id)">
-            Begin Quiz
+            Begin 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
           <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'waiting'" class="action-btn reject-btn" (click)="startQuiz(quiz._id)">
-            Start Quiz
+            Start 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
           <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'in-progress'" class="action-btn reject-btn" (click)="EndQuiz(quiz._id)">
-            End Quiz
+            End 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
