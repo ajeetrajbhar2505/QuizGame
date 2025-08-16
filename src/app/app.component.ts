@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
           behavior: 'smooth'
         });
       });
-   this.notifications$ = this.notificationService.notificationsCount$
    this.notifications$ = this.notificationService.getUnreadNotificationsCount()
   }
 

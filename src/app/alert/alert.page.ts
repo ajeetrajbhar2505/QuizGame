@@ -22,7 +22,6 @@ export class AlertPage implements OnInit {
 
   async ngOnInit() {
     await this.loadNotifications();
-    this.setupNotificationUpdates();
     await this.notificationService.getAllNotifications().toPromise()
   }
 
@@ -40,14 +39,6 @@ export class AlertPage implements OnInit {
     }
   }
 
-  private setupNotificationUpdates(): void {
-    this.notificationService.notifications$.subscribe(notifications => {
-      if (notifications) {
-        this.unreadNotifications = notifications.filter(n => !n.isRead);
-        this.readNotifications = notifications.filter(n => n.isRead);
-      }
-    });
-  }
 
   getNotificationIcon(type: NotificationType): string {
     const icons = {

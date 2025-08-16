@@ -58,8 +58,7 @@ export class NotificationService implements OnDestroy {
     });
 
     this.socketService.socket.on('notification:broadcast:success', (data: { notification: Notification }) => {
-      const current = this.notificationSource$.value;
-      this.notificationSource$.next([data.notification, ...current]);
+      this.notificationSource$.next([data.notification]);
       this.showToastNotification(data.notification);
     });
 
