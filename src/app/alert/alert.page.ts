@@ -18,17 +18,18 @@ export class AlertPage implements OnInit {
   constructor(
     private notificationService: NotificationService,
     private router: Router,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.loadNotifications();
     this.setupNotificationUpdates();
+    await this.notificationService.getAllNotifications().toPromise()
   }
 
   private async loadNotifications(): Promise<void> {
     try {
       this.loading = true;
-      this.notificationService.notifications$.subscribe((allNotifications:Notification[])=>{
+      this.notificationService.notifications$.subscribe((allNotifications: Notification[]) => {
         this.unreadNotifications = allNotifications.filter(n => !n.isRead);
         this.readNotifications = allNotifications.filter(n => n.isRead);
       })
@@ -78,11 +79,9 @@ export class AlertPage implements OnInit {
     return colors[type] || 'medium';
   }
 
-  async viewNotification(notification: Notification, slidingItem?: IonItemSliding): Promise<void> {
-    if (slidingItem) await slidingItem.close();
-    
+  async viewNotification(notification: Notification): Promise<void> {
     if (!notification.isRead) {
-      await this.notificationService.markAsRead(notification.id);
+      await this.notificationService.markAsRead(notification._id);
     }
 
     // Handle navigation based on notification type
@@ -101,7 +100,7 @@ export class AlertPage implements OnInit {
   }
 
   async markAllAsRead(): Promise<void> {
-    const unreadIds = this.unreadNotifications.map(n => n.id);
+    const unreadIds = this.unreadNotifications.map(n => n._id);
     if (unreadIds.length > 0) {
       await this.notificationService.markAllAsRead();
       this.unreadNotifications = [];
@@ -111,7 +110,7 @@ export class AlertPage implements OnInit {
 
 
   trackByNotificationId(index: number, notification: Notification): string {
-    return notification.id;
+    return notification._id;
   }
 
   async doRefresh(event: any): Promise<void> {

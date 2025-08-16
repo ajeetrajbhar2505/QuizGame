@@ -4,6 +4,8 @@ import { filter } from 'rxjs/operators';
 import { SocketService } from './socket.service';
 import { CreateQuizesService } from './create-quizes.service';
 import { DashboardService } from './dashboard.service';
+import { NotificationService } from './notification.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +16,14 @@ import { DashboardService } from './dashboard.service';
 export class AppComponent implements OnInit {
   showLoader: boolean = false
   logged: boolean = false
+  notifications$: Observable<number>;
   currentRoute: string = '';
   constructor(
     private socketService: SocketService,
     private router: Router,
     private createQuizesService:CreateQuizesService,
-    private dashboardService:DashboardService
+    private dashboardService:DashboardService,
+    private notificationService:NotificationService
     
   ) {
     this.router.events
@@ -32,6 +36,8 @@ export class AppComponent implements OnInit {
           behavior: 'smooth'
         });
       });
+   this.notifications$ = this.notificationService.notificationsCount$
+   this.notifications$ = this.notificationService.getUnreadNotificationsCount()
   }
 
   navigateTopage(page:string){

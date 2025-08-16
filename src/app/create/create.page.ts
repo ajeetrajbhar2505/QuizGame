@@ -3,6 +3,8 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, combineLatest, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
+import { NotificationService } from '../notification.service';
+import { NotificationType } from '../notification-type.enum';
 
 @Component({
   selector: 'app-create',
@@ -33,7 +35,8 @@ export class CreatePage implements OnInit {
   constructor(
     private quizService: CreateQuizesService,
     private toasterService: ToasterService,
-    private router: Router
+    private router: Router,
+    private notificationService:NotificationService
   ) {
     this.viewModel$ = combineLatest([
       this.quizService.getCurrentDraft$,
@@ -53,6 +56,8 @@ export class CreatePage implements OnInit {
   }
 
   createQuiz(): void {
+    this.notificationService.sendBroadcastNotification(NotificationType.QUIZ_INVITATION,'Quiz invitation testing!')
+    return
     if (!this.validateQuizPrompt()) return;
 
     this.prepareForQuizCreation();

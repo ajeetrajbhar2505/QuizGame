@@ -5,7 +5,7 @@ import { ToasterService } from './toaster.service';
 import { NotificationType } from './notification-type.enum';
 
 export interface Notification {
-  id: string;
+  _id: string;
   recipient?: string;
   sender?: string;
   isBroadcast: boolean;
@@ -25,8 +25,10 @@ export interface Notification {
 })
 export class NotificationService implements OnDestroy {
   private notificationSource$ = new BehaviorSubject<Notification[]>([]);
+  private notificationCountSource$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
   public notifications$ = this.notificationSource$.asObservable();
+  public notificationsCount$ = this.notificationCountSource$.asObservable();
   public unreadCount$ = this.notifications$.pipe(
     map(notifications => notifications.filter(n => !n.isRead).length)
   );
@@ -63,7 +65,7 @@ export class NotificationService implements OnDestroy {
 
     this.socketService.socket.on('notification:read:success', (data: { notificationId: string }) => {
       const updated = this.notificationSource$.value.map(n => 
-        n.id === data.notificationId ? { ...n, isRead: true } : n
+        n._id === data.notificationId ? { ...n, isRead: true } : n
       );
       this.notificationSource$.next(updated);
     });
@@ -103,6 +105,15 @@ export class NotificationService implements OnDestroy {
     );
   }
 
+  getUnreadNotificationsCount(): Observable<number> {
+    this.socketService.socket.emit('notification:UnreadNotificationsCount');
+    return this.socketService.fromEvent<{ data:any }>('notification:UnreadNotificationsCount:success').pipe(
+      map(data => data),
+      tap((data:any) => this.notificationCountSource$.next(data)),
+      takeUntil(this.destroy$)
+    );
+  }
+
   sendNotification(recipientId: string, type: NotificationType, metadata: any): void {
     this.socketService.socket.emit('notification:send', { 
       recipientId: recipientId, 
@@ -118,14 +129,20 @@ export class NotificationService implements OnDestroy {
     });
   }
 
-  markAsRead(notificationId: string): void {
-    this.socketService.socket.emit('notification:read', { notificationId });
+  markAsRead(notificationId:string): Observable<string> {
+    this.socketService.socket.emit('notification:read', notificationId);
+    return this.socketService.fromEvent<{ notificationId: string }>('notification:read:success').pipe(
+      map(data => data.notificationId),
+      tap(notificationId => {
+        this.getAllNotifications().subscribe()
+      })
+    );
   }
 
   markAllAsRead(): void {
     const unreadIds = this.notificationSource$.value
       .filter(n => !n.isRead)
-      .map(n => n.id);
+      .map(n => n._id);
     
     if (unreadIds.length > 0) {
       this.socketService.socket.emit('notification:read-all', { notificationIds: unreadIds });

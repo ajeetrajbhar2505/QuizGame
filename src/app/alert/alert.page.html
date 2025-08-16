@@ -7,9 +7,6 @@
     <ion-segment [(ngModel)]="segmentValue">
       <ion-segment-button value="unread">
         <ion-label>Unread</ion-label>
-        <ion-badge *ngIf="unreadNotifications.length > 0" color="danger">
-          {{unreadNotifications.length}}
-        </ion-badge>
       </ion-segment-button>
       <ion-segment-button value="all">
         <ion-label>All</ion-label>
@@ -32,7 +29,7 @@
           <ion-label>
             <h2>{{notification.title}}</h2>
             <p>{{notification.message}}</p>
-            <p class="time">{{(notification.createdAt)}}</p>
+            <p class="time">{{(notification.createdAt | date : 'short')}}</p>
           </ion-label>
 
           <ion-badge *ngIf="!notification.isRead" slot="end" color="danger">New</ion-badge>
