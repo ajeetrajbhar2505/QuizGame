@@ -40,9 +40,12 @@ export class AlertPage implements OnInit {
   }
 
 
-  getNotificationIcon(type: NotificationType): string {
+  getNotificationIcon(notification: Notification): string {
+    const type: NotificationType = notification.type;
+    const isRead: boolean = notification.isRead;
+
     const icons = {
-      [NotificationType.QUIZ_INVITATION]: 'mail-unread-outline',
+      [NotificationType.QUIZ_INVITATION]: isRead ? 'mail' : 'mail-unread-outline',
       [NotificationType.QUIZ_START]: 'play-circle-outline',
       [NotificationType.QUESTION_READY]: 'help-circle-outline',
       [NotificationType.QUIZ_ENDED]: 'checkmark-done-outline',
@@ -52,6 +55,7 @@ export class AlertPage implements OnInit {
       [NotificationType.ADMIN_ANNOUNCEMENT]: 'megaphone-outline',
       [NotificationType.SYSTEM_ALERT]: 'warning-outline'
     };
+
     return icons[type] || 'notifications-outline';
   }
 
@@ -70,23 +74,14 @@ export class AlertPage implements OnInit {
     return colors[type] || 'medium';
   }
 
-  async viewNotification(notification: Notification): Promise<void> {
+  async viewNotification(notification: Notification) {
     if (!notification.isRead) {
       await this.notificationService.markAsRead(notification._id);
-    }
-
-    // Handle navigation based on notification type
-    switch (notification.type) {
-      case NotificationType.QUIZ_INVITATION:
-        this.router.navigate(['/quiz', notification.metadata?.quizId]);
-        break;
-      case NotificationType.ACHIEVEMENT_UNLOCKED:
-        this.router.navigate(['/profile/achievements']);
-        break;
-      default:
-        // Default action or show details modal
-        console.log('Notification action:', notification);
-        break;
+      this.unreadNotifications = this.unreadNotifications.filter(n => n._id !== notification._id);
+      this.readNotifications.unshift({
+        ...notification,
+        isRead: true
+      });
     }
   }
 

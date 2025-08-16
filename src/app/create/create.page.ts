@@ -56,8 +56,7 @@ export class CreatePage implements OnInit {
   }
 
   createQuiz(): void {
-    this.notificationService.sendBroadcastNotification(NotificationType.QUIZ_INVITATION,'Quiz invitation testing!')
-    return
+    // this.notificationService.sendBroadcastNotification(NotificationType.QUIZ_INVITATION,'Quiz invitation testing!')
     if (!this.validateQuizPrompt()) return;
 
     this.prepareForQuizCreation();

@@ -49,6 +49,7 @@ export class NotificationService implements OnDestroy {
     // Success handlers
     this.socketService.socket.on('notification:get:success', (data: { notifications: Notification[] }) => {
       this.notificationSource$.next(data.notifications);
+      this.getUnreadNotificationsCount().subscribe()
     });
 
     this.socketService.socket.on('notification:new', (data: { notification: Notification }) => {
@@ -57,16 +58,14 @@ export class NotificationService implements OnDestroy {
       this.showToastNotification(data.notification);
     });
 
-    this.socketService.socket.on('notification:broadcast:success', (data: { notification: Notification }) => {
-      this.notificationSource$.next([data.notification]);
+    this.socketService.socket.on('notification:broadcast:success', (data) => {
       this.showToastNotification(data.notification);
+      this.getAllNotifications().subscribe()
+      this.getUnreadNotificationsCount().subscribe()
     });
 
-    this.socketService.socket.on('notification:read:success', (data: { notificationId: string }) => {
-      const updated = this.notificationSource$.value.map(n => 
-        n._id === data.notificationId ? { ...n, isRead: true } : n
-      );
-      this.notificationSource$.next(updated);
+    this.socketService.socket.on('notification:read:success', (data) => {
+      this.getUnreadNotificationsCount().subscribe()
     });
 
     // Error handlers

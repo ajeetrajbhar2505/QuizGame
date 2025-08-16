@@ -22,7 +22,7 @@
         <ion-item (click)="viewNotification(notification)" [detail]="false" [class.unread]="!notification.isRead">
           <ion-icon 
             slot="start" 
-            [name]="getNotificationIcon(notification.type)" 
+            [name]="getNotificationIcon(notification)" 
             [color]="getNotificationColor(notification.type)">
           </ion-icon>
           
