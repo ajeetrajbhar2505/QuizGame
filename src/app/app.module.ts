@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home/home.page';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { WebService } from './web.service';
-import { interceptorInterceptor } from './interceptor.interceptor';
 import { LoaderService } from './loader.service';
 import { SocketService } from './socket.service';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
@@ -48,8 +47,7 @@ library.add(fas);
       deps: [SocketService],
       multi: true
     },
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: interceptorInterceptor, multi: true }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
 })
