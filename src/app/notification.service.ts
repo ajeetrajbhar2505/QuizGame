@@ -15,7 +15,7 @@ export interface Notification {
   isRead: boolean;
   isSeen: boolean;
   metadata?: any;
-  actionUrl?: string;
+  actionUrl: string;
   priority: 'low' | 'medium' | 'high';
   createdAt: Date;
 }
@@ -48,6 +48,11 @@ export class NotificationService implements OnDestroy {
   private setupSocketListeners(): void {
     // Success handlers
     this.socketService.socket.on('notification:get:success', (data: { notifications: Notification[] }) => {
+      this.notificationSource$.next(data.notifications);
+      this.getUnreadNotificationsCount().subscribe()
+    });
+
+    this.socketService.socket.on('notification:send:success', (data: { notifications: Notification[] }) => {
       this.notificationSource$.next(data.notifications);
       this.getUnreadNotificationsCount().subscribe()
     });
@@ -105,29 +110,33 @@ export class NotificationService implements OnDestroy {
 
   getUnreadNotificationsCount(): Observable<number> {
     this.socketService.socket.emit('notification:UnreadNotificationsCount');
-    return this.socketService.fromEvent<{ data:any }>('notification:UnreadNotificationsCount:success').pipe(
+    return this.socketService.fromEvent<{ data: any }>('notification:UnreadNotificationsCount:success').pipe(
       map(data => data),
-      tap((data:any) => this.notificationCountSource$.next(data)),
+      tap((data: any) => this.notificationCountSource$.next(data)),
       takeUntil(this.destroy$)
     );
   }
 
-  sendNotification(recipientId: string, type: NotificationType, metadata: any): void {
-    this.socketService.socket.emit('notification:send', { 
-      recipientId: recipientId, 
-      type, 
-      metadata 
+  sendNotification(recipientId: string, type: NotificationType, message: string, metadata: any, actionUrl: string): void {
+    this.socketService.socket.emit('notification:send', {
+      recipientId: recipientId,
+      type,
+      message,
+      metadata,
+      actionUrl
     });
   }
 
-  sendBroadcastNotification(type: NotificationType, messageData: any): void {
-    this.socketService.socket.emit('notification:broadcast', { 
-      type, 
-      messageData 
+  sendBroadcastNotification(type: NotificationType, message: string, metadata: any, actionUrl: string): void {
+    this.socketService.socket.emit('notification:broadcast', {
+      type,
+      message,
+      metadata,
+      actionUrl
     });
   }
 
-  markAsRead(notificationId:string): Observable<string> {
+  markAsRead(notificationId: string): Observable<string> {
     this.socketService.socket.emit('notification:read', notificationId);
     return this.socketService.fromEvent<{ notificationId: string }>('notification:read:success').pipe(
       map(data => data.notificationId),
@@ -141,7 +150,7 @@ export class NotificationService implements OnDestroy {
     const unreadIds = this.notificationSource$.value
       .filter(n => !n.isRead)
       .map(n => n._id);
-    
+
     if (unreadIds.length > 0) {
       this.socketService.socket.emit('notification:read-all', { notificationIds: unreadIds });
     }

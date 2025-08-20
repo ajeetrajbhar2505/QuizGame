@@ -349,6 +349,19 @@ export class CreateQuizesService {
     );
   }
 
+  completeQuizByHost(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('quiz:completeQuizByHost', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:completeQuizByHost:success').pipe(
+      map(data => data.quiz),
+      tap(quiz => {
+        this.refreshedQuizes$.next(true)
+        this.getAllQuiz().subscribe();
+        this.getPublishedQuiz(3).subscribe();
+        this.getActiveQuizes(3).subscribe()
+      })
+    );
+  }
+
   getQuizParticipant(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:participants', quizId);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:participants:success').pipe(

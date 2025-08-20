@@ -25,6 +25,17 @@ export class AlertPage implements OnInit {
     await this.notificationService.getAllNotifications().toPromise()
   }
 
+  IsToday_sDateWithTimezone(date: Date | string, timeZone?: string): boolean {
+    const inputDate = typeof date === 'string' ? new Date(date) : date;
+    const today = new Date();
+    
+    // Convert both dates to the same timezone (or local time if no timezone specified)
+    const inputDateStr = inputDate.toLocaleDateString('en-CA', { timeZone });
+    const todayStr = today.toLocaleDateString('en-CA', { timeZone });
+    
+    return inputDateStr === todayStr;
+  }
+
   private async loadNotifications(): Promise<void> {
     try {
       this.loading = true;
@@ -44,7 +55,7 @@ export class AlertPage implements OnInit {
     const type: NotificationType = notification.type;
     const isRead: boolean = notification.isRead;
 
-    const icons = {
+    const icons:any = {
       [NotificationType.QUIZ_INVITATION]: isRead ? 'mail' : 'mail-unread-outline',
       [NotificationType.QUIZ_START]: 'play-circle-outline',
       [NotificationType.QUESTION_READY]: 'help-circle-outline',
@@ -60,7 +71,7 @@ export class AlertPage implements OnInit {
   }
 
   getNotificationColor(type: NotificationType): string {
-    const colors = {
+    const colors:any = {
       [NotificationType.QUIZ_INVITATION]: 'primary',
       [NotificationType.QUIZ_START]: 'success',
       [NotificationType.QUESTION_READY]: 'warning',
@@ -74,6 +85,10 @@ export class AlertPage implements OnInit {
     return colors[type] || 'medium';
   }
 
+  navigateToactionUrl(actionUrl:String){
+   this.router.navigate([actionUrl])
+  }
+
   async viewNotification(notification: Notification) {
     if (!notification.isRead) {
       await this.notificationService.markAsRead(notification._id);
@@ -83,6 +98,7 @@ export class AlertPage implements OnInit {
         isRead: true
       });
     }
+    this.navigateToactionUrl(notification.actionUrl)
   }
 
   async markAllAsRead(): Promise<void> {

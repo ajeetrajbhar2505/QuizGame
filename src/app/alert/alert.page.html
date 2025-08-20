@@ -29,7 +29,7 @@
           <ion-label>
             <h2>{{notification.title}}</h2>
             <p>{{notification.message}}</p>
-            <p class="time">{{(notification.createdAt | date : 'short')}}</p>
+            <p class="time">{{(notification.createdAt | date : IsToday_sDateWithTimezone(notification.createdAt)?("shortTime"):("dd MMM, yyyy 'at' hh:mm a"))}}</p>
           </ion-label>
 
           <ion-badge *ngIf="!notification.isRead" slot="end" color="danger">New</ion-badge>

@@ -71,9 +71,9 @@ export class QuizesPage implements OnInit {
 
 
 
-  async EndQuiz(quizId: string) {
+  async completeQuizByHost(quizId: string) {
     // Quiz start logic
-    await this.quizService.submitQuiz(quizId).toPromise();
+    await this.quizService.completeQuizByHost(quizId).toPromise();
   }
 
   verifyQuiz(quizId: string): void {
