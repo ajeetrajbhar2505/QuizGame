@@ -14,6 +14,7 @@ export class AlertPage implements OnInit {
   unreadNotifications: Notification[] = [];
   readNotifications: Notification[] = [];
   segmentValue: 'unread' | 'all' = 'unread';
+  isLoadingNotification: boolean = false;
 
   constructor(
     private notificationService: NotificationService,
@@ -38,6 +39,11 @@ export class AlertPage implements OnInit {
 
   private async loadNotifications(): Promise<void> {
     try {
+      this.isLoadingNotification = true;
+      setTimeout(() => {
+        this.isLoadingNotification = false;
+      }, 2000);
+
       this.loading = true;
       this.notificationService.notifications$.subscribe((allNotifications: Notification[]) => {
         this.unreadNotifications = allNotifications.filter(n => !n.isRead);
@@ -115,8 +121,7 @@ export class AlertPage implements OnInit {
     return notification._id;
   }
 
-  async doRefresh(event: any): Promise<void> {
+  async doRefresh() {
     await this.loadNotifications();
-    event.target.complete();
   }
 }

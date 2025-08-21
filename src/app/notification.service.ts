@@ -49,26 +49,22 @@ export class NotificationService implements OnDestroy {
     // Success handlers
 
     this.socketService.socket.on('notification:send:success', (data) => {
-      console.log(data);
       this.getUnreadNotificationsCount().subscribe()
       this.showToastNotification(data.notification);
     });
 
     this.socketService.socket.on('notification:new', (data) => {
-      console.log(data);
       const current = this.notificationSource$.value;
       this.notificationSource$.next([data.notification, ...current]);
       this.showToastNotification(data.notification);
     });
 
     this.socketService.socket.on('notification:broadcast:success', (data) => {
-      console.log(data);
       this.showToastNotification(data.notification);
       this.getUnreadNotificationsCount().subscribe()
     });
 
     this.socketService.socket.on('notification:read:success', (data) => {
-      console.log(data);
       this.getUnreadNotificationsCount().subscribe()
     });
 
