@@ -47,29 +47,28 @@ export class NotificationService implements OnDestroy {
 
   private setupSocketListeners(): void {
     // Success handlers
-    this.socketService.socket.on('notification:get:success', (data: { notifications: Notification[] }) => {
-      this.notificationSource$.next(data.notifications);
+
+    this.socketService.socket.on('notification:send:success', (data) => {
+      console.log(data);
       this.getUnreadNotificationsCount().subscribe()
+      this.showToastNotification(data.notification);
     });
 
-    this.socketService.socket.on('notification:send:success', (data: { notifications: Notification[] }) => {
-      this.notificationSource$.next(data.notifications);
-      this.getUnreadNotificationsCount().subscribe()
-    });
-
-    this.socketService.socket.on('notification:new', (data: { notification: Notification }) => {
+    this.socketService.socket.on('notification:new', (data) => {
+      console.log(data);
       const current = this.notificationSource$.value;
       this.notificationSource$.next([data.notification, ...current]);
       this.showToastNotification(data.notification);
     });
 
     this.socketService.socket.on('notification:broadcast:success', (data) => {
+      console.log(data);
       this.showToastNotification(data.notification);
-      this.getAllNotifications().subscribe()
       this.getUnreadNotificationsCount().subscribe()
     });
 
     this.socketService.socket.on('notification:read:success', (data) => {
+      console.log(data);
       this.getUnreadNotificationsCount().subscribe()
     });
 
@@ -93,9 +92,46 @@ export class NotificationService implements OnDestroy {
 
   private showToastNotification(notification: Notification): void {
     let message = notification.message;
-    if (notification.type === NotificationType.QUIZ_INVITATION) {
-      message = `You've been invited to ${notification.metadata?.quizName || 'a quiz'}`;
+    const metadata = notification.metadata || {};
+
+    switch (notification.type) {
+      case NotificationType.QUIZ_INVITATION:
+        message = `🎯 You've been invited to "${metadata.quizTitle || metadata.custom_data || 'a quiz'}" by ${metadata.inviterName || 'a friend'}!`;
+        break;
+
+      case NotificationType.QUIZ_START:
+        message = `🚀 "${metadata.quizTitle || metadata.custom_data || 'The quiz'}" is starting now! Get ready!`;
+        break;
+
+      case NotificationType.QUESTION_READY:
+        message = `❓ New question available in "${metadata.quizTitle || metadata.custom_data || 'the quiz'}!"`;
+        break;
+
+      case NotificationType.QUIZ_ENDED:
+        message = `✅ "${metadata.quizTitle || metadata.custom_data || 'The quiz'}" has ended. Thanks for playing! 🎉`;
+        break;
+
+      case NotificationType.RESULTS_AVAILABLE:
+        message = `📊 Results for "${metadata.quizTitle || metadata.custom_data || 'the quiz'}" are now available!`;
+        break;
+
+      case NotificationType.NEW_LEADER:
+        message = `🏆 You're now the leader in "${metadata.quizTitle || metadata.custom_data || 'the quiz'}!" 🎉`;
+        break;
+
+      case NotificationType.ACHIEVEMENT_UNLOCKED:
+        message = `⭐ Achievement unlocked: "${metadata.achievementName || metadata.custom_data || 'New achievement'}!" 🎯`;
+        break;
+
+      case NotificationType.ADMIN_ANNOUNCEMENT:
+        message = `📢 Announcement: ${metadata.message || metadata.custom_data || 'New announcement'}`;
+        break;
+
+      case NotificationType.SYSTEM_ALERT:
+        message = `⚠️ System alert: ${metadata.alertMessage || metadata.custom_data || 'System notification'}`;
+        break;
     }
+
     this.toastr.success(message);
   }
 

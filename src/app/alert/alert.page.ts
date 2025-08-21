@@ -56,18 +56,18 @@ export class AlertPage implements OnInit {
     const isRead: boolean = notification.isRead;
 
     const icons:any = {
-      [NotificationType.QUIZ_INVITATION]: isRead ? 'mail' : 'mail-unread-outline',
-      [NotificationType.QUIZ_START]: 'play-circle-outline',
-      [NotificationType.QUESTION_READY]: 'help-circle-outline',
-      [NotificationType.QUIZ_ENDED]: 'checkmark-done-outline',
-      [NotificationType.RESULTS_AVAILABLE]: 'bar-chart-outline',
-      [NotificationType.NEW_LEADER]: 'trophy-outline',
-      [NotificationType.ACHIEVEMENT_UNLOCKED]: 'ribbon-outline',
-      [NotificationType.ADMIN_ANNOUNCEMENT]: 'megaphone-outline',
-      [NotificationType.SYSTEM_ALERT]: 'warning-outline'
+      [NotificationType.QUIZ_INVITATION]: isRead ? 'mail-open' : 'mail-unread',
+      [NotificationType.QUIZ_START]: isRead ? 'play-circle-outline' : 'mail-unread',
+      [NotificationType.QUESTION_READY]: isRead ? 'help-circle-outline' : 'mail-unread',
+      [NotificationType.QUIZ_ENDED]: isRead ? 'mail-open' : 'mail-unread',
+      [NotificationType.RESULTS_AVAILABLE]: isRead ? 'bar-chart-outline' : 'mail-unread',
+      [NotificationType.NEW_LEADER]: isRead ? 'trophy-outline' : 'mail-unread',
+      [NotificationType.ACHIEVEMENT_UNLOCKED]: isRead ? 'ribbon-outline' : 'mail-unread',
+      [NotificationType.ADMIN_ANNOUNCEMENT]: isRead ? 'megaphone-outline' : 'mail-unread',
+      [NotificationType.SYSTEM_ALERT]: isRead ? 'warning-outline': 'mail-unread'
     };
 
-    return icons[type] || 'notifications-outline';
+    return icons[type] || 'notifications';
   }
 
   getNotificationColor(type: NotificationType): string {
