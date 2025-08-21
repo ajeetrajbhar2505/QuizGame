@@ -21,6 +21,25 @@
 
 <body>
   <app-root></app-root>
+  <script>
+    (function() {
+  if (typeof EventTarget !== 'undefined') {
+    const addEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function(type, listener, options) {
+      if (type === 'touchstart' || type === 'touchmove' || type === 'wheel' || type === 'scroll') {
+        if (typeof options === 'boolean') {
+          options = { capture: options, passive: false };
+        } else if (typeof options === 'object') {
+          options = { ...options, passive: options.passive !== false };
+        } else {
+          options = { passive: true };
+        }
+      }
+      return addEventListener.call(this, type, listener, options);
+    };
+  }
+})();
+  </script>
 </body>
 
 </html>
