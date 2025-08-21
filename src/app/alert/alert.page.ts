@@ -14,8 +14,7 @@ export class AlertPage implements OnInit {
   unreadNotifications: Notification[] = [];
   readNotifications: Notification[] = [];
   segmentValue: 'unread' | 'all' = 'unread';
-  isLoadingNotification: boolean = false;
-
+  isLoadingNotification:boolean = false
   constructor(
     private notificationService: NotificationService,
     private router: Router,
@@ -43,7 +42,6 @@ export class AlertPage implements OnInit {
       setTimeout(() => {
         this.isLoadingNotification = false;
       }, 2000);
-
       this.loading = true;
       this.notificationService.notifications$.subscribe((allNotifications: Notification[]) => {
         this.unreadNotifications = allNotifications.filter(n => !n.isRead);
