@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subject, Subscription, timer } from 'rxjs';
@@ -27,6 +27,7 @@ export class LoginPage implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal!: IonModal;
   @ViewChild('googleModal') googleModal!: IonModal;
   @ViewChild('facebookModal') facebookModal!: IonModal;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
   loginForm = {
     email: '',
@@ -373,6 +374,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   // UI Helpers
   focusInput(): void {
+    this.scrollToShowContent()
     this.continuewith = true;
     setTimeout(() => {
       const inputElement = document.getElementById('input');
@@ -380,5 +382,17 @@ export class LoginPage implements OnInit, OnDestroy {
         inputElement.focus();
       }
     }, 0);
+  }
+
+  scrollToShowContent() {
+    try {
+      const container = this.scrollContainer.nativeElement;
+      const buttonHeight = 50; // Adjust this to your button's actual height
+      
+      // Scroll to show content but leave space for the button
+      container.scrollTop = container.scrollHeight - container.clientHeight - buttonHeight;
+    } catch (err) {
+      console.error('Scroll error:', err);
+    }
   }
 }

@@ -17,7 +17,7 @@
         <a (click)="navigateTopage('/alert')"  class="nav-item {{currentRoute == '/alert' ? 'active':''}}">
           <i class="fas fa-bell"></i>
           <span>Alerts</span>
-          <div class="badge">{{notifications$ | async}}</div>
+          <div class="badge">{{notifications$}}</div>
         </a>
         <a  (click)="navigateTopage('/profile')"  class="nav-item {{currentRoute == '/profile' ? 'active':''}}">
           <i class="fas fa-user"></i>

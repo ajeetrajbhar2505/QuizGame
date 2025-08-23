@@ -16,15 +16,15 @@ import { Observable } from 'rxjs';
 export class AppComponent implements OnInit {
   showLoader: boolean = false
   logged: boolean = false
-  notifications$: Observable<number>;
+  notifications$: Observable<number> | number = 0;
   currentRoute: string = '';
   constructor(
     private socketService: SocketService,
     private router: Router,
-    private createQuizesService:CreateQuizesService,
-    private dashboardService:DashboardService,
-    private notificationService:NotificationService
-    
+    private createQuizesService: CreateQuizesService,
+    private dashboardService: DashboardService,
+    private notificationService: NotificationService
+
   ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -36,18 +36,17 @@ export class AppComponent implements OnInit {
           behavior: 'smooth'
         });
       });
-   this.notifications$ = this.notificationService.getUnreadNotificationsCount()
+      if (localStorage.getItem('token')) {
+        this.notificationService.getUnreadNotificationsCount().subscribe((count:number)=>{
+         this.notifications$ = count
+        })
+       }
   }
 
-  navigateTopage(page:string){
-  this.router.navigate([page])
-  this.__runInitializers()
+  navigateTopage(page: string) {
+    this.router.navigate([page])
   }
 
- async __runInitializers(){
-   this.createQuizesService.initializeData()
-   await this.dashboardService.getLeaderboardUser(3).toPromise()
-  }
 
   ngOnInit(): void {
     this.logged = (localStorage.getItem('token')) ? true : false
@@ -56,6 +55,6 @@ export class AppComponent implements OnInit {
     })
 
   }
-  
+
 
 }
