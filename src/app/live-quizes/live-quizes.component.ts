@@ -11,7 +11,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './live-quizes.component.html',
   styleUrls: ['./live-quizes.component.scss'],
 })
-export class LiveQuizesComponent implements OnInit {
+export class LiveQuizesComponent implements OnInit,OnDestroy {
   @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() quizParticipants$: Observable<Quiz | null>;
   @Input() ParentInjected: boolean = false
@@ -44,19 +44,20 @@ export class LiveQuizesComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.loadInitialData(0)
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
-        this.loadInitialData(0)
+        this.loadInitialData(3)
       }
     })
   }
 
-  async loadInitialData(limit: number) {
+  async loadInitialData(index:number) {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
-    await this.quizService.getActiveQuizes(limit).toPromise();
+    await this.quizService.getActiveQuizes(index).toPromise();
   }
 
   async joinQuiz(quizId: any) {
@@ -104,5 +105,10 @@ export class LiveQuizesComponent implements OnInit {
     return user.userId;
   }
 
+
+ async ngOnDestroy() {
+    await this.quizService.getActiveQuizes(3).toPromise();
+    
+  }
 
 }

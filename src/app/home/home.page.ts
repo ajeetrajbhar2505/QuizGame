@@ -48,8 +48,9 @@ export class HomePage implements OnInit {
 
   async loadInitialData() {
    await forkJoin([
-      this.dashboardService.getLeaderboardUser(3),
-      this.quizService.getActiveQuizes(3)
+      this.dashboardService.getLeaderboardUser(),
+      this.quizService.getActiveQuizes(),
+      this.quizService.getPublishedQuiz()
     ]).toPromise()
     
     this.dashboardService.getDashboardStats();

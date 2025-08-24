@@ -12,7 +12,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage implements OnInit {
+export class QuizesPage implements OnInit,OnDestroy {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
@@ -40,22 +40,22 @@ export class QuizesPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadInitialData(0)
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
-        this.loadInitialData(0)
+        this.loadInitialData(3)
       }
     })
   }
 
 
-  async loadInitialData(limit: number) {
+  async loadInitialData(index:number) {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);
     this.handleRefresh.emit(true)
-    await this.quizService.getPublishedQuiz(limit).toPromise();
-    await this.quizService.getActiveQuizes(limit).toPromise();
+    await this.quizService.getPublishedQuiz(index).toPromise();
   }
 
   async BeginQuiz(quizId: string) {
@@ -95,6 +95,10 @@ export class QuizesPage implements OnInit {
   // TrackBy functions for ngFor performance
   trackByQuizId(index: number, quiz: Quiz): string {
     return quiz._id; // Assuming Quiz has an _id property
+  }
+
+ async ngOnDestroy() {
+    await this.quizService.getPublishedQuiz(3).toPromise();
   }
 
 

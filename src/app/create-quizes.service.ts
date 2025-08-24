@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
 import { SocketService } from './socket.service';
 import { map, tap } from 'rxjs/operators';
 import { ToasterService } from './toaster.service';
+import { Router } from '@angular/router';
 
 export interface QuizQuestion {
   _id: string;
@@ -80,7 +81,7 @@ export class CreateQuizesService {
     return this.activeQuizSubject$.value;
   }
 
-  constructor(private socketService: SocketService,private toastr:ToasterService) {
+  constructor(private socketService: SocketService,private toastr:ToasterService,private router:Router) {
     this.setupSocketListeners();
   }
 
@@ -88,8 +89,8 @@ export class CreateQuizesService {
     // Load initial data
     await forkJoin([
       this.getAllQuiz().toPromise(),
-      this.getActiveQuizes(3).toPromise(),
-      this.getPublishedQuiz(3).toPromise()
+      this.getActiveQuizes().toPromise(),
+      this.getPublishedQuiz().toPromise()
     ]).toPromise()
 
   }
@@ -227,9 +228,14 @@ export class CreateQuizesService {
         this.quizDraftSubject$.next(quiz);
         // Refresh lists
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
+        this.getPublishedQuiz().subscribe();
       })
     );
+  }
+
+  get limit(): number {
+    let isLimitRoute = ['/home'].includes(this.router.url);
+    return isLimitRoute ? 3 : 0;
   }
 
   getAllQuiz(): Observable<Quiz[]> {
@@ -240,16 +246,16 @@ export class CreateQuizesService {
     );
   }
 
-  getPublishedQuiz(limit: number): Observable<Quiz[]> {
-    this.socketService.socket.emit('quiz:published', limit);
+  getPublishedQuiz(limit?:number): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:published', limit == 0 ? limit : this.limit);
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:published:success').pipe(
       map(data => data.quizes),
       tap(quizzes => this.quizzesPublishedSubject$.next(quizzes))
     );
   }
 
-  getActiveQuizes(limit: number): Observable<Quiz[]> {
-    this.socketService.socket.emit('quiz:active', limit);
+  getActiveQuizes(limit?:number): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:active',  limit == 0 ? limit : this.limit);
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:active:success').pipe(
       map(data => data.quizes),
       tap(quizzes => this.liveQuizesSubject$.next(quizzes))
@@ -270,7 +276,7 @@ export class CreateQuizesService {
       tap(quiz => {
         // The socket listeners will handle the state updates
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
+        this.getPublishedQuiz().subscribe();
       })
     );
   }
@@ -289,9 +295,7 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(() => {
         // The socket listeners will handle the state updates
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
+        this.refreshedQuizes$.next(true)
       })
     );
   }
@@ -302,9 +306,6 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -316,9 +317,6 @@ export class CreateQuizesService {
       tap(quiz => {
         this.activeQuizSubject$.next(quiz),
         this.refreshedQuizes$.next(true)
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -329,9 +327,6 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -342,9 +337,6 @@ export class CreateQuizesService {
       map(data => data.quiz),
       tap(quiz => {
         this.refreshedQuizes$.next(true)
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
       })
     );
   }
@@ -356,8 +348,8 @@ export class CreateQuizesService {
       tap(quiz => {
         this.refreshedQuizes$.next(true)
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
+        this.getPublishedQuiz().subscribe();
+        this.getActiveQuizes().subscribe()
       })
     );
   }
@@ -392,8 +384,8 @@ export class CreateQuizesService {
         this.quizResultSubject$.next(result),
         this.refreshedQuizes$.next(true)
         this.getAllQuiz().subscribe();
-        this.getPublishedQuiz(3).subscribe();
-        this.getActiveQuizes(3).subscribe()
+        this.getPublishedQuiz().subscribe();
+        this.getActiveQuizes().subscribe()
       })
     );
   }

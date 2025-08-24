@@ -9,34 +9,35 @@ import { CreateQuizesService } from '../create-quizes.service';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
-export class UsersComponent  implements  OnInit,OnDestroy {
+export class UsersComponent implements OnInit, OnDestroy {
   @Input() leaderboardUsers$: Observable<LeaderboardUser[]>;
   @Input() ParentInjected: boolean = false;
 
   constructor(
     private dashboardService: DashboardService,
-    private quizService:CreateQuizesService,
+    private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer
   ) {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
-  
+
 
   ngOnInit(): void {
-    this.quizService.isQuizesRefreshed.subscribe(data=>{
+    this.loadLeaderboardData(0)
+    this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
-        this.loadLeaderboardData(0)
+        this.loadLeaderboardData(3)
       }
     })
   }
-  
 
-  ngOnDestroy(): void {
-    this.loadLeaderboardData(3)
+
+  async ngOnDestroy() {
+    await this.dashboardService.getLeaderboardUser(3).toPromise();
   }
 
-  protected async loadLeaderboardData(limit:number) {
-   await this.dashboardService.getLeaderboardUser(limit).toPromise();
+  protected async loadLeaderboardData(index:number) {
+    await this.dashboardService.getLeaderboardUser(index).toPromise();
   }
 
   makeSafeUrl(url: string): SafeUrl | string {
