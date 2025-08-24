@@ -312,7 +312,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .quiz-card {
   background-color: $card-bg;
   border-radius: 16px;
-  padding: 18px;
+  padding: 5px 10px 5px 10px;
   margin-bottom: 14px;
   transition: all 0.3s;
   position: relative;
@@ -911,6 +911,9 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   margin-bottom: 16px;
   line-height: 1.5;
 }
+.quiz-header .quiz-meta {
+  margin: unset;
+}
 
 .quiz-meta {
   display: flex;
@@ -1034,7 +1037,7 @@ ion-icon{
   }
 
   .quiz-card {
-    padding: 16px;
+    padding: 5px 10px 15px 10px;
   }
 }
 
