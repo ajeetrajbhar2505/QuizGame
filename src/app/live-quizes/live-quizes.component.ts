@@ -44,7 +44,8 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
 
 
   ngOnInit(): void {
-    this.loadInitialData(0)
+    let isLimitRoute = ['/home'].includes(this.router.url);
+    this.loadInitialData(isLimitRoute ? 3 : 0)
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData(3)

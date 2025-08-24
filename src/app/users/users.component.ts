@@ -3,6 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { DashboardService, LeaderboardUser } from '../dashboard.service';
 import { CreateQuizesService } from '../create-quizes.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -16,14 +17,16 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router:Router
   ) {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
 
 
   ngOnInit(): void {
-    this.loadLeaderboardData(0)
+    let isLimitRoute = ['/home'].includes(this.router.url);
+    this.loadLeaderboardData(isLimitRoute ? 3 : 0)
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadLeaderboardData(3)

@@ -12,7 +12,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './quizes.page.html',
   styleUrls: ['./quizes.page.scss'],
 })
-export class QuizesPage implements OnInit,OnDestroy {
+export class QuizesPage implements OnInit, OnDestroy {
   @Input() publishedQuizzes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false
   isLoadingQuizzes: boolean = false;
@@ -40,7 +40,8 @@ export class QuizesPage implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadInitialData(0)
+    let isLimitRoute = ['/home'].includes(this.router.url);
+    this.loadInitialData(isLimitRoute ? 3 : 0)
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData(3)
@@ -49,7 +50,7 @@ export class QuizesPage implements OnInit,OnDestroy {
   }
 
 
-  async loadInitialData(index:number) {
+  async loadInitialData(index: number) {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
@@ -97,7 +98,7 @@ export class QuizesPage implements OnInit,OnDestroy {
     return quiz._id; // Assuming Quiz has an _id property
   }
 
- async ngOnDestroy() {
+  async ngOnDestroy() {
     await this.quizService.getPublishedQuiz(3).toPromise();
   }
 
