@@ -13,6 +13,7 @@ import { authGuard, loginGuard } from './auth.guard';
 import { VerifyQuizComponent } from './verify-quiz/verify-quiz.component';
 import { UsersComponent } from './users/users.component';
 import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
+import { OngoingComponent } from './ongoing/ongoing.component';
 
 const routes: Routes = [
   {
@@ -77,6 +78,11 @@ const routes: Routes = [
   {
     path: 'verify-quiz',
     component: VerifyQuizComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'ongoing',
+    component: OngoingComponent,
     canActivate: [authGuard]
   }
 ];

@@ -63,6 +63,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
 
   async joinQuiz(quizId: any) {
     // Quiz start logic
+    this.router.navigate(['/ongoing'])
     await this.quizService.joinQuiz(quizId).toPromise();
   }
 
