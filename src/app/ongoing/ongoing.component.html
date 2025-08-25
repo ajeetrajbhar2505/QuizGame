@@ -1,10 +1,7 @@
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="container">
-
-
-
-    <div class="quiz-title">Web Development Fundamentals</div>
-    <div class="quiz-description">Test your knowledge of basic web development concepts including HTML, CSS, and JavaScript.</div>
+  <div class="container" *ngIf="(quiz$ | async) as quiz; else loading" >
+    <div class="quiz-title">{{ quiz.title }}</div>
+    <div class="quiz-description">{{ quiz.description }}</div>
     <div class="quiz-meta">
         <span class="meta-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,7 +9,7 @@
               d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          80 min
+          {{ quiz.estimatedTime / 60 }} min
         </span>
         <span class="meta-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +19,7 @@
             <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" />
           </svg>
-         medium
+          {{ quiz.difficulty | titlecase }}
         </span>
         <span class="meta-item">
             <i class="fas fa-bolt"></i>
@@ -31,62 +28,97 @@
       </div>
 
       
-    <div class="timer-container">
-
+      <div class="timer-container">
         <i class="fas fa-clock"></i>
-        <div class="timer">12:45</div>
-    </div>
+        <div class="timer">{{ formatTime(remainingTime) }}</div>
+      </div>
+
 
     <div class="progress-container">
         <div class="progress-info">
-            <span>Progress: 3/5</span>
-            <span>60%</span>
+            <span>Progress: {{ currentQuestionIndex + 1 }}/{{ quiz.questions.length }}</span>
+            <span>{{((currentQuestionIndex + 1) / quiz.questions.length) * 100 | number:'1.0-0'}}%</span>
         </div>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
     </div>
 
-    <div class="question-card">
+    <div class="question-card" *ngIf="!getQuestionLoadingState(currentQuestionIndex)">
         <div class="question-header">
-            <div class="question-number">Question 3 of 5</div>
+            <div class="question-number">Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions.length }}</div>
         </div>
 
-        <div class="question-text">Which of the following CSS properties is used to control the spacing between elements?</div>
+        <div class="question-text">{{ quiz.questions[currentQuestionIndex].question }}</div>
         
-        <div class="options-list">
-            <div class="option-item">
-                <div class="option-radio"></div>
-                <div class="option-text">padding</div>
-            </div>
-            <div class="option-item selected">
-                <div class="option-radio"></div>
-                <div class="option-text">margin</div>
-            </div>
-            <div class="option-item">
-                <div class="option-radio"></div>
-                <div class="option-text">border</div>
-            </div>
-            <div class="option-item">
-                <div class="option-radio"></div>
-                <div class="option-text">spacing</div>
-            </div>
+       <div class="options-list">
+        <div *ngFor="let option of quiz.questions[currentQuestionIndex].options; let i = index" 
+             class="option-item"
+             [ngClass]="{'selected': isOptionSelected(i), 'correct-answer': isCorrectAnswer(currentQuestionIndex, option)}"
+             (click)="selectOption(i)">
+          <div class="option-radio">
+            <div class="radio-inner" *ngIf="isOptionSelected(i)"></div>
+          </div>
+          <div class="option-text">{{ option }}</div>
         </div>
+      </div>
     </div>
 
     <div class="quiz-actions">
-        <button class="action-btn prev-btn">
+        <button class="action-btn prev-btn" (click)="previousQuestion()" 
+        [disabled]="currentQuestionIndex === 0">
             <i class="fas fa-arrow-left"></i>
             Previous
         </button>
-        <button class="action-btn next-btn">
+        <button class="action-btn next-btn" *ngIf="currentQuestionIndex < quiz.questions.length - 1" 
+        (click)="nextQuestion()"
+        [disabled]="!isOptionSelected()">
             Next
             <i class="fas fa-arrow-right"></i>
         </button>
-        <button *ngIf="false" class="action-btn submit-btn">
+        <button *ngIf="currentQuestionIndex === quiz.questions.length - 1" class="action-btn submit-btn" (click)="submitQuiz()">
             Submit Quiz
             <i class="fas fa-paper-plane"></i>
         </button>
     </div>
 </div>
+<ng-template #loading>
+    <div class="ph-item">
+      <div class="ph-col-12">
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+        </div>
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+        </div>
+        <div class="ph-picture"></div>
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+          <div class="ph-col-4"></div>
+          <div class="ph-col-8 empty"></div>
+          <div class="ph-col-6"></div>
+          <div class="ph-col-6 empty"></div>
+          <div class="ph-col-12"></div>
+        </div>
+        <div class="ph-picture"></div>
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+          <div class="ph-col-4"></div>
+          <div class="ph-col-8 empty"></div>
+          <div class="ph-col-6"></div>
+          <div class="ph-col-6 empty"></div>
+          <div class="ph-col-12"></div>
+        </div>
+        <div class="ph-picture"></div>
+      </div>
+    </div>
+  </ng-template>
 </ion-content>
