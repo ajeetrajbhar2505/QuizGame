@@ -55,8 +55,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       tap(() => this.isLoading = true),
       switchMap(params => this.quizService.getLiveQuiz(params['id'])),
       tap(quiz => {
-        console.log({quiz});
-        
+
         // Initialize loading states for each question
         this.quizSubject.next(quiz);
         this.isLoading = false;
