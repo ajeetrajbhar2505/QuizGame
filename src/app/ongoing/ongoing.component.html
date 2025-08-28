@@ -1,6 +1,6 @@
 <ion-content class="ion-padding" [fullscreen]="true">
   <div class="container" *ngIf="(quiz$ | async) as quiz; else loading" >
-    <div class="quiz-title">{{ quiz.title }}</div>
+    <div class="quiz-title"> {{ quiz.title }}</div>
     <div class="quiz-description">{{ quiz.description }}</div>
     <div class="quiz-meta">
         <span class="meta-item">
@@ -21,7 +21,7 @@
           </svg>
           {{ quiz.difficulty | titlecase }}
         </span>
-        <span class="meta-item">
+        <span class="meta">
             <i class="fas fa-bolt"></i>
             50 XP
           </span>
@@ -29,18 +29,29 @@
 
       
       <div class="timer-container">
+        <span class="meta">
+            <i class="fas fa-bolt"></i>
+            50 XP
+          </span>
+          <hr>
+       <div>
         <i class="fas fa-clock"></i>
         <div class="timer">{{ formatTime(remainingTime) }}</div>
+       </div>
       </div>
 
 
     <div class="progress-container">
-        <div class="progress-info">
-            <span>Progress: {{ currentQuestionIndex + 1 }}/{{ quiz.questions.length }}</span>
-            <span>{{((currentQuestionIndex + 1) / quiz.questions.length) * 100 | number:'1.0-0'}}%</span>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Progress: {{ currentQuestionIndex + 1 }}/{{ quiz.questions.length }}</span>
+                <span>{{ ((currentQuestionIndex + 1) / quiz.questions.length) * 100 | number:'1.0-0' }}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" 
+                     [style.width.%]="((currentQuestionIndex + 1) / quiz.questions.length) * 100">
+                </div>
+            </div>
         </div>
     </div>
 
