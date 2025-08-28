@@ -64,7 +64,7 @@
       <div class="options-list">
         <div *ngFor="let option of quiz.questions[currentQuestionIndex].options; let i = index" class="option-item"
           [ngClass]="{'selected': isOptionSelected(i), 'correct-answer': isCorrectAnswer(currentQuestionIndex, option)}"
-          (click)="selectOption(i)">
+          (click)="selectOption(i,quiz._id,quiz.questions[currentQuestionIndex]._id,option)">
           <div class="option-radio">
             <div class="radio-inner" *ngIf="isOptionSelected(i)"></div>
           </div>

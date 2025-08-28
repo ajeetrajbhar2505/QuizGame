@@ -269,6 +269,13 @@ export class CreateQuizesService {
     );
   }
 
+  getLiveQuiz(quizId: string): Observable<Quiz> {
+    this.socketService.socket.emit('livequiz:get', quizId);
+    return this.socketService.fromEvent<{ quiz: Quiz }>('livequiz:get:success').pipe(
+      map(data => data.quiz)
+    );
+  }
+
   updateQuizStatus(quizId: string, approvalStatus: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:publish', quizId, approvalStatus);
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:publish:success').pipe(
@@ -362,18 +369,18 @@ export class CreateQuizesService {
     );
   }
 
-  submitAnswer(questionId: string, answer: string): Observable<{
-    correct: boolean,
-    explanation?: string,
-    questionId?: string,
-    selectedAnswer?: string
+  submitAnswer(quizId:string,questionId: string, answer: string): Observable<{
+    isCorrect: boolean,
+    points?: number,
+    currentScore?: number,
+    questionsRemaining?: number
   }> {
-    if (!this.activeQuiz) {
+    if (!quizId) {
       throw new Error('No active quiz');
     }
 
     this.socketService.socket.emit('quiz:answer:submit', {
-      quizId: this.activeQuiz._id,
+      quizId: quizId,
       questionId,
       answer
     });
@@ -381,11 +388,7 @@ export class CreateQuizesService {
     return this.socketService.fromEvent<{ result: any }>('quiz:answer:result').pipe(
       map(data => data.result),
       tap(result => {
-        this.quizResultSubject$.next(result),
-        this.refreshedQuizes$.next(true)
-        this.getAllQuiz().subscribe();
-        this.getPublishedQuiz().subscribe();
-        this.getActiveQuizes().subscribe()
+        return result
       })
     );
   }

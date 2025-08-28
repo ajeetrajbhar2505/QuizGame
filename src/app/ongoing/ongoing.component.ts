@@ -35,7 +35,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
     private quizGuard: QuizGuardService,
-    private router:Router
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -53,8 +53,10 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
     this.route.queryParams.pipe(
       tap(() => this.isLoading = true),
-      switchMap(params => this.quizService.getQuiz(params['id'])),
+      switchMap(params => this.quizService.getLiveQuiz(params['id'])),
       tap(quiz => {
+        console.log({quiz});
+        
         // Initialize loading states for each question
         this.quizSubject.next(quiz);
         this.isLoading = false;
@@ -98,17 +100,17 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (!this.isQuizActive) {
       return true;
     }
-    
+
     // Show the confirmation dialog
     this.confirmationPopup = true;
-    
+
     // Return an observable that will resolve when the user makes a decision
     return new Observable<boolean>(observer => {
       // Store the observer to resolve later
       this.deactivateResponse = new Observable<boolean>(subscriber => {
         // This will be completed when the user makes a choice
       });
-      
+
       // Return the observable that will be resolved when user acts
       return this.deactivateResponse.subscribe(observer);
     });
@@ -178,8 +180,9 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   }
 
   // Option selection
-  selectOption(optionIndex: number) {
+  selectOption(optionIndex: number, quizId: string, questionId: string, answer: string) {
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
+    this.quizService.submitAnswer(quizId, questionId, answer).subscribe()
   }
 
   isOptionSelected(optionIndex?: number): boolean {
@@ -197,16 +200,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   // Submit quiz
   submitQuiz() {
-    this.quizSubscription = this.quiz$.subscribe(quiz => {
-      if (quiz) {
-        // Calculate score
-        const score = this.calculateScore(quiz);
-        // Submit quiz results
-        console.log({ score });
-
-
-      }
-    });
   }
 
   calculateScore(quiz: Quiz): number {
