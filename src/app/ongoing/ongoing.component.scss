@@ -264,3 +264,101 @@ hr{
   background-color: rgba(214, 48, 49, 0.2);
   color: #D63031;
 }
+
+
+
+        
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.dialog-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  transform: scale(0.9);
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+.dialog-header {
+  padding: 24px 24px 16px;
+  text-align: center;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.dialog-message {
+  color: #718096;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.test-suite-name {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.dialog-actions {
+  display: flex;
+  padding: 16px 24px 24px;
+  gap: 12px;
+}
+
+.dialog-button {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button-cancel {
+  background-color: #f7fafc;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+}
+
+.button-cancel:hover {
+  background-color: #edf2f7;
+}
+
+.button-delete {
+  background-color: #0a5b55;
+  color: white;
+}
+
+.button-delete:hover {
+  background-color: #135e59;;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
+}

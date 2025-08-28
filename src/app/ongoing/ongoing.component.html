@@ -1,72 +1,70 @@
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="container" *ngIf="(quiz$ | async) as quiz; else loading" >
+  <div class="container" *ngIf="(quiz$ | async) as quiz; else loading">
     <div class="quiz-title"> {{ quiz.title }}</div>
     <div class="quiz-description">{{ quiz.description }}</div>
     <div class="quiz-meta">
-        <span class="meta-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          {{ quiz.estimatedTime / 60 }} min
-        </span>
-        <span class="meta-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-          {{ quiz.difficulty | titlecase }}
-        </span>
-        <span class="meta">
-            <i class="fas fa-bolt"></i>
-            50 XP
-          </span>
-      </div>
+      <span class="meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ quiz.estimatedTime / 60 }} min
+      </span>
+      <span class="meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        {{ quiz.difficulty | titlecase }}
+      </span>
+      <span class="meta">
+        <i class="fas fa-bolt"></i>
+        50 XP
+      </span>
+    </div>
 
-      
-      <div class="timer-container">
-        <span class="meta">
-            <i class="fas fa-bolt"></i>
-            50 XP
-          </span>
-          <hr>
-       <div>
+
+    <div class="timer-container">
+      <span class="meta">
+        <i class="fas fa-bolt"></i>
+        50 XP
+      </span>
+      <hr>
+      <div>
         <i class="fas fa-clock"></i>
         <div class="timer">{{ formatTime(remainingTime) }}</div>
-       </div>
       </div>
+    </div>
 
 
     <div class="progress-container">
-        <div class="progress-container">
-            <div class="progress-info">
-                <span>Progress: {{ currentQuestionIndex + 1 }}/{{ quiz.questions.length }}</span>
-                <span>{{ ((currentQuestionIndex + 1) / quiz.questions.length) * 100 | number:'1.0-0' }}%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" 
-                     [style.width.%]="((currentQuestionIndex + 1) / quiz.questions.length) * 100">
-                </div>
-            </div>
+      <div class="progress-container">
+        <div class="progress-info">
+          <span>Progress: {{ currentQuestionIndex + 1 }}/{{ quiz.questions.length }}</span>
+          <span>{{ ((currentQuestionIndex + 1) / quiz.questions.length) * 100 | number:'1.0-0' }}%</span>
         </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="((currentQuestionIndex + 1) / quiz.questions.length) * 100">
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="question-card" *ngIf="!getQuestionLoadingState(currentQuestionIndex)">
-        <div class="question-header">
-            <div class="question-number">Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions.length }}</div>
-        </div>
+      <div class="question-header">
+        <div class="question-number">Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions.length }}</div>
+      </div>
 
-        <div class="question-text">{{ quiz.questions[currentQuestionIndex].question }}</div>
-        
-       <div class="options-list">
-        <div *ngFor="let option of quiz.questions[currentQuestionIndex].options; let i = index" 
-             class="option-item"
-             [ngClass]="{'selected': isOptionSelected(i), 'correct-answer': isCorrectAnswer(currentQuestionIndex, option)}"
-             (click)="selectOption(i)">
+      <div class="question-text">{{ quiz.questions[currentQuestionIndex].question }}</div>
+
+      <div class="options-list">
+        <div *ngFor="let option of quiz.questions[currentQuestionIndex].options; let i = index" class="option-item"
+          [ngClass]="{'selected': isOptionSelected(i), 'correct-answer': isCorrectAnswer(currentQuestionIndex, option)}"
+          (click)="selectOption(i)">
           <div class="option-radio">
             <div class="radio-inner" *ngIf="isOptionSelected(i)"></div>
           </div>
@@ -76,24 +74,23 @@
     </div>
 
     <div class="quiz-actions">
-        <button class="action-btn prev-btn" (click)="previousQuestion()" 
-        [disabled]="currentQuestionIndex === 0">
-            <i class="fas fa-arrow-left"></i>
-            Previous
-        </button>
-        <button class="action-btn next-btn" *ngIf="currentQuestionIndex < quiz.questions.length - 1" 
-        (click)="nextQuestion()"
-        [disabled]="!isOptionSelected()">
-            Next
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        <button *ngIf="currentQuestionIndex === quiz.questions.length - 1" class="action-btn submit-btn" (click)="submitQuiz()">
-            Submit Quiz
-            <i class="fas fa-paper-plane"></i>
-        </button>
+      <button class="action-btn prev-btn" (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0">
+        <i class="fas fa-arrow-left"></i>
+        Previous
+      </button>
+      <button class="action-btn next-btn" *ngIf="currentQuestionIndex < quiz.questions.length - 1"
+        (click)="nextQuestion()" [disabled]="!isOptionSelected()">
+        Next
+        <i class="fas fa-arrow-right"></i>
+      </button>
+      <button *ngIf="currentQuestionIndex === quiz.questions.length - 1" class="action-btn submit-btn"
+        (click)="submitQuiz()">
+        Submit Quiz
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
-</div>
-<ng-template #loading>
+  </div>
+  <ng-template #loading>
     <div class="ph-item">
       <div class="ph-col-12">
         <div class="ph-row">
@@ -132,4 +129,19 @@
       </div>
     </div>
   </ng-template>
+
+  <div class="dialog-backdrop" *ngIf="confirmationPopup">
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h2 class="dialog-title">Leave Quiz?</h2>
+        <p class="dialog-message">You have an active quiz. Are you sure you want to leave? All progress will be lost.
+        </p>
+      </div>
+      <div class="dialog-actions">
+        <button class="dialog-button button-cancel" (click)="stayInQuiz()">Stay</button>
+        <button class="dialog-button button-delete" (click)="leaveQuiz()">Leave</button>
+      </div>
+    </div>
+  </div>
+
 </ion-content>

@@ -1,4 +1,4 @@
-import { NgModule, createComponent } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './login/login.component';
 import { HomePage } from './home/home.page';
@@ -14,6 +14,7 @@ import { VerifyQuizComponent } from './verify-quiz/verify-quiz.component';
 import { UsersComponent } from './users/users.component';
 import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
 import { OngoingComponent } from './ongoing/ongoing.component';
+import { QuizGuardService } from './quiz-guard.service'; // Import the guard
 
 const routes: Routes = [
   {
@@ -83,7 +84,8 @@ const routes: Routes = [
   {
     path: 'ongoing',
     component: OngoingComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    canDeactivate: [QuizGuardService]
   }
 ];
 
@@ -91,6 +93,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [QuizGuardService] // Add the guard to providers
 })
 export class AppRoutingModule { }
