@@ -134,6 +134,8 @@ hr{
 .option-item.selected {
   background-color: #3f51b5;
   color: #fff;
+  pointer-events: none;
+  user-select: none;
 }
 
 
@@ -173,7 +175,7 @@ hr{
   display: flex;
   justify-content: space-between;
   position: sticky;
-  bottom: 60px;
+  bottom: 10px;
   background: #ffffff;
   border-radius: 16px;
   margin-top: 24px;

@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LeaderboardUser, user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { SocketService } from '../socket.service';
 
 
 @Component({
@@ -29,7 +30,8 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
   constructor(
     private quizService: CreateQuizesService,
     protected router: Router,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private SocketService:SocketService
   ) {
     const User: any = localStorage.getItem('user')
     if (User) {
@@ -63,6 +65,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
 
   async joinQuiz(quizId: any) {
     // Quiz start logic
+    this.SocketService.authDataSource.next(null)
     this.router.navigate(['/ongoing'], {
       queryParams: { id: quizId }
     })

@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of, Subject } from 'rxjs';
+import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
-import { QuizGuardService, ComponentCanDeactivate } from '../quiz-guard.service';
+import { ComponentCanDeactivate } from '../quiz-guard.service';
+import { AuthData, SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-ongoing',
@@ -23,7 +24,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private loadingStates: boolean[] = [];
   isQuizActive: boolean = false;
   private routeChangeSubscription!: Subscription;
-  private deactivateResponse: Observable<boolean> | null = null;
+  private deactivateSubject: Subject<boolean> | null = null;
   confirmationPopup: boolean = false
 
   // State management for loading and actions
@@ -34,22 +35,14 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   constructor(
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
-    private quizGuard: QuizGuardService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private SocketService:SocketService
+  ) {
+    this.isQuizActive = true;
+    this.SocketService.authDataSource.next(null);
+   }
 
   ngOnInit() {
-
-
-    this.isQuizActive = true;
-    this.deactivateResponse = of(false)
-
-    // Subscribe to route change events
-    this.routeChangeSubscription = this.quizGuard.routeChange$.subscribe((navigateAway) => {
-      if (navigateAway) {
-        this.isQuizActive = false;
-      }
-    });
 
     this.route.queryParams.pipe(
       tap(() => this.isLoading = true),
@@ -79,59 +72,72 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   }
 
+
   ngOnDestroy() {
-    // Clear timer when component is destroyed
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
-
-    // Unsubscribe from observables
     if (this.quizSubscription) {
       this.quizSubscription.unsubscribe();
     }
     if (this.routeChangeSubscription) {
       this.routeChangeSubscription.unsubscribe();
     }
+    // Complete any pending deactivation subject
+    if (this.deactivateSubject) {
+      this.deactivateSubject.complete();
+      this.deactivateSubject = null;
+    }
   }
 
-
-  canDeactivate(): boolean | Observable<boolean> {
+  canDeactivate(): Observable<boolean> {
     if (!this.isQuizActive) {
-      return true;
+      return of(true);
     }
 
-    // Show the confirmation dialog
     this.confirmationPopup = true;
-
-    // Return an observable that will resolve when the user makes a decision
-    return new Observable<boolean>(observer => {
-      // Store the observer to resolve later
-      this.deactivateResponse = new Observable<boolean>(subscriber => {
-        // This will be completed when the user makes a choice
-      });
-
-      // Return the observable that will be resolved when user acts
-      return this.deactivateResponse.subscribe(observer);
-    });
+    
+    // Create a new subject for this deactivation attempt
+    this.deactivateSubject = new Subject<boolean>();
+    
+    return this.deactivateSubject.asObservable().pipe(
+      // Ensure we complete the subject after emission
+      map(response => {
+        this.confirmationPopup = false;
+        this.deactivateSubject = null;
+        return response;
+      })
+    );
   }
 
   stayInQuiz() {
     this.confirmationPopup = false;
-    if (this.deactivateResponse) {
-      // Complete the observable with false (don't navigate)
-      this.deactivateResponse = of(false);
+    if (this.deactivateSubject) {
+      this.deactivateSubject.next(false); // Don't navigate
+      this.deactivateSubject.complete();
+      this.deactivateSubject = null;
     }
   }
 
   leaveQuiz() {
     this.isQuizActive = false;
     this.confirmationPopup = false;
-    if (this.deactivateResponse) {
-      // Complete the observable with true (allow navigation)
-      this.deactivateResponse = of(true);
+    
+    if (this.deactivateSubject) {
+      this.deactivateSubject.next(true); // Allow navigation
+      this.deactivateSubject.complete();
+      this.deactivateSubject = null;
     }
-    this.router.navigate(['/home'])
-    // The router navigation will be handled by the guard
+    
+    // Navigate after allowing the guard to complete
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+      let AuthData: AuthData = {
+        token: localStorage.getItem('token') || '',
+        user: JSON.parse(localStorage.getItem('user') || '{}')
+      };
+      this.SocketService.authDataSource.next(AuthData);
+    });
   }
 
   // Handle browser events (closing tab, refreshing page)
@@ -166,6 +172,8 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   previousQuestion() {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
+      // save question response
+
     }
   }
 
@@ -174,6 +182,8 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.quizSubscription = this.quiz$.subscribe(quiz => {
       if (quiz && this.currentQuestionIndex < quiz.questions.length - 1) {
         this.currentQuestionIndex++;
+      // save question response
+      
       }
     });
   }
