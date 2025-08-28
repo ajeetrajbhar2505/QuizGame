@@ -114,7 +114,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.confirmationPopup = false;
     if (this.deactivateSubject) {
       this.deactivateSubject.next(false); // Don't navigate
-      this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
   }
