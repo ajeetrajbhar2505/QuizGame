@@ -1,7 +1,7 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
       <!-- Bottom Navigation -->
-      <div class="bottom-nav" *ngIf="logged && currentRoute !='/login'">
+      <div class="bottom-nav" *ngIf="logged && currentRoute !='/login' && currentRoute != '/ongoing'">
         <a (click)="navigateTopage('/home')" class="nav-item {{currentRoute == '/home' ? 'active':''}}">
           <i class="fas fa-home"></i>
           <span>Home</span>
