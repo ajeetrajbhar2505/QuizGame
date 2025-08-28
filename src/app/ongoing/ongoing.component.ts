@@ -42,6 +42,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
 
     this.isQuizActive = true;
+    this.deactivateResponse = of(true)
 
     // Subscribe to route change events
     this.routeChangeSubscription = this.quizGuard.routeChange$.subscribe((navigateAway) => {

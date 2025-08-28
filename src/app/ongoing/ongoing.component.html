@@ -130,7 +130,7 @@
     </div>
   </ng-template>
 
-  <div class="dialog-backdrop" *ngIf="confirmationPopup">
+  <div class="dialog-backdrop" *ngIf="confirmationPopup" (click)="stayInQuiz()">
     <div class="dialog-container">
       <div class="dialog-header">
         <h2 class="dialog-title">Leave Quiz?</h2>
