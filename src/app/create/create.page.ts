@@ -55,16 +55,40 @@ export class CreatePage implements OnInit {
            quiz.approvalStatus !== 'rejected';
   }
 
-  createQuiz(): void {
-    if (!this.validateQuizPrompt()) return;
+createQuiz(): void {
+  if (!this.validateQuizPrompt()) return;
 
-    this.prepareForQuizCreation();
-    this.startLoadingAnimation();
-    
-    this.quizService.createQuiz(this.quizPromptDraft).subscribe({
-      error: (err) => this.handleCreationError(err)
-    });
-  }
+  this.prepareForQuizCreation();
+  this.startLoadingAnimation();
+  
+  this.quizService.createQuiz(this.quizPromptDraft).subscribe({
+    next: (response) => {
+      this.stopLoadingAnimation(); // Stop progress bar on success
+      this.handleCreationSuccess(response);
+    },
+    error: (err) => {
+      this.stopLoadingAnimation(); // Also stop on error
+      this.handleCreationError(err);
+    }
+  });
+}
+
+
+private stopLoadingAnimation(): void {
+  this.isCreating = false;
+}
+
+private handleCreationSuccess(response: any): void {
+  // Handle successful quiz creation
+  console.log('Quiz created successfully:', response);
+  // You might want to navigate to the quiz page or show success message
+  this.showSuccessMessage('Quiz created successfully!');
+}
+
+private showSuccessMessage(message: string): void {
+  // Your success message implementation
+  // Could use Toast, Alert, or Snackbar
+}
   
   private handleCreationError(err: any): void {
     this.isCreating = false;

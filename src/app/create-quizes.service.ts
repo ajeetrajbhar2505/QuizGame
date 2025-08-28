@@ -32,7 +32,8 @@ export interface Quiz {
   quizId?:any,
   isLive?:boolean,
   participantCount?:number
-  host?:any
+  host?:any,
+  totalPoints:number
 }
 
 @Injectable({
