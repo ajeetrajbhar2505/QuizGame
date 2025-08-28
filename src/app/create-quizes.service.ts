@@ -373,7 +373,6 @@ export class CreateQuizesService {
     isCorrect: boolean,
     points?: number,
     currentScore?: number,
-    questionsRemaining?: number
   }> {
     if (!quizId) {
       throw new Error('No active quiz');
