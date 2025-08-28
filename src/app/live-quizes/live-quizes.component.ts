@@ -67,6 +67,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
     // Quiz start logic
     this.SocketService.authDataSource.next(null)
     this.router.navigate(['/ongoing'], {
+      replaceUrl: true,
       queryParams: { id: quizId }
     })
     await this.quizService.joinQuiz(quizId).toPromise();

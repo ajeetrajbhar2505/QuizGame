@@ -5,6 +5,7 @@ import { switchMap, tap, catchError, map } from 'rxjs/operators';
 import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
 import { ComponentCanDeactivate } from '../quiz-guard.service';
 import { AuthData, SocketService } from '../socket.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-ongoing',
@@ -35,12 +36,16 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   constructor(
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
-    private router: Router,
-    private SocketService:SocketService
+    private location: Location,
+    private router:Router,
+    private SocketService: SocketService
   ) {
     this.isQuizActive = true;
     this.SocketService.authDataSource.next(null);
-   }
+    // Replace current history state with home to prevent back navigation
+    this.location.replaceState('/home');
+
+  }
 
   ngOnInit() {
 
@@ -72,7 +77,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   }
 
-
   ngOnDestroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
@@ -83,7 +87,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (this.routeChangeSubscription) {
       this.routeChangeSubscription.unsubscribe();
     }
-    // Complete any pending deactivation subject
     if (this.deactivateSubject) {
       this.deactivateSubject.complete();
       this.deactivateSubject = null;
@@ -96,46 +99,48 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
 
     this.confirmationPopup = true;
-    
-    // Create a new subject for this deactivation attempt
     this.deactivateSubject = new Subject<boolean>();
-    
+
     return this.deactivateSubject.asObservable().pipe(
-      // Ensure we complete the subject after emission
       map(response => {
         this.confirmationPopup = false;
-        this.deactivateSubject = null;
+        if (response) {
+          this.cleanupQuiz(); // Only cleanup if user chooses to leave
+        }
         return response;
       })
     );
   }
 
   stayInQuiz() {
-    this.confirmationPopup = false;
     if (this.deactivateSubject) {
-      this.deactivateSubject.next(false); // Don't navigate
+      this.confirmationPopup = false;
+      this.deactivateSubject.next(false);
+      this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
+    this.location.replaceState('/home');
   }
 
   leaveQuiz() {
-    this.isQuizActive = false;
-    this.confirmationPopup = false;
-    
     if (this.deactivateSubject) {
+      this.confirmationPopup = false;
       this.deactivateSubject.next(true); // Allow navigation
+      this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
-    
-    // Navigate after allowing the guard to complete
-    setTimeout(() => {
-      this.router.navigate(['/home']);
-      let AuthData: AuthData = {
-        token: localStorage.getItem('token') || '',
-        user: JSON.parse(localStorage.getItem('user') || '{}')
-      };
-      this.SocketService.authDataSource.next(AuthData);
-    });
+    this.router.navigate(['/home'], { replaceUrl: true });
+
+    // DON'T navigate here - let the router handle it!
+  }
+
+  private cleanupQuiz() {
+    this.isQuizActive = false;
+    let AuthData: AuthData = {
+      token: localStorage.getItem('token') || '',
+      user: JSON.parse(localStorage.getItem('user') || '{}')
+    };
+    this.SocketService.authDataSource.next(AuthData);
   }
 
   // Handle browser events (closing tab, refreshing page)
@@ -180,8 +185,8 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.quizSubscription = this.quiz$.subscribe(quiz => {
       if (quiz && this.currentQuestionIndex < quiz.questions.length - 1) {
         this.currentQuestionIndex++;
-      // save question response
-      
+        // save question response
+
       }
     });
   }

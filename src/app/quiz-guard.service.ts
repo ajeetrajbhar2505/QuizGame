@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, from, map, switchMap } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { CanDeactivate } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 
@@ -17,10 +17,7 @@ export class QuizGuardService implements CanDeactivate<ComponentCanDeactivate> {
     return component.canDeactivate ? component.canDeactivate() : true;
   }
 
-  // Observable that components can subscribe to for route change events
   get routeChange$(): Observable<boolean> {
     return this.routeChangeSubject.asObservable();
   }
-
-
 }
