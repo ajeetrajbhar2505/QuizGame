@@ -2,9 +2,7 @@
   <div *ngIf="(quiz$ | async) as quiz; else loading" class="quiz-preview-container">
     <!-- Quiz Header -->
     <div class="quiz-header">
-      <ion-chip [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
-        {{ quiz.difficulty | titlecase }}
-      </ion-chip>
+   
       <div class="quiz-meta">
         <span class="meta-item">
           <ion-icon name="time-outline"></ion-icon>
@@ -22,10 +20,13 @@
         </div>
 
       </div>
+      
     </div>
 
     <!-- Quiz Title & Description -->
-    <div class="quiz-title">{{ quiz.title }}</div>
+    <div class="quiz-title">{{ quiz.title }}  <ion-chip [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
+      {{ quiz.difficulty | titlecase }}
+    </ion-chip></div>
     <div class="quiz-description">{{ quiz.description }}</div>
 
     <!-- Questions Preview -->

@@ -83,8 +83,8 @@
         Next
         <i class="fas fa-arrow-right"></i>
       </button>
-      <button *ngIf="currentQuestionIndex === quiz.questions.length - 1" class="action-btn submit-btn"
-        (click)="submitQuiz()">
+      <button *ngIf="currentQuestionIndex === quiz.questions.length - 1" (click)="submitQuiz()"
+        [disabled]="!isOptionSelected()" class="action-btn submit-btn">
         Submit Quiz
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -134,11 +134,12 @@
     <div class="dialog-container">
       <div class="dialog-header">
         <h2 class="dialog-title">Leave Quiz?</h2>
-        <p class="dialog-message">You have an active quiz! Are you sure you want to leave? Don't miss your opportunity to win amazing prizes!</p>
+        <p class="dialog-message">You have an active quiz! Are you sure you want to leave? If you leave this page,your
+          quiz will be submitted automatically.</p>
       </div>
       <div class="dialog-actions">
         <button class="dialog-button button-cancel" (click)="stayInQuiz()">Stay</button>
-        <button class="dialog-button button-delete" (click)="leaveQuiz()">Leave</button>
+        <button class="dialog-button button-delete" (click)="submitQuiz()">Leave</button>
       </div>
     </div>
   </div>

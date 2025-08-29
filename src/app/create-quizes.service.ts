@@ -15,6 +15,12 @@ export interface QuizQuestion {
   isloading?:boolean
 }
 
+export interface userSubmissionStatus {
+  isSubmitted : boolean,
+  score : number,
+  status : 'in-progress' | 'completed'
+}
+
 export interface Quiz {
   _id: string;
   title: string;
@@ -34,7 +40,8 @@ export interface Quiz {
   participantCount?:number
   host?:any,
   totalPoints:number,
-  isParticipant:boolean
+  isParticipant:boolean,
+  userSubmissionStatus : userSubmissionStatus
 }
 
 @Injectable({
@@ -345,6 +352,7 @@ export class CreateQuizesService {
     return this.socketService.fromEvent<{ quiz: Quiz }>('quiz:submit:success').pipe(
       map(data => data.quiz),
       tap(quiz => {
+      this.toastr.success('Quiz submitted successfully!');
         this.refreshedQuizes$.next(true)
       })
     );
@@ -362,6 +370,7 @@ export class CreateQuizesService {
       })
     );
   }
+
 
   getQuizParticipant(quizId: string): Observable<Quiz> {
     this.socketService.socket.emit('quiz:participants', quizId);

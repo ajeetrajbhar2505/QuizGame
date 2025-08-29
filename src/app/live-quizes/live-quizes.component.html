@@ -98,7 +98,7 @@
                 d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            {{ quiz.estimatedTime / 60 }} min
+            {{ (quiz.estimatedTime / 60) | number : '1.2-2' }} min
           </span>
           <span class="meta-item">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,13 +137,16 @@
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button class="action-btn approve-btn" (click)="playQuiz(quiz.quizId)" *ngIf="quiz.status == 'in-progress' && quiz.isParticipant">
+          <button class="action-btn approve-btn" (click)="playQuiz(quiz.quizId)" *ngIf="quiz.status == 'in-progress' && quiz.isParticipant && !quiz.userSubmissionStatus.isSubmitted">
             Start
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
+          <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
+            {{ quiz.userSubmissionStatus.status| titlecase }}
+            </ion-chip>
         </div>
       </div>
     </ng-container>

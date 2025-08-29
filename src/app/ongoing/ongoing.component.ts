@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, Subscription, of, Subject } from 'rxjs';
-import { switchMap, tap, catchError, map } from 'rxjs/operators';
+import { switchMap, tap, catchError, map, take } from 'rxjs/operators';
 import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
 import { ComponentCanDeactivate } from '../quiz-guard.service';
 import { AuthData, SocketService } from '../socket.service';
@@ -123,12 +123,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   }
 
   leaveQuiz() {
-    if (this.deactivateSubject) {
-      this.confirmationPopup = false;
-      this.deactivateSubject.next(true); // Allow navigation
-      this.deactivateSubject.complete();
-      this.deactivateSubject = null;
-    }
+ 
     this.router.navigate(['/home'], { replaceUrl: true });
 
     // DON'T navigate here - let the router handle it!
@@ -196,6 +191,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
     this.quizService.submitAnswer(quizId, questionId, answer).subscribe()
   }
+  
 
   isOptionSelected(optionIndex?: number): boolean {
     if (optionIndex !== undefined) {
@@ -211,7 +207,29 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   }
 
   // Submit quiz
-  submitQuiz() {
+   async submitQuiz() {
+    try {
+      // Convert observable to promise and get the latest quiz value
+      const quiz = await this.quiz$.pipe(take(1)).toPromise();
+      
+      if (this.deactivateSubject) {
+        this.confirmationPopup = false;
+        this.deactivateSubject.next(true); // Allow navigation
+        this.deactivateSubject.complete();
+        this.deactivateSubject = null;
+      }
+      
+      if (quiz) {
+        // Call your quiz submission logic here
+        this.quizService.submitQuiz(quiz._id).subscribe()
+        this.leaveQuiz()
+
+      } else {
+        console.warn('No quiz available to submit');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+    }
   }
 
   calculateScore(quiz: Quiz): number {

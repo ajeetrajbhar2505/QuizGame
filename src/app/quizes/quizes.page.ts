@@ -77,6 +77,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     await this.quizService.completeQuizByHost(quizId).toPromise();
   }
 
+   
   verifyQuiz(quizId: string): void {
     this.router.navigate(['/verify-quiz'], {
       queryParams: { id: quizId }
