@@ -6,7 +6,7 @@
       <div class="quiz-meta">
         <span class="meta-item">
           <ion-icon name="time-outline"></ion-icon>
-          {{ quiz.estimatedTime / 60 }} min
+          {{ (quiz.estimatedTime / 60) | number : '1.2-2' }} min
         </span>
         <span class="meta-item">
           <ion-icon name="help-circle-outline"></ion-icon>

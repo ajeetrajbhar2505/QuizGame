@@ -155,6 +155,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.remainingTime--;
       } else {
         clearInterval(this.timerInterval);
+        this.isQuizActive = false
         this.submitQuiz();
       }
     }, 1000);
