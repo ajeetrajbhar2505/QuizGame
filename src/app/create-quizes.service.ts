@@ -28,12 +28,13 @@ export interface Quiz {
   approvalStatus: string;
   difficulty?: any;
   participants?:any[],
-  status?:string,
+  status?:any,
   quizId?:any,
   isLive?:boolean,
   participantCount?:number
   host?:any,
-  totalPoints:number
+  totalPoints:number,
+  isParticipant:boolean
 }
 
 @Injectable({

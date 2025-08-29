@@ -128,9 +128,17 @@
         </div>
 
 
-        <div class="quiz-actions" *ngIf="quiz.status == 'waiting'">
-          <button class="action-btn approve-btn" (click)="joinQuiz(quiz.quizId)">
-            Join
+        <div class="quiz-actions">
+          <button class="action-btn approve-btn" (click)="joinQuiz(quiz.quizId)" *ngIf="quiz.status == 'waiting'">
+            <ion-icon name="people-outline"></ion-icon>
+            Participate
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="action-btn approve-btn" (click)="playQuiz(quiz.quizId)" *ngIf="quiz.status == 'in-progress' && quiz.isParticipant">
+            Start
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
