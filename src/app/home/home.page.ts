@@ -4,6 +4,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable, forkJoin } from 'rxjs';
 import { RefresherCustomEvent } from '@ionic/angular';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-home',
@@ -24,12 +25,10 @@ export class HomePage implements OnInit {
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer,
+    private notificationService: NotificationService
   ) {
-    // Current user
-    const User: any = localStorage.getItem('user')
-    if (User) {
-      this.currentUser = JSON.parse(User)
-    }
+      // Current user'
+    this.currentUser = this.dashboardService.getUser();
     if (this.currentUser.avatar) {
       this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
     }
@@ -39,7 +38,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.loadInitialData()
-    this.quizService.isQuizesRefreshed.subscribe(data=>{
+    this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData()
       }
@@ -47,14 +46,15 @@ export class HomePage implements OnInit {
   }
 
   async loadInitialData() {
-   await forkJoin([
+    await forkJoin([
       this.dashboardService.getLeaderboardUser(),
       this.quizService.getActiveQuizes(),
-      this.quizService.getPublishedQuiz()
+      this.quizService.getPublishedQuiz(),
+      this.notificationService.getUnreadNotificationsCount()
     ]).toPromise()
-    
+
     this.dashboardService.getDashboardStats();
-     this.quizService.initializeData();
+    this.quizService.initializeData();
   }
 
   protected makeSafeUrl(url: string): SafeUrl {
