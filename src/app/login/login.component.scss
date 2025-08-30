@@ -16,6 +16,7 @@
     overflow-x: hidden;
     height: 100vh;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #FAFAFA;
   }
 
   .features {
@@ -35,8 +36,9 @@
     font-weight: 500;
     flex: none;
   }
-  .otp-container{
-    .logo{
+
+  .otp-container {
+    .logo {
       height: unset !important;
     }
   }
@@ -96,8 +98,9 @@
     width: 30%;
     height: 1px;
     background: lightgray;
+
     @media (max-width: 414px) {
-    width: 22%;
+      width: 22%;
     }
   }
 
@@ -267,11 +270,12 @@
     font-size: 14px;
   }
 
-  .spinner{
+  .spinner {
     width: 20px;
     margin-left: 10px;
     color: #fff;
-   i {
-    color: #1877F2;
+
+    i {
+      color: #1877F2;
+    }
   }
-}
