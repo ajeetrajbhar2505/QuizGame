@@ -216,7 +216,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       if (this.deactivateSubject) {
         this.confirmationPopup = false;
         this.deactivateSubject.next(true); // Allow navigation
-        this.deactivateSubject.complete();
         this.deactivateSubject = null;
       }
       
@@ -224,6 +223,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         // Call your quiz submission logic here
         this.quizService.submitQuiz(quiz._id).subscribe()
         this.leaveQuiz()
+        this.cleanupQuiz()
 
       } else {
         console.warn('No quiz available to submit');
