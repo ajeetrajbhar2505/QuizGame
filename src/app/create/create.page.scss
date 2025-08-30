@@ -91,7 +91,6 @@
 
     .big-input:focus {
         border-color: $primary;
-        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
     }
 
     .big-input::placeholder {
@@ -110,7 +109,6 @@
         width: 100%;
         transition: all 0.3s;
         margin-bottom: 24px;
-        box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -120,7 +118,6 @@
     .generate-btn:hover {
         background-color: #5D4BDB;
         transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(108, 92, 231, 0.3);
     }
 
     .generate-btn:active {
