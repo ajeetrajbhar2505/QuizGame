@@ -125,8 +125,9 @@ export class LoginPage implements OnInit, OnDestroy {
 
   async handleAuthSuccess(data: any) {
     if (!data) return;
-
-    this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
+    if (!localStorage.getItem('token')) {
+      this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
+    }
     this.loginSuccess = true;
     this.isLoading = false;
     this.resetAuthStates();
@@ -388,7 +389,7 @@ export class LoginPage implements OnInit, OnDestroy {
     try {
       const container = this.scrollContainer.nativeElement;
       const buttonHeight = 50; // Adjust this to your button's actual height
-      
+
       // Scroll to show content but leave space for the button
       container.scrollTop = container.scrollHeight - container.clientHeight - buttonHeight;
     } catch (err) {
