@@ -21,7 +21,7 @@
 
 
 
-    .phone {
+    .phone-section {
         max-width: 414px;
         margin: 0 auto;
         padding: 20px;
@@ -231,6 +231,7 @@
 
     .tab-content .quiz-card {
         animation: unset;
+        margin-bottom: 18%;
     }
 
     .tab-content.active {

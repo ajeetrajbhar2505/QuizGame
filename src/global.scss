@@ -55,6 +55,7 @@
 ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   --backdrop-opacity: 0.5;
   padding: 10px;
+  background-color: #FAFAFA;
 }
 
 * {
@@ -98,12 +99,13 @@ $shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   -8px -8px 15px rgba(255, 255, 255, 0.8);
 
-.phone {
+.phone-section {
   overflow: auto;
   display: flex;
   flex-direction: column;
   position: relative;
   margin-bottom: 50px;
+  background-color: #FAFAFA;
 }
 
 .homeHeader {
@@ -201,7 +203,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   padding: 24px;
   flex: 1;
   overflow-y: auto;
-  background: var(--white);
+  background: #FAFAFA;
 }
 
 .section-title {
@@ -318,7 +320,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   transition: all 0.3s;
   position: relative;
   overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 20px 0px;
 }
 
 
@@ -977,6 +978,12 @@ ion-icon{
   padding: unset !important;
   margin: unset !important;
   border: unset !important;
+  border-radius: 16px !important;
+  background: unset !important;
+}
+
+.ph-item > *{
+  margin-top: 15px !important;
 }
 
 .ph-avatar {
@@ -1018,7 +1025,7 @@ ion-icon{
 }
 
 @media (max-width: 480px) {
-  .phone {
+  .phone-section {
     padding: 16px;
   }
 

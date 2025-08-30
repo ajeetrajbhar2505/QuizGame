@@ -10,7 +10,7 @@
     $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
         -8px -8px 15px rgba(255, 255, 255, 0.8);
 
-    .phone {
+    .phone-section {
         position: relative;
     }
 
@@ -56,10 +56,8 @@
         background-color: $card-bg;
         border-radius: 16px;
         padding: 20px;
-        box-shadow: $shadow;
         margin-bottom: 20px;
         position: relative;
-        border: 1px solid rgba(0, 0, 0, 0.03);
     }
 
     .cancel {
@@ -149,7 +147,7 @@
         border-radius: 16px;
         font-size: 10px;
         position: absolute;
-        top: -6px;  
+        top: -6px;
         right: -7px;
         border-radius: unset;
         border-bottom-left-radius: 22px;
