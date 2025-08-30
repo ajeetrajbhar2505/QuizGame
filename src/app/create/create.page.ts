@@ -80,7 +80,7 @@ private stopLoadingAnimation(): void {
 
 private handleCreationSuccess(response: any): void {
   // Handle successful quiz creation
-  console.log('Quiz created successfully:', response);
+  this.waitingMessage = ""
   // You might want to navigate to the quiz page or show success message
   this.showSuccessMessage('Quiz created successfully!');
 }
