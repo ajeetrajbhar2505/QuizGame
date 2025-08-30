@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LeaderboardUser, user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { SocketService } from '../socket.service';
+import { AuthData, SocketService } from '../socket.service';
 
 
 @Component({
@@ -78,6 +78,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
 
   async getQuizParticipant(quizId: any) {
     // Quiz start logic
+    this.SocketService.authDataSource.next(null);
     await this.quizService.getQuizParticipant(quizId).toPromise();
   }
 
@@ -102,6 +103,11 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
   }
 
   closeDialog() {
+    let AuthData: AuthData = {
+      token: localStorage.getItem('token') || '',
+      user: JSON.parse(localStorage.getItem('user') || '{}')
+    };
+    this.SocketService.authDataSource.next(AuthData);
     this.openModel = false
   }
 

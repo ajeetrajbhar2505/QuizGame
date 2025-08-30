@@ -222,6 +222,7 @@ export class SocketService implements OnDestroy {
       token : data.token || localStorage.getItem('token')
     }
     this.socket.connect()
+    this.router.navigate(['/home'])
   }
 
   private showToast(message: string, duration = 3000, position = 'bottom', color = 'dark'): void {
