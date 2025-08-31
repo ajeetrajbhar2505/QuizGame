@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DashboardService, LeaderboardUser, UserStats, user } from '../dashboard.service';
+import { Component, OnInit } from '@angular/core';
+import { DashboardService, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Observable, forkJoin } from 'rxjs';
-import { RefresherCustomEvent } from '@ionic/angular';
+import { forkJoin } from 'rxjs';
 import { NotificationService } from '../notification.service';
 
 @Component({
@@ -27,13 +26,11 @@ export class HomePage implements OnInit {
     private sanitizer: DomSanitizer,
     private notificationService: NotificationService
   ) {
-      // Current user'
+    // Current user'
     this.currentUser = this.dashboardService.getUser();
     if (this.currentUser.avatar) {
       this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
     }
-
-    // Initialize observables
   }
 
   ngOnInit() {

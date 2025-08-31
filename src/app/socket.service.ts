@@ -5,7 +5,7 @@ import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 export interface AuthData {
@@ -62,7 +62,8 @@ export class SocketService implements OnDestroy {
     private toasterService: ToasterService,
     private http: HttpClient,
     private inAppBrowser: InAppBrowser,
-    private platform: Platform
+    private platform: Platform,
+    private modalController: ModalController
   ) {
     this.initializeSocket(localStorage.getItem('token') || undefined);
   }
@@ -214,7 +215,7 @@ export class SocketService implements OnDestroy {
 
   }
 
-  private persistAuthData(data: AuthData): void {
+  async persistAuthData(data: AuthData) {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     this.cleanupSocket();
@@ -223,7 +224,24 @@ export class SocketService implements OnDestroy {
     }
     this.socket.connect()
     this.router.navigate(['/home'])
+    await this.closeAllModals();
   }
+
+  // Add this method to your component
+async closeAllModals(): Promise<void> {
+  try {
+    // Method 1: Close all modals using ModalController (recommended)
+    const topModal = await this.modalController.getTop();
+    if (topModal) {
+      await this.modalController.dismiss();
+      // Recursively close all modals
+      await this.closeAllModals();
+    }
+
+  } catch (error) {
+    console.error('Error closing modals:', error);
+  }
+}
 
   private showToast(message: string, duration = 3000, position = 'bottom', color = 'dark'): void {
     this.toasterService.presentToast(message, duration, position, color);
@@ -245,14 +263,17 @@ export class SocketService implements OnDestroy {
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user?.id) {
-        this.emit('auth:logout', user.id);
+      if (user?._id) {
+        this.emit('auth:logout', user._id);
       }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
       localStorage.clear();
       this.router.navigate(['/login']);
+      this.authDataSource.complete();
+      this.authDataSource = new ReplaySubject<AuthData | null>(1);
+      this.authDataSource.next(null);
       this.showToast('You have been logged out');
     }
   }

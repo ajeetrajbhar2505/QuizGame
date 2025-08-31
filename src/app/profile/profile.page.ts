@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DashboardService, UserStats, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
 import { Share } from '@capacitor/share';
-import { Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, combineLatest, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit {
-  activeTab: string = 'quizzes'; // Default active tab
+export class ProfilePage implements OnInit, OnDestroy {
+  activeTab: string = 'quizzes';
   currentUser: user;
 
   // Combined view model observable
@@ -22,30 +22,56 @@ export class ProfilePage implements OnInit {
     draftQuizzes: Quiz[];
   }>;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
     private router: Router,
     private toasterService: ToasterService
   ) {
-    this.currentUser = this.dashboardService.getUser();
-    
+    // Initialize with current user data
+    this.currentUser = { ...this.dashboardService.getUser() };
     // Combine all needed observables
     this.viewModel$ = combineLatest([
       this.dashboardService.getUserStats$,
       this.quizService.getQuizesDraft$
     ]).pipe(
-      map(([userStats, draftQuizzes]) => ({ userStats, draftQuizzes }))
+      map(([userStats, draftQuizzes]) => ({ userStats, draftQuizzes })),
+      takeUntil(this.destroy$)
     );
   }
 
   ngOnInit(): void {
+    this.setupUserSubscription();
     this.loadInitialData();
+
+
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupUserSubscription(): void {
+    this.dashboardService.getUserStats$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Update user data when stats are updated
+        this.currentUser = { ...this.dashboardService.getUser() };
+      });
   }
 
   async loadInitialData() {
-    this.dashboardService.getDashboardStats().toPromise()
-    this.quizService.getAllQuiz().toPromise()
+    try {
+      await Promise.all([
+        this.dashboardService.getDashboardStats().toPromise(),
+        this.quizService.getAllQuiz().toPromise()
+      ]);
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+    }
   }
 
   changeTab(tab: string): void {
@@ -73,23 +99,28 @@ export class ProfilePage implements OnInit {
   }
 
   async shareApp() {
-    const appName = "QuizMaster"; 
+    const appName = "QuizMaster";
     const message = `🚀 Challenge yourself with ${appName}! 
   Test your knowledge with fun quizzes and compete with friends. 
   Join me now!`;
-    
+
     const shareOptions = {
       title: `Try ${appName} - The Ultimate Quiz App`,
       text: message,
-      url: 'https://your-app-website-or-play-store-link.com', 
+      url: 'https://your-app-website-or-play-store-link.com',
       dialogTitle: 'Challenge Your Friends',
     };
-    await Share.share(shareOptions);
+
+    try {
+      await Share.share(shareOptions);
+    } catch (error) {
+      console.error('Share error:', error);
+    }
   }
 
   IsAdminTemplate(quiz: Quiz): boolean {
-    return quiz.source?.toLowerCase() === 'admin-template' && 
-           quiz.approvalStatus !== 'rejected';
+    return quiz.source?.toLowerCase() === 'admin-template' &&
+      quiz.approvalStatus !== 'rejected';
   }
 
   avatarError(event: Event) {
