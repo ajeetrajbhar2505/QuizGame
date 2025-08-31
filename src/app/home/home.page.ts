@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { forkJoin } from 'rxjs';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { NotificationService } from '../notification.service';
 
 @Component({
@@ -10,15 +10,9 @@ import { NotificationService } from '../notification.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
-  currentUser: user = {
-    id: "",
-    name: "",
-    email: "",
-    avatar: "",
-    role: "",
-    isVerified: false
-  };
+export class HomePage implements OnInit, OnDestroy {
+  currentUser: user;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private dashboardService: DashboardService,
@@ -27,13 +21,11 @@ export class HomePage implements OnInit {
     private notificationService: NotificationService
   ) {
     // Current user'
-    this.currentUser = this.dashboardService.getUser();
-    if (this.currentUser.avatar) {
-      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
-    }
+    this.currentUser = { ...this.dashboardService.getUser() };
   }
 
   ngOnInit() {
+    this.setupUserSubscription()
     this.loadInitialData()
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
@@ -41,6 +33,15 @@ export class HomePage implements OnInit {
       }
     })
   }
+  private setupUserSubscription(): void {
+    this.dashboardService.getUserStats$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Update user data when stats are updated
+        this.currentUser = { ...this.dashboardService.getUser() };
+      });
+  }
+
 
   async loadInitialData() {
     await forkJoin([
@@ -73,5 +74,10 @@ export class HomePage implements OnInit {
     this.loadInitialData()
   }
 
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

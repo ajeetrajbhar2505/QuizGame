@@ -48,7 +48,7 @@ export class SocketService implements OnDestroy {
   private authErrorSource = new ReplaySubject<any | null>(1);
   private connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
   private connectionAttempts = 0;
-  private urlSubject = new ReplaySubject<{url: string}>(1); // New subject for URL events
+  private urlSubject = new ReplaySubject<{ url: string }>(1); // New subject for URL events
 
   public readonly authData$ = this.authDataSource.asObservable();
   public readonly loginData$ = this.loginDataSource.asObservable();
@@ -75,7 +75,7 @@ export class SocketService implements OnDestroy {
   private initializeSocket(token?: string): void {
     try {
       this.connectionState$.next('connecting');
-      
+
       this.socket = io(environment.apiURL, {
         transports: ['websocket'],
         reconnection: true,
@@ -96,12 +96,12 @@ export class SocketService implements OnDestroy {
   }
 
   private registerUrlEvents(): void {
-    this.socket.on('auth:google:url', (data: {url: string}) => {
+    this.socket.on('auth:google:url', (data: { url: string }) => {
       this.urlSubject.next(data); // Emit URL data
       this.openAuthUrl(data); // Also open URL if needed
     });
 
-    this.socket.on('auth:facebook:url', (data: {url: string}) => {
+    this.socket.on('auth:facebook:url', (data: { url: string }) => {
       this.urlSubject.next(data); // Emit URL data
       this.openAuthUrl(data); // Also open URL if needed
     });
@@ -126,7 +126,7 @@ export class SocketService implements OnDestroy {
 
       if (localStorage.getItem('token')) {
         this.emit('quiz:all');
-        this.emit('quiz:published',3);
+        this.emit('quiz:published', 3);
       }
     });
 
@@ -135,7 +135,7 @@ export class SocketService implements OnDestroy {
       if (!this.socket?.connected) {
         this.cleanupSocket();
         this.socket.auth = {
-          token :  localStorage.getItem('token') || undefined
+          token: localStorage.getItem('token') || undefined
         }
         this.socket.connect()
       }
@@ -220,7 +220,7 @@ export class SocketService implements OnDestroy {
     localStorage.setItem('user', JSON.stringify(data.user));
     this.cleanupSocket();
     this.socket.auth = {
-      token : data.token || localStorage.getItem('token')
+      token: data.token || localStorage.getItem('token')
     }
     this.socket.connect()
     this.router.navigate(['/home'])
@@ -228,20 +228,20 @@ export class SocketService implements OnDestroy {
   }
 
   // Add this method to your component
-async closeAllModals(): Promise<void> {
-  try {
-    // Method 1: Close all modals using ModalController (recommended)
-    const topModal = await this.modalController.getTop();
-    if (topModal) {
-      await this.modalController.dismiss();
-      // Recursively close all modals
-      await this.closeAllModals();
-    }
+  async closeAllModals(): Promise<void> {
+    try {
+      // Method 1: Close all modals using ModalController (recommended)
+      const topModal = await this.modalController.getTop();
+      if (topModal) {
+        await this.modalController.dismiss();
+        // Recursively close all modals
+        await this.closeAllModals();
+      }
 
-  } catch (error) {
-    console.error('Error closing modals:', error);
+    } catch (error) {
+      console.error('Error closing modals:', error);
+    }
   }
-}
 
   private showToast(message: string, duration = 3000, position = 'bottom', color = 'dark'): void {
     this.toasterService.presentToast(message, duration, position, color);
@@ -252,28 +252,51 @@ async closeAllModals(): Promise<void> {
     if (!this.socket?.connected) {
       this.cleanupSocket();
       this.socket.auth = {
-        token : token || localStorage.getItem('token')
+        token: token || localStorage.getItem('token')
       }
       this.socket.connect()
     }
   }
 
   public async logout(): Promise<void> {
-    this.toasterService.dismiss();
-
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user?._id) {
-        this.emit('auth:logout', user._id);
+      // 1. Get user data before clearing storage
+      let userId: string = '';
+      try {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          userId = user._id || '';
+        }
+      } catch (parseError) {
+        console.warn('Error parsing user data:', parseError);
+      }
+
+      // 2. Close all toasters first
+      this.toasterService.dismiss();
+
+      // 3. Close all open modals (if you have modalController)
+      await this.closeAllModals();
+
+      // 4. Clear auth data source properly
+      this.authDataSource.complete();
+      this.authDataSource = new ReplaySubject<AuthData | null>(1);
+      this.authDataSource.next(null);
+
+      // 5. Emit logout event if user ID exists
+      if (userId) {
+        try {
+          this.emit('auth:logout', userId);
+        } catch (emitError) {
+          console.error('Logout emit error:', emitError);
+        }
       }
     } catch (error) {
+      localStorage.clear();
       console.error('Logout error:', error);
     } finally {
       localStorage.clear();
       this.router.navigate(['/login']);
-      this.authDataSource.complete();
-      this.authDataSource = new ReplaySubject<AuthData | null>(1);
-      this.authDataSource.next(null);
       this.showToast('You have been logged out');
     }
   }
@@ -380,7 +403,7 @@ async closeAllModals(): Promise<void> {
     }
   }
 
-  openAuthUrl(data: {url: string}): void {
+  openAuthUrl(data: { url: string }): void {
     try {
       console.log('Opening URL:', data.url);
       if (!this.platform.is('cordova')) {
@@ -394,11 +417,11 @@ async closeAllModals(): Promise<void> {
   }
 
   public connect(token?: string): void {
-      this.cleanupSocket();
-      this.socket.auth = {
-        token : token || localStorage.getItem('token')
-      }
-      this.socket.connect()
+    this.cleanupSocket();
+    this.socket.auth = {
+      token: token || localStorage.getItem('token')
+    }
+    this.socket.connect()
   }
 
   public disconnect(): void {
