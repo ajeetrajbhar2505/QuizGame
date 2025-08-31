@@ -14,7 +14,6 @@ import { map, takeUntil } from 'rxjs/operators';
 })
 export class ProfilePage implements OnInit, OnDestroy {
   activeTab: string = 'quizzes';
-  currentUser: user;
 
   // Combined view model observable
   viewModel$: Observable<{
@@ -30,8 +29,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     private router: Router,
     private toasterService: ToasterService
   ) {
-    // Initialize with current user data
-    this.currentUser = { ...this.dashboardService.getUser() };
     // Combine all needed observables
     this.viewModel$ = combineLatest([
       this.dashboardService.getUserStats$,
@@ -43,10 +40,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.setupUserSubscription();
     this.loadInitialData();
-
-
   }
 
   ngOnDestroy(): void {
@@ -54,14 +48,12 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private setupUserSubscription(): void {
-    this.dashboardService.getUserStats$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        // Update user data when stats are updated
-        this.currentUser = { ...this.dashboardService.getUser() };
-      });
+
+  get currentUser(): user {
+    return this.dashboardService.getUser()
   }
+
+
 
   async loadInitialData() {
     try {

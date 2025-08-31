@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { BehaviorSubject, Observable, ReplaySubject, of, fromEvent } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, of, fromEvent, Subject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
@@ -56,6 +56,7 @@ export class SocketService implements OnDestroy {
   public readonly connectionState = this.connectionState$.asObservable();
   public readonly authError$ = this.authErrorSource.asObservable();
   public readonly url$ = this.urlSubject.asObservable(); // Expose URL observable
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -63,13 +64,14 @@ export class SocketService implements OnDestroy {
     private http: HttpClient,
     private inAppBrowser: InAppBrowser,
     private platform: Platform,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) {
     this.initializeSocket(localStorage.getItem('token') || undefined);
   }
 
   ngOnDestroy(): void {
     this.cleanupSocket();
+    this.cleanup();
   }
 
   private initializeSocket(token?: string): void {
@@ -223,11 +225,8 @@ export class SocketService implements OnDestroy {
       token: data.token || localStorage.getItem('token')
     }
     this.socket.connect()
+    this.cleanup()
     this.router.navigate(['/home'])
-    this.loginDataSource = new ReplaySubject<AuthData | null>(1);
-    this.loginDataSource.next(data)
-    this.authDataSource = new ReplaySubject<AuthData | null>(1);
-    this.authDataSource.next(data)
     await this.closeAllModals();
   }
 
@@ -283,15 +282,7 @@ export class SocketService implements OnDestroy {
       await this.closeAllModals();
 
       // 4. Clear auth data source properly
-      this.loginDataSource.complete();
-      this.loginDataSource = new ReplaySubject<AuthData | null>(1);
-      this.loginDataSource.next(null);
-
-      // 4. Clear auth data source properly
-      this.authDataSource.complete();
-      this.authDataSource = new ReplaySubject<AuthData | null>(1);
-      this.authDataSource.next(null);
-
+      this.cleanup()
       // 5. Emit logout event if user ID exists
       if (userId) {
         try {
@@ -302,12 +293,75 @@ export class SocketService implements OnDestroy {
       }
     } catch (error) {
       localStorage.clear();
+      this.cleanup()
       console.error('Logout error:', error);
     } finally {
       localStorage.clear();
+      this.cleanup()
       this.router.navigate(['/login']);
       this.showToast('You have been logged out');
     }
+  }
+
+  public cleanup(): void {
+    // Complete all subjects
+    this.authDataSource.complete();
+    this.loginDataSource.complete();
+    this.otpDataSource.complete();
+    this.authErrorSource.complete();
+    this.connectionState$.complete();
+    this.urlSubject.complete();
+
+    // Complete the destroy subject
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    // Reset connection attempts
+    this.connectionAttempts = 0;
+  }
+
+  /**
+   * Individual subject cleanup methods (optional)
+   */
+  public cleanupAuthData(): void {
+    this.authDataSource.complete();
+    this.authDataSource = new ReplaySubject<AuthData | null>(1);
+  }
+
+  public cleanupLoginData(): void {
+    this.loginDataSource.complete();
+    this.loginDataSource = new ReplaySubject<AuthData | null>(1);
+  }
+
+  public cleanupOtpData(): void {
+    this.otpDataSource.complete();
+    this.otpDataSource = new ReplaySubject<AuthData | null>(1);
+  }
+
+  public cleanupAuthErrors(): void {
+    this.authErrorSource.complete();
+    this.authErrorSource = new ReplaySubject<any | null>(1);
+  }
+
+  public cleanupConnectionState(): void {
+    this.connectionState$.complete();
+    this.connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
+  }
+
+  public cleanupUrlSubject(): void {
+    this.urlSubject.complete();
+    this.urlSubject = new ReplaySubject<{ url: string }>(1);
+  }
+
+  public resetAllSubjects(): void {
+    this.cleanupAuthData();
+    this.cleanupLoginData();
+    this.cleanupOtpData();
+    this.cleanupAuthErrors();
+    this.cleanupConnectionState();
+    this.cleanupUrlSubject();
+
+    this.connectionAttempts = 0;
   }
 
   private handleUnauthorized(): void {
@@ -403,7 +457,6 @@ export class SocketService implements OnDestroy {
 
   public emit(eventName: string, ...args: any[]): void {
     if (this.socket?.connected) {
-      console.log(`Emitting event: ${eventName}`, args);
       this.socket.emit(eventName, ...args);
     } else {
       console.warn(`Attempted to emit ${eventName} while disconnected`);

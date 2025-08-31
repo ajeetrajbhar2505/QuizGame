@@ -76,7 +76,7 @@ export class DashboardService {
   }
 
 
-  getLeaderboardUser(limit?:number) {
+  getLeaderboardUser(limit?: number) {
     this.socketService.socket.emit('dashboard:leaderboardUser:get', limit == 0 ? limit : this.limit);
     return new Observable<LeaderboardUser[]>(observer => {
       const subscription = this.socketService.fromEvent<UserStats>('dashboard:leaderboardUser:success').subscribe({
@@ -95,11 +95,8 @@ export class DashboardService {
     });
   }
 
-  getUser() {
-    const User: any = localStorage.getItem('user')
-    if (User) {
-      return JSON.parse(User)
-    }
+  getUser(): user {
+    return JSON.parse(localStorage.getItem('user') || '') as user
   }
 
   logout(): void {

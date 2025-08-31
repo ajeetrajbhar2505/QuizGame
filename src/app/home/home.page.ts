@@ -12,7 +12,6 @@ import { SocketService } from '../socket.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
-  currentUser: user;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -21,28 +20,20 @@ export class HomePage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private notificationService: NotificationService,
   ) {
-    // Current user - but this might be null if data isn't loaded yet
-    this.currentUser = { ...this.dashboardService.getUser() };
-    
-    // This Observable does nothing without subscribe()
-    combineLatest([
-      this.dashboardService.getUserStats$,
-    ]).pipe(
-      map(([userStats]) => ({ userStats })),
-      takeUntil(this.destroy$)
-    ).subscribe(); // Need to subscribe
+
   }
 
   ngOnInit() {
     this.loadInitialData()
-    this.setupUserSubscription()
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData()
       }
     })
+  }
 
-
+  get currentUser(): user {
+    return this.dashboardService.getUser()
   }
 
 
@@ -58,15 +49,6 @@ export class HomePage implements OnInit, OnDestroy {
     ]).toPromise()
 
 
-  }
-
-  private setupUserSubscription(): void {
-    this.dashboardService.getUserStats$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        // Update user data when stats are updated
-        this.currentUser = { ...this.dashboardService.getUser() };
-      });
   }
 
   protected makeSafeUrl(url: string): SafeUrl {
