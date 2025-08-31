@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } fro
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { user } from '../dashboard.service';
 
 
 

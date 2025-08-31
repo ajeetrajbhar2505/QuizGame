@@ -2,8 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { Observable, Subject, filter, forkJoin, from, map, of, switchMap, takeUntil } from 'rxjs';
 import { NotificationService } from '../notification.service';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-home',
@@ -11,36 +12,47 @@ import { NotificationService } from '../notification.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
-  currentUser: user;
+ currentUser$: Observable<user | null> = from([this.getStoredUser()]).pipe(
+  switchMap(storedUser => storedUser ? of(storedUser) : this.socketService.authData$.pipe(
+    map(authData => authData?.user || null),
+    filter(user => user !== null)
+  ))
+);
   private destroy$ = new Subject<void>();
 
   constructor(
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private socketService:SocketService
   ) {
-    // Current user'
-    this.currentUser = { ...this.dashboardService.getUser() };
   }
 
   ngOnInit() {
-    this.setupUserSubscription()
     this.loadInitialData()
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData()
       }
     })
+  
   }
-  private setupUserSubscription(): void {
-    this.dashboardService.getUserStats$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        // Update user data when stats are updated
-        this.currentUser = { ...this.dashboardService.getUser() };
-      });
+
+  private getStoredUser(): user | null {
+    try {
+      // Try currentUser first, then fallback to user for backward compatibility
+      const userData = localStorage.getItem('user') || localStorage.getItem('user');
+      if (userData) {
+        const user = JSON.parse(userData);
+          return user;
+      }
+    } catch (error) {
+      console.error('Error parsing stored user data:', error);
+    }
+    return null;
   }
+
 
 
   async loadInitialData() {

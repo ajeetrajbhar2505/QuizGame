@@ -7,11 +7,10 @@ export interface user {
   id: string;
   name: string;
   email: string;
-  avatar: any;
+  avatar?: any;
   role: string;
   isVerified: boolean;
 }
-
 
 export class UserStats {
   correctAnswers: number = 0;
@@ -101,11 +100,6 @@ export class DashboardService {
     if (User) {
       return JSON.parse(User)
     }
-    this.socketService.authData$.subscribe((data: any) => {
-      if (data) {
-        return data.user
-      }
-    })
   }
 
   logout(): void {
