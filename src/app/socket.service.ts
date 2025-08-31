@@ -224,6 +224,8 @@ export class SocketService implements OnDestroy {
     }
     this.socket.connect()
     this.router.navigate(['/home'])
+    this.loginDataSource = new ReplaySubject<AuthData | null>(1);
+    this.loginDataSource.next(data)
     this.authDataSource = new ReplaySubject<AuthData | null>(1);
     this.authDataSource.next(data)
     await this.closeAllModals();
@@ -279,6 +281,11 @@ export class SocketService implements OnDestroy {
 
       // 3. Close all open modals (if you have modalController)
       await this.closeAllModals();
+
+      // 4. Clear auth data source properly
+      this.loginDataSource.complete();
+      this.loginDataSource = new ReplaySubject<AuthData | null>(1);
+      this.loginDataSource.next(null);
 
       // 4. Clear auth data source properly
       this.authDataSource.complete();

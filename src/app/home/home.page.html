@@ -2,17 +2,12 @@
   <!-- Header with user greeting and stats -->
   <div class="homeHeader">
     <div class="homeHeader-content">
-      <div class="user-greeting" *ngIf="currentUser$ | async as currentUser">
+      <div class="user-greeting">
         <h1>Welcome back, {{currentUser.name}}!</h1>
         <p>Ready to challenge yourself today?</p>
       </div>
-  
-      <img 
-        *ngIf="currentUser$ | async as currentUser"
-        [src]="currentUser.avatar" 
-        (click)="logout()" 
-        crossorigin="anonymous" 
-        class="user-avatar"
+
+      <img [src]="currentUser.avatar" (click)="logout()" crossorigin="anonymous" class="user-avatar"
         (error)="avatarError($event)">
     </div>
   </div>
