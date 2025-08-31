@@ -125,9 +125,6 @@ export class LoginPage implements OnInit, OnDestroy {
 
   async handleAuthSuccess(data: any) {
     if (!data) return;
-    if (!localStorage.getItem('token')) {
-      this.toasterService.presentToast('Login successful', 3000, 'bottom', 'success');
-    }
     this.loginSuccess = true;
     this.isLoading = false;
     this.resetAuthStates();

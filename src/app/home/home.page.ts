@@ -4,7 +4,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable, Subject, filter, forkJoin, from, map, of, switchMap, takeUntil } from 'rxjs';
 import { NotificationService } from '../notification.service';
-import { SocketService } from '../socket.service';
+import { AuthData, SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-home',
@@ -12,12 +12,12 @@ import { SocketService } from '../socket.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
- currentUser$: Observable<user | null> = from([this.getStoredUser()]).pipe(
-  switchMap(storedUser => storedUser ? of(storedUser) : this.socketService.authData$.pipe(
-    map(authData => authData?.user || null),
-    filter(user => user !== null)
-  ))
-);
+  currentUser$: Observable<user | null> = from([this.getStoredUser()]).pipe(
+    switchMap(storedUser => storedUser ? of(storedUser) : this.socketService.authData$.pipe(
+      map(authData => authData?.user || null),
+      filter(user => user !== null)
+    ))
+  );
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -25,18 +25,21 @@ export class HomePage implements OnInit, OnDestroy {
     private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer,
     private notificationService: NotificationService,
-    private socketService:SocketService
+    private socketService: SocketService
   ) {
+    console.log('hii');
+
   }
 
   ngOnInit() {
+
     this.loadInitialData()
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData()
       }
     })
-  
+
   }
 
   private getStoredUser(): user | null {
@@ -45,7 +48,7 @@ export class HomePage implements OnInit, OnDestroy {
       const userData = localStorage.getItem('user') || localStorage.getItem('user');
       if (userData) {
         const user = JSON.parse(userData);
-          return user;
+        return user;
       }
     } catch (error) {
       console.error('Error parsing stored user data:', error);

@@ -224,6 +224,8 @@ export class SocketService implements OnDestroy {
     }
     this.socket.connect()
     this.router.navigate(['/home'])
+    this.authDataSource = new ReplaySubject<AuthData | null>(1);
+    this.authDataSource.next(data)
     await this.closeAllModals();
   }
 
