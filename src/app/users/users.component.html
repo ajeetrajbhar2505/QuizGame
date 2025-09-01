@@ -20,7 +20,7 @@
             <div class="name">{{ user.userId == currentUser._id ? 'You' : user.name}}</div>
           </div>
           <div class="points">{{ user.points}} pts</div>
-          <i class="fas fa-crown crown" *ngIf="i === 0"></i>
+          <i class="fas fa-crown crown {{ 'crown-' + (i+1)}}" *ngIf="i < 2"></i>
           <i class="fas fa-trophy trophy" *ngIf="i < 3"></i>
         </div>
       </div>

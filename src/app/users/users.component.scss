@@ -46,14 +46,14 @@
   display: flex;
   align-items: center;
   padding: 15px 20px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   border-radius: 15px;
+  background: #fff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
 }
 
 .rank {
-  font-size: 24px;
   font-weight: 700;
   text-align: center;
   color: #2c3e50;
@@ -68,7 +68,6 @@
 
 .name {
   font-weight: 600;
-  font-size: 18px;
   color: #2c3e50;
   white-space: nowrap;
   overflow: hidden;
@@ -77,36 +76,36 @@
 }
 
 .points {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
   color: #28a745;
   min-width: 70px;
 }
 
 /* Specific ranking styles */
-.rank-1 {
-  background: linear-gradient(135deg, #fff9e6 0%, #ffedb8 100%);
-  border: 2px solid #ffc107;
-}
+// .rank-1 {
+//   background: linear-gradient(135deg, #fff9e6 0%, #ffedb8 100%);
+//   border: 1px solid #ffc107;
+// }
 
-.rank-2 {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 2px solid #6c757d;
-}
+// .rank-2 {
+//   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+//   border: 1px solid #6c757d;
+// }
 
-.rank-3 {
-  background: linear-gradient(135deg, #f8f0e6 0%, #ecdcc8 100%);
-}
+// .rank-3 {
+//   background: linear-gradient(135deg, #f8f0e6 0%, #ecdcc8 100%);
+// }
 
-.rank-1 .rank {
+.rank-1 .rank,.crown-1 {
   color: #ffc107;
 }
 
-.rank-2 .rank {
+.rank-2 .rank,.crown-2 {
   color: #6c757d;
 }
 
-.rank-3 .rank {
+.rank-3 .rank,.crown-3 {
   color: #cd7f32;
 }
 
@@ -115,7 +114,6 @@
   position: absolute;
   top: -11px;
   left: 67px;
-  color: #ffc107;
   font-size: 24px;
 }
 
