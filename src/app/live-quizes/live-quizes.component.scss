@@ -12,7 +12,7 @@
   font-size: 12px;
   font-weight: bold;
   position: absolute;
-  top: 13px;
+  top: 16px;
   left: 13px;
   letter-spacing: 0.5px;
   z-index: 10;
@@ -273,6 +273,7 @@ a {
   justify-content: center;
   line-height: 1;
   cursor: pointer;
+  margin-bottom: 5px;
   border-radius: 8px;
   transition: 0.15s ease;
   background: none;
@@ -337,8 +338,6 @@ a {
 .leaderboard-header-modal {
   display: grid;
   grid-template-columns: 60px 1fr 120px 80px;
-  padding: 12px 15px;
-  background: #f8f9fa;
   border-radius: 8px;
   margin-bottom: 10px;
   font-weight: 600;
@@ -361,15 +360,6 @@ a {
   border-radius: 10px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
-}
-
-.leaderboard-item-modal:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.top-participant {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .rank-modal {
@@ -480,7 +470,6 @@ a {
   .leaderboard-header-modal {
     grid-template-columns: 50px 1fr 90px 60px;
     font-size: 12px;
-    padding: 10px;
   }
 
   .leaderboard-item-modal {
