@@ -4,7 +4,7 @@ import { Observable, ReplaySubject, filter } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
 export interface user {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   avatar?: any;

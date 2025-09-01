@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
-import { DashboardService, LeaderboardUser } from '../dashboard.service';
+import { DashboardService, LeaderboardUser, user } from '../dashboard.service';
 import { CreateQuizesService } from '../create-quizes.service';
 import { Router } from '@angular/router';
 
@@ -23,6 +23,10 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.leaderboardUsers$ = this.dashboardService.leaderboard$;
   }
 
+
+  get currentUser(): user {
+    return this.dashboardService.getUser()
+  }
 
   ngOnInit(): void {
     let isLimitRoute = ['/home'].includes(this.router.url);

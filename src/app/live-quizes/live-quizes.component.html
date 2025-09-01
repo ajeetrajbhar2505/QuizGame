@@ -189,37 +189,53 @@
             </svg>
           </button>
         </header>
+        
         <section class="modal-container-body rtf">
           <ng-container *ngIf="quizParticipants$ | async as leaderboardUsers; else leaderboardLoading">
             <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
-              <div class="content" style="padding-bottom: 8px;">
-                <div class="leaderboard-item"
-                  *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId">
-                  <div class="rank">{{leaderboardUsers.participants.indexOf(user) + 1}}</div>
-                  <div class="user">
+              <div class="leaderboard-modal">
+                <div class="leaderboard-header-modal">
+                  <div>Rank</div>
+                  <div>Participant</div>
+                  <div>Status</div>
+                  <div>Score</div>
+                </div>
+                
+                <div class="leaderboard-item-modal" 
+                     *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
+                     [class.top-participant]="i < 3">
+                  <div class="rank-modal">{{ i + 1 }}</div>
+                  <div class="user-modal">
                     <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
-                    <div>
-                      <div class="name">{{user.name}}</div>
+                    <div class="user-info-modal">
+                      <div class="name-modal">{{ user.name }}</div>
                     </div>
                   </div>
-                  <!-- Submitted -->
-                  <svg width="24" height="24" *ngIf="user.isSubmitted" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="9" fill="#10B981" />
-                    <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-
-                  <!-- Pending -->
-                  <svg width="24" height="24" *ngIf="!user.isSubmitted" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="9" fill="#F59E0B" />
-                    <path d="M12 8V12L15 15" stroke="white" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-                  <div class="points">{{user.score}}</div>
+                  
+                  <div class="status-modal">
+                    <!-- Submitted -->
+                    <svg width="24" height="24" *ngIf="user.isSubmitted" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" fill="#10B981" />
+                      <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+      
+                    <!-- Pending -->
+                    <svg width="24" height="24" *ngIf="!user.isSubmitted" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" fill="#F59E0B" />
+                      <path d="M12 8V12L15 15" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                    
+                    <span class="status-text">{{ user.isSubmitted ? 'Submitted' : 'Pending' }}</span>
+                  </div>
+                  
+                  <div class="points-modal">{{ user.score }}</div>
+                  
                 </div>
               </div>
             </div>
-
+      
             <ng-template #emptyLeaderboard>
               <div class="ph-item">
                 <div class="ph-col-12">
@@ -232,8 +248,7 @@
               </div>
             </ng-template>
           </ng-container>
-
-
+      
           <ng-template #leaderboardLoading>
             <div class="ph-item">
               <div class="ph-col-12">
@@ -245,18 +260,17 @@
               </div>
             </div>
           </ng-template>
-
         </section>
+        
         <footer class="modal-container-footer">
           <div class="host-container">
             <div class="host-data">
               <img *ngIf="false" [src]="(quizParticipants$ | async)?.host.avatar" class="host-avatar" alt="Host avatar"
                 crossorigin="anonymous" (error)="handleAvatarError($event)">
-              <div>
+              <div class="hoster">
                 <span class="host-label">Hosted by</span>
                 <span class="host-name">{{ (quizParticipants$ | async)?.host.name }}</span>
               </div>
-
             </div>
           </div>
         </footer>

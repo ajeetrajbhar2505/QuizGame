@@ -19,7 +19,7 @@ export class QuizesPage implements OnInit, OnDestroy {
   @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter(false)
 
   currentUser: user = {
-    id: "",
+    _id: "",
     name: "",
     email: "",
     avatar: "",

@@ -19,7 +19,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
   isLoadingQuizzes: boolean = false;
   openModel: boolean = false
   currentUser: user = {
-    id: "",
+    _id: "",
     name: "",
     email: "",
     avatar: "",
