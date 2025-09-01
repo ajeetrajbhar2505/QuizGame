@@ -56,8 +56,8 @@
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
         <div class="quiz-header">
           <h3 class="quiz-title">
-            <div class="status-badge-container" [class.waiting]="quiz.status === 'waiting'"
-              [class.live]="quiz.status === 'in-progress'" [class.completed]="quiz.status === 'completed'">
+            <div class="status-badge-container" [class.waiting]="quiz.status == 'waiting'"
+              [class.live]="quiz.status == 'in-progress'" [class.completed]="quiz.status == 'completed'">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <!-- Waiting/Live: Double Ring Icon -->
                 <path *ngIf="quiz.status !== 'completed'"
@@ -68,12 +68,12 @@
                   fill="currentColor" />
 
                 <!-- Completed: Checkmark Icon -->
-                <path *ngIf="quiz.status === 'completed'" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                <path *ngIf="quiz.status == 'completed'" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                   fill="currentColor" />
               </svg>
               <span class="status-text">
-                {{ quiz.status === 'waiting' ? 'Waiting' :
-                quiz.status === 'in-progress' ? 'LIVE NOW' :
+                {{ quiz.status == 'waiting' ? 'Waiting' :
+                quiz.status == 'in-progress' ? 'LIVE NOW' :
                 'Completed' }}
               </span>
             </div>
@@ -227,7 +227,6 @@
                         stroke-linejoin="round" />
                     </svg>
                     
-                    <span class="status-text">{{ user.isSubmitted ? 'Submitted' : 'Pending' }}</span>
                   </div>
                   
                   <div class="points-modal">{{ user.score }}</div>
