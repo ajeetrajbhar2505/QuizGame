@@ -63,7 +63,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  margin-left: 10px;
 }
 
 .name {
@@ -79,7 +79,6 @@
   font-size: 13px;
   font-weight: 700;
   color: #28a745;
-  min-width: 70px;
 }
 
 /* Specific ranking styles */
@@ -113,14 +112,14 @@
 .crown {
   position: absolute;
   top: -11px;
-  left: 67px;
+  left: 63px;
   font-size: 24px;
 }
 
 .trophy {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 95px;
   transform: translateY(-50%);
   font-size: 24px;
   opacity: 0.2;
