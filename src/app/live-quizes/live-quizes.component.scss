@@ -333,7 +333,6 @@ a {
 
 .leaderboard-modal {
   padding: 15px;
-  width: 350px;
 }
 
 .leaderboard-header-modal {
@@ -348,7 +347,12 @@ a {
   div {
     display: flex;
     justify-content: flex-end;
+
+    :nth-child(1) {
+      width: 115px;
+    }
   }
+
 }
 
 .leaderboard-item-modal {
@@ -373,6 +377,7 @@ a {
 .user-modal {
   display: flex;
   align-items: center;
+  width: 125px;
 }
 
 .user-modal img {
@@ -399,7 +404,8 @@ a {
   max-width: 150px;
 }
 
-.status-modal,.hoster {
+.status-modal,
+.hoster {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -469,7 +475,7 @@ a {
 /* Responsive styles */
 @media (max-width: 600px) {
   .leaderboard-header-modal {
-    grid-template-columns: 50px 1fr 90px 60px;
+    grid-template-columns: 53px 14fr 113px 0px;
     font-size: 12px;
   }
 
