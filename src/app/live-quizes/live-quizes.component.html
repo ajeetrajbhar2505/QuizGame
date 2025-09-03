@@ -207,7 +207,7 @@
                   <div class="user-modal">
                     <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
                     <div class="user-info-modal">
-                      <div class="name-modal">{{ user.name }}</div>
+                      <div class="name-modal">{{ user.userId == currentUser._id ? 'You' : user.name}}</div>
                     </div>
                   </div>
                   
