@@ -151,7 +151,6 @@
 .ph-row {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 7.5px;
 }
 
 .ph-col-12 {
@@ -160,7 +159,7 @@
 
 .ph-col-12.big {
   height: 30px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   background-color: #f0f0f0;
   border-radius: 5px;
   animation: phAnimation 1.5s linear infinite;

@@ -474,13 +474,13 @@ a {
 /* Responsive styles */
 @media (max-width: 600px) {
   .leaderboard-header-modal {
-    grid-template-columns: 43px 18fr 113px 35px;
+    grid-template-columns: 43px 18fr 123px 27px;
     font-size: 12px;
   }
 
   .leaderboard-item-modal {
-    grid-template-columns: 56px 1fr 100px 28px;
-    padding: 12px 10px;
+    grid-template-columns: 56px 1fr 119px 28px;
+    padding: 12px 0;
   }
 
   .name-modal {

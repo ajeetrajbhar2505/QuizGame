@@ -55,6 +55,7 @@ export class CreateQuizesService {
   private quizzesParticipantsSubject$ = new BehaviorSubject<Quiz | null>(null);
   private activeQuizSubject$ = new BehaviorSubject<Quiz | null>(null);
   private liveQuizesSubject$ = new BehaviorSubject<Quiz[]>([]);
+  private submittedQuizesSubject$ = new BehaviorSubject<Quiz[]>([]);
   private quizResultSubject$ = new BehaviorSubject<{
     correct: boolean,
     explanation?: string,
@@ -70,6 +71,7 @@ export class CreateQuizesService {
   public getPublishedQuizes$ = this.quizzesPublishedSubject$.asObservable();
   public getActiveQuiz$ = this.activeQuizSubject$.asObservable();
   public liveQuizes$ = this.liveQuizesSubject$.asObservable();
+  public submittedQuizes$ = this.submittedQuizesSubject$.asObservable();
   public getQuizResults$ = this.quizResultSubject$.asObservable();
   public getParticipants$ = this.quizzesParticipantsSubject$.asObservable();
 
@@ -268,6 +270,14 @@ export class CreateQuizesService {
     return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:active:success').pipe(
       map(data => data.quizes),
       tap(quizzes => this.liveQuizesSubject$.next(quizzes))
+    );
+  }
+
+  getSubmittedQuizes(): Observable<Quiz[]> {
+    this.socketService.socket.emit('quiz:SubmittedQuizes');
+    return this.socketService.fromEvent<{ quizes: Quiz[] }>('quiz:SubmittedQuizes:success').pipe(
+      map(data => data.quizes),
+      tap(quizzes => this.submittedQuizesSubject$.next(quizzes))
     );
   }
 

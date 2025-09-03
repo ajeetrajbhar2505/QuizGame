@@ -43,6 +43,7 @@ export class HomePage implements OnInit, OnDestroy {
       this.dashboardService.getLeaderboardUser(),
       this.quizService.getActiveQuizes(),
       this.quizService.getPublishedQuiz(),
+      this.quizService.getSubmittedQuizes(),
       this.notificationService.getUnreadNotificationsCount(),
       this.dashboardService.getDashboardStats(),
       this.quizService.initializeData(),

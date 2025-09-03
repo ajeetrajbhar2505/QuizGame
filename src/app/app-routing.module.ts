@@ -15,6 +15,7 @@ import { UsersComponent } from './users/users.component';
 import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
 import { OngoingComponent } from './ongoing/ongoing.component';
 import { QuizGuardService } from './quiz-guard.service'; // Import the guard
+import { HistoryComponent } from './history/history.component';
 
 const routes: Routes = [
   {
@@ -69,6 +70,11 @@ const routes: Routes = [
   {
     path: 'live-quizes',
     component: LiveQuizesComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'history',
+    component: HistoryComponent,
     canActivate: [authGuard]
   },
   {

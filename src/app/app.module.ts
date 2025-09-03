@@ -30,11 +30,12 @@ import { VerifyQuizComponent } from './verify-quiz/verify-quiz.component';
 import { UsersComponent } from './users/users.component';
 import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
 import { OngoingComponent } from './ongoing/ongoing.component';
+import { HistoryComponent } from './history/history.component';
 
 library.add(fas);
 
 @NgModule({
-  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage,VerifyQuizComponent,UsersComponent,LiveQuizesComponent,OngoingComponent],
+  declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage,VerifyQuizComponent,UsersComponent,LiveQuizesComponent,OngoingComponent,HistoryComponent],
   imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [
     GoogleadsService,
