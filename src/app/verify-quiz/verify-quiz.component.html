@@ -24,7 +24,7 @@
     </div>
 
     <!-- Quiz Title & Description -->
-    <div class="quiz-title">{{ quiz.title }}  <ion-chip [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
+    <div class="quiz-title">{{ quiz.title }}  <ion-chip style="width: 110px;" [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
       {{ quiz.difficulty | titlecase }}
     </ion-chip></div>
     <div class="quiz-description">{{ quiz.description }}</div>
