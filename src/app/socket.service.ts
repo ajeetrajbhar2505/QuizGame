@@ -225,7 +225,6 @@ export class SocketService implements OnDestroy {
       token: data.token || localStorage.getItem('token')
     }
     this.socket.connect()
-    this.cleanup()
     this.router.navigate(['/home'])
     await this.closeAllModals();
   }

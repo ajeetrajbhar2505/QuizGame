@@ -16,7 +16,7 @@
     overflow-x: hidden;
     height: 100vh;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #e9e8e3;
+    background-color: #FAFAFA;
   }
 
   .features {
@@ -56,9 +56,6 @@
 
     img {
       width: 170px;
-      position: absolute;
-      top: -20px;
-      z-index: 100;
     }
   }
 
