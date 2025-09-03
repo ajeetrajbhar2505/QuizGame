@@ -55,7 +55,7 @@
 ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   --backdrop-opacity: 0.5;
   padding: 10px;
-  background-color: #FAFAFA;
+  background-color: #e9e8e3;
 }
 
 * {
@@ -105,7 +105,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   flex-direction: column;
   position: relative;
   margin-bottom: 50px;
-  background-color: #FAFAFA;
+  background-color: #e9e8e3;
 }
 
 .homeHeader {
@@ -116,6 +116,10 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   border-bottom-right-radius: 30px;
   background: #2c3e50;
   color: #fff;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1200;
 }
 
 .homeHeader-content {
@@ -202,7 +206,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   padding: 24px;
   flex: 1;
   overflow-y: auto;
-  background: #FAFAFA;
+  background: #e9e8e3;
 }
 
 .section-title {

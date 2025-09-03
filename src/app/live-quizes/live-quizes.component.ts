@@ -31,7 +31,7 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
     private quizService: CreateQuizesService,
     protected router: Router,
     private sanitizer: DomSanitizer,
-    private SocketService:SocketService
+    private SocketService:SocketService,
   ) {
     const User: any = localStorage.getItem('user')
     if (User) {
@@ -128,4 +128,8 @@ export class LiveQuizesComponent implements OnInit,OnDestroy {
     
   }
 
+  
+  logout(): void {
+    this.SocketService.logout();
+  }
 }

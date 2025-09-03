@@ -1,6 +1,14 @@
 .mb {
   margin-bottom: 15%;
+  padding-top: 24px !important;
+  margin-top: unset !important;
 }
+
+.section{
+  padding-top: 15%;
+  margin-top: -40px;
+}
+
 
 .status-badge-container {
   display: inline-flex;
