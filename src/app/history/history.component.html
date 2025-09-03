@@ -171,7 +171,7 @@
             </svg>
           </button>
         </header>
-        
+
         <section class="modal-container-body rtf">
           <ng-container *ngIf="quizParticipants$ | async as leaderboardUsers; else leaderboardLoading">
             <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
@@ -181,10 +181,10 @@
                   <div class="header-participant">Participant</div>
                   <div class="header-status">Score</div>
                 </div>
-                
-                <div class="leaderboard-item-modal" 
-                     *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
-                     [class.top-participant]="i < 3">
+
+                <div class="leaderboard-item-modal"
+                  *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
+                  [class.top-participant]="i < 3">
                   <div class="rank-modal">{{ i + 1 }}</div>
                   <div class="user-modal">
                     <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
@@ -192,15 +192,18 @@
                       <div class="name-modal">{{ user.name }}</div>
                     </div>
                   </div>
-                  
+
                   <div class="status-modal">
                     <span class="status-text">{{ user.score}}</span>
                   </div>
-                  
+                  <i class="fas fa-crown crown {{ 'crown-' + (i+1)}}" *ngIf="i < 2"></i>
+                  <i class="fas fa-trophy trophy" *ngIf="i < 3"></i>
+
+
                 </div>
               </div>
             </div>
-      
+
             <ng-template #emptyLeaderboard>
               <div class="ph-item">
                 <div class="ph-col-12">
@@ -213,7 +216,7 @@
               </div>
             </ng-template>
           </ng-container>
-      
+
           <ng-template #leaderboardLoading>
             <div class="ph-item">
               <div class="ph-col-12">
@@ -226,12 +229,12 @@
             </div>
           </ng-template>
         </section>
-        
+
         <footer class="modal-container-footer">
           <div class="host-container">
             <div class="host-data">
-              <img *ngIf="(quizParticipants$ | async)?.host?.avatar" [src]="(quizParticipants$ | async)?.host?.avatar" class="host-avatar" alt="Host avatar"
-                crossorigin="anonymous" (error)="handleAvatarError($event)">
+              <img *ngIf="(quizParticipants$ | async)?.host?.avatar" [src]="(quizParticipants$ | async)?.host?.avatar"
+                class="host-avatar" alt="Host avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
               <div class="hoster">
                 <span class="host-label">Hosted by</span>
                 <span class="host-name">{{ (quizParticipants$ | async)?.host?.name || 'Unknown Host' }}</span>
