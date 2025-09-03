@@ -195,9 +195,9 @@
             <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
               <div class="leaderboard-modal">
                 <div class="leaderboard-header-modal">
-                  <div>Rank</div>
-                  <div>Participant</div>
-                  <div>Status</div>
+                  <div class="header-rank">Rank</div>
+                  <div class="header-participant">Participant</div>
+                  <div class="header-status">Status</div>
                 </div>
                 
                 <div class="leaderboard-item-modal" 
@@ -226,6 +226,7 @@
                         stroke-linejoin="round" />
                     </svg>
                     
+                    <span class="status-text">{{ user.isSubmitted ? 'Submitted' : 'Pending' }}</span>
                   </div>
                   
                 </div>
@@ -261,11 +262,11 @@
         <footer class="modal-container-footer">
           <div class="host-container">
             <div class="host-data">
-              <img *ngIf="false" [src]="(quizParticipants$ | async)?.host.avatar" class="host-avatar" alt="Host avatar"
+              <img *ngIf="(quizParticipants$ | async)?.host?.avatar" [src]="(quizParticipants$ | async)?.host?.avatar" class="host-avatar" alt="Host avatar"
                 crossorigin="anonymous" (error)="handleAvatarError($event)">
               <div class="hoster">
                 <span class="host-label">Hosted by</span>
-                <span class="host-name">{{ (quizParticipants$ | async)?.host.name }}</span>
+                <span class="host-name">{{ (quizParticipants$ | async)?.host?.name || 'Unknown Host' }}</span>
               </div>
             </div>
           </div>
@@ -273,6 +274,4 @@
       </article>
     </div>
   </div>
-
-
 </div>
