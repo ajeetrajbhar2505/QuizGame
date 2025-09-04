@@ -332,6 +332,7 @@ a {
 
 .leaderboard-modal {
   padding: 15px;
+  width: 320px;
 }
 
 .leaderboard-header-modal {
@@ -522,7 +523,7 @@ a {
 /* Responsive styles */
 @media (max-width: 600px) {
   .leaderboard-header-modal {
-    grid-template-columns: 43px 18fr 123px 27px;
+    grid-template-columns: 43px 18fr 124px 11px;
     font-size: 12px;
   }
 

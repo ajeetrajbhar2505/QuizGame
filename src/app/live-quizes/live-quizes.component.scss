@@ -1,14 +1,6 @@
 .mb {
   margin-bottom: 15%;
-  padding-top: 24px !important;
-  margin-top: unset !important;
 }
-
-.section{
-  padding-top: 15%;
-  margin-top: -40px;
-}
-
 
 .status-badge-container {
   display: inline-flex;
@@ -340,6 +332,7 @@ a {
 
 .leaderboard-modal {
   padding: 15px;
+  width: 320px;
 }
 
 .leaderboard-header-modal {
@@ -479,15 +472,63 @@ a {
   }
 }
 
+.rank-1 .rank,
+.crown-1 {
+  color: #ffc107;
+}
+
+.rank-2 .rank,
+.crown-2 {
+  color: #6c757d;
+}
+
+.rank-3 .rank,
+.crown-3 {
+  color: #cd7f32;
+}
+
+
+.crown {
+  position: absolute;
+  top: -11px;
+  left: 63px;
+  font-size: 24px;
+}
+
+
+.trophy {
+  position: absolute;
+  top: 50%;
+  right: 70px;
+  transform: translateY(-50%);
+  font-size: 24px;
+  opacity: 0.2;
+}
+
+.rank-1 .trophy {
+  color: #ffc107;
+  opacity: 0.4;
+}
+
+.rank-2 .trophy {
+  color: #6c757d;
+  opacity: 0.4;
+}
+
+.rank-3 .trophy {
+  color: #cd7f32;
+  opacity: 0.4;
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
   .leaderboard-header-modal {
-    grid-template-columns: 43px 18fr 123px 27px;
+    grid-template-columns: 43px 18fr 124px 11px;
     font-size: 12px;
   }
 
   .leaderboard-item-modal {
-    grid-template-columns: 56px 1fr 119px 28px;
+    grid-template-columns: 60px 1fr 85px 37px;
     padding: 12px 0;
   }
 
