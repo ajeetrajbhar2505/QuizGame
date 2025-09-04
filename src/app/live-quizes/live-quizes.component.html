@@ -130,12 +130,8 @@
     </ng-container>
 
     <ng-template #noactiveQuizzes>
-      <div class="no-quizzes-message" *ngIf="(liveQuizes$ | async)?.length === 0">
-        <i class="fas fa-inbox"></i>
-        <p>No submitted quizzes found</p>
-      </div>
       
-      <div class="ph-item" *ngIf="((liveQuizes$ | async) || []).length > 0">
+      <div class="ph-item" *ngIf="((liveQuizes$ | async) || []).length === 0">
         <div class="ph-col-12">
           <div class="ph-picture"></div>
           <div class="ph-row">
@@ -192,10 +188,23 @@
                     </div>
                   </div>
 
+                               
                   <div class="status-modal">
-                    <span class="status-text">{{ user.score}}</span>
+                    <!-- Submitted -->
+                    <svg width="24" height="24" *ngIf="user.isSubmitted" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" fill="#10B981" />
+                      <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+      
+                    <!-- Pending -->
+                    <svg width="24" height="24" *ngIf="!user.isSubmitted" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" fill="#F59E0B" />
+                      <path d="M12 8V12L15 15" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
                   </div>
-                  <i class="fas fa-crown crown {{ 'crown-' + (i+1)}}" *ngIf="i < 2"></i>
+
                 </div>
               </div>
             </div>
