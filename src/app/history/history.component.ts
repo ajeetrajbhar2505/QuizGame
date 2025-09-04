@@ -119,18 +119,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.selectedCategory = categoryId;
     this.filterQuizzes();
   }
-
   async loadInitialData() {
     this.isLoadingQuizzes = true;
-    try {
-      await this.quizService.getSubmittedQuizes().toPromise();
-    } catch (error) {
-      console.error('Error loading quizzes:', error);
-    } finally {
-      setTimeout(() => {
-        this.isLoadingQuizzes = false;
-      }, 2000);
-    }
+    setTimeout(() => {
+      this.isLoadingQuizzes = false;
+    }, 2000);
+    await this.quizService.getSubmittedQuizes().toPromise();
   }
 
   async getQuizParticipant(quizId: any) {
