@@ -1,7 +1,5 @@
-<ion-content [fullscreen]="true">
   <div class="section {{!ParentInjected && 'mb'}}">
     <!-- Search bar -->
-
 
     <!-- Featured Quizzes -->
     <div class="section-title">
@@ -10,48 +8,29 @@
 
     <div class="search-bar" *ngIf="!ParentInjected">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search quizzes, topics...">
+      <input type="text" placeholder="Search quizzes, topics..." [(ngModel)]="searchQuery" (input)="filterQuizzes()">
     </div>
 
-
+    <!-- Category Filter -->
     <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
-      <div class="category-card active">
+      <div 
+        *ngFor="let category of categories" 
+        class="category-card" 
+        [class.active]="selectedCategory === category.id"
+        (click)="selectCategory(category.id)"
+      >
         <div class="icon-wrapper">
-          <i class="fas fa-calculator"></i>
+          <i [class]="category.icon"></i>
         </div>
-        <h4>Math</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-flask"></i>
-        </div>
-        <h4>Science</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-book"></i>
-        </div>
-        <h4>Literature</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-globe-americas"></i>
-        </div>
-        <h4>Geography</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-history"></i>
-        </div>
-        <h4>History</h4>
+        <h4>{{category.name}}</h4>
       </div>
     </div>
-
 
     <!-- Combined async state for quizzes -->
-    <ng-container *ngIf="submittedQuizes$ | async as quizzes;">
+    <ng-container *ngIf="(filteredQuizzes$ | async) as quizzes;">
       <ng-container *ngIf="quizzes.length > 0; else noliveQuizzes">
         <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
+          <!-- Quiz card content remains the same -->
           <div class="quiz-header">
             <h3 class="quiz-title">
               <div class="status-badge-container" [class.waiting]="quiz.status == 'waiting'"
@@ -125,7 +104,6 @@
             </span>
           </div>
 
-
           <div class="quiz-actions">
             <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
               {{ quiz.userSubmissionStatus.status| titlecase }}
@@ -135,7 +113,12 @@
       </ng-container>
 
       <ng-template #noliveQuizzes>
-        <div class="ph-item">
+        <div class="no-quizzes-message" *ngIf="(submittedQuizes$ | async)?.length === 0">
+          <i class="fas fa-inbox"></i>
+          <p>No submitted quizzes found</p>
+        </div>
+        
+        <div class="ph-item" *ngIf="((submittedQuizes$ | async) || []).length > 0">
           <div class="ph-col-12">
             <div class="ph-picture"></div>
             <div class="ph-row">
@@ -153,8 +136,7 @@
       </ng-template>
     </ng-container>
 
-
-
+    <!-- Modal content remains the same -->
     <div class="modal-overlay" *ngIf="openModel">
       <div class="modal">
         <article class="modal-container">
@@ -254,4 +236,3 @@
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
     </svg>
   </div>
-</ion-content>
