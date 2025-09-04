@@ -1,58 +1,38 @@
 <div class="section {{ParentInjected && 'mb'}}">
-
+  <!-- Search bar -->
 
   <!-- Featured Quizzes -->
   <div class="section-title">
     <h2>Live Quizzes</h2>
-    <a *ngIf="ParentInjected" (click)="loadInitialData(0)" routerLink="/live-quizes">View all <i
-        class="fas fa-chevron-right"></i></a>
+    <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
+      class="fas fa-chevron-right"></i></a>
+      </div>
+
+  <div class="search-bar" *ngIf="!ParentInjected">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search quizzes, topics..." [(ngModel)]="searchQuery" (input)="filterQuizzes()">
   </div>
 
-
-    <!-- Search bar -->
-    <div class="search-bar" *ngIf="!ParentInjected">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search quizzes, topics...">
+  <!-- Category Filter -->
+  <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
+    <div 
+      *ngFor="let category of categories" 
+      class="category-card" 
+      [class.active]="selectedCategory === category.id"
+      (click)="selectCategory(category.id)"
+    >
+      <div class="icon-wrapper">
+        <i [class]="category.icon"></i>
+      </div>
+      <h4>{{category.name}}</h4>
     </div>
-  
-    <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
-      <div class="category-card active">
-        <div class="icon-wrapper">
-          <i class="fas fa-calculator"></i>
-        </div>
-        <h4>Math</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-flask"></i>
-        </div>
-        <h4>Science</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-book"></i>
-        </div>
-        <h4>Literature</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-globe-americas"></i>
-        </div>
-        <h4>Geography</h4>
-      </div>
-      <div class="category-card">
-        <div class="icon-wrapper">
-          <i class="fas fa-history"></i>
-        </div>
-        <h4>History</h4>
-      </div>
-    </div>
-
+  </div>
 
   <!-- Combined async state for quizzes -->
-  <ng-container *ngIf="liveQuizes$ | async as quizzes;">
-    <ng-container *ngIf="quizzes.length > 0; else noliveQuizzes">
+  <ng-container *ngIf="(filteredQuizzes$ | async) as quizzes;">
+    <ng-container *ngIf="quizzes.length > 0; else noactiveQuizzes">
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
+        <!-- Quiz card content remains the same -->
         <div class="quiz-header">
           <h3 class="quiz-title">
             <div class="status-badge-container" [class.waiting]="quiz.status == 'waiting'"
@@ -126,7 +106,6 @@
           </span>
         </div>
 
-
         <div class="quiz-actions">
           <button class="action-btn approve-btn" (click)="joinQuiz(quiz.quizId)" *ngIf="quiz.status == 'waiting'">
             <ion-icon name="people-outline"></ion-icon>
@@ -143,16 +122,20 @@
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
-          </button>
-          <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
+          </button>          <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
             {{ quiz.userSubmissionStatus.status| titlecase }}
           </ion-chip>
         </div>
       </div>
     </ng-container>
 
-    <ng-template #noliveQuizzes>
-      <div class="ph-item">
+    <ng-template #noactiveQuizzes>
+      <div class="no-quizzes-message" *ngIf="(liveQuizes$ | async)?.length === 0">
+        <i class="fas fa-inbox"></i>
+        <p>No submitted quizzes found</p>
+      </div>
+      
+      <div class="ph-item" *ngIf="((liveQuizes$ | async) || []).length > 0">
         <div class="ph-col-12">
           <div class="ph-picture"></div>
           <div class="ph-row">
@@ -170,8 +153,7 @@
     </ng-template>
   </ng-container>
 
-
-
+  <!-- Modal content remains the same -->
   <div class="modal-overlay" *ngIf="openModel">
     <div class="modal">
       <article class="modal-container">
@@ -188,7 +170,7 @@
             </svg>
           </button>
         </header>
-        
+
         <section class="modal-container-body rtf">
           <ng-container *ngIf="quizParticipants$ | async as leaderboardUsers; else leaderboardLoading">
             <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
@@ -196,12 +178,12 @@
                 <div class="leaderboard-header-modal">
                   <div class="header-rank">Rank</div>
                   <div class="header-participant">Participant</div>
-                  <div class="header-status">Status</div>
+                  <div class="header-status">Score</div>
                 </div>
-                
-                <div class="leaderboard-item-modal" 
-                     *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
-                     [class.top-participant]="i < 3">
+
+                <div class="leaderboard-item-modal"
+                  *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
+                  [class.top-participant]="i < 3">
                   <div class="rank-modal">{{ i + 1 }}</div>
                   <div class="user-modal">
                     <img [src]="user.avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
@@ -209,27 +191,15 @@
                       <div class="name-modal">{{ user.userId == currentUser._id ? 'You' : user.name}}</div>
                     </div>
                   </div>
-                  
+
                   <div class="status-modal">
-                    <!-- Submitted -->
-                    <svg width="24" height="24" *ngIf="user.isSubmitted" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9" fill="#10B981" />
-                      <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    </svg>
-      
-                    <!-- Pending -->
-                    <svg width="24" height="24" *ngIf="!user.isSubmitted" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9" fill="#F59E0B" />
-                      <path d="M12 8V12L15 15" stroke="white" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    </svg>
+                    <span class="status-text">{{ user.score}}</span>
                   </div>
-                  
+                  <i class="fas fa-crown crown {{ 'crown-' + (i+1)}}" *ngIf="i < 2"></i>
                 </div>
               </div>
             </div>
-      
+
             <ng-template #emptyLeaderboard>
               <div class="ph-item">
                 <div class="ph-col-12">
@@ -242,7 +212,7 @@
               </div>
             </ng-template>
           </ng-container>
-      
+
           <ng-template #leaderboardLoading>
             <div class="ph-item">
               <div class="ph-col-12">
@@ -255,12 +225,12 @@
             </div>
           </ng-template>
         </section>
-        
+
         <footer class="modal-container-footer">
           <div class="host-container">
             <div class="host-data">
-              <img *ngIf="(quizParticipants$ | async)?.host?.avatar" [src]="(quizParticipants$ | async)?.host?.avatar" class="host-avatar" alt="Host avatar"
-                crossorigin="anonymous" (error)="handleAvatarError($event)">
+              <img *ngIf="(quizParticipants$ | async)?.host?.avatar" [src]="(quizParticipants$ | async)?.host?.avatar"
+                class="host-avatar" alt="Host avatar" crossorigin="anonymous" (error)="handleAvatarError($event)">
               <div class="hoster">
                 <span class="host-label">Hosted by</span>
                 <span class="host-name">{{ (quizParticipants$ | async)?.host?.name || 'Unknown Host' }}</span>
@@ -271,4 +241,15 @@
       </article>
     </div>
   </div>
+</div>
+
+<!-- Refresh Button -->
+<div class="floating-action" (click)="loadInitialData()">
+  <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+    stroke-linejoin="round">
+    <path d="M23 4v6h-6" />
+    <path d="M1 20v-6h6" />
+    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+  </svg>
 </div>
