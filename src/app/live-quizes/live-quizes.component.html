@@ -131,7 +131,7 @@
 
     <ng-template #noactiveQuizzes>
       
-      <div class="ph-item" *ngIf="((liveQuizes$ | async) || []).length === 0">
+      <div class="ph-item" *ngIf="((filteredQuizzes$ | async) || []).length === 0">
         <div class="ph-col-12">
           <div class="ph-picture"></div>
           <div class="ph-row">

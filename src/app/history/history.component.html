@@ -113,12 +113,7 @@
       </ng-container>
 
       <ng-template #noliveQuizzes>
-        <div class="no-quizzes-message" *ngIf="(submittedQuizes$ | async)?.length === 0">
-          <i class="fas fa-inbox"></i>
-          <p>No submitted quizzes found</p>
-        </div>
-        
-        <div class="ph-item" *ngIf="((submittedQuizes$ | async) || []).length > 0">
+        <div class="ph-item" *ngIf="((filteredQuizzes$ | async) || []).length === 0">
           <div class="ph-col-12">
             <div class="ph-picture"></div>
             <div class="ph-row">
