@@ -2,7 +2,7 @@
   <div class="phone-section {{((viewModel$|async)?.draftQuizzes || []).length > 2 ?'mb-50':''}}">
     <!-- Quiz Input Section -->
     <div class="input-container">
-      <label for="quiz-input" class="input-label">Enter your topic or questions</label>
+      <label for="quiz-input" class="input-label">Create your own custom quiz in seconds! Simply provide a topic and number of questions you want in this, and our system will generate a personalized quiz with a variety of questions. Perfect for learning, testing knowledge, or just having fun!</label>
       <textarea [readOnly]="isCreating" id="quiz-input" [(ngModel)]="quizPrompt" class="big-input"
         [placeholder]="waitingMessage"></textarea>
       <button class="action-btn reject-btn cancel" *ngIf="isCreating" slot="right" (click)="cancelQuizGeneration()">

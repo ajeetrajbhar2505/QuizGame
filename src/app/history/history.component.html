@@ -1,15 +1,50 @@
 <ion-content [fullscreen]="true">
   <div class="section {{!ParentInjected && 'mb'}}">
     <!-- Search bar -->
+
+
+    <!-- Featured Quizzes -->
+    <div class="section-title">
+      <h2>Submitted Quizzes</h2>
+    </div>
+
     <div class="search-bar" *ngIf="!ParentInjected">
       <i class="fas fa-search"></i>
       <input type="text" placeholder="Search quizzes, topics...">
     </div>
 
 
-    <!-- Featured Quizzes -->
-    <div class="section-title">
-      <h2>Submitted Quizzes</h2>
+    <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
+      <div class="category-card active">
+        <div class="icon-wrapper">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <h4>Math</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-flask"></i>
+        </div>
+        <h4>Science</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-book"></i>
+        </div>
+        <h4>Literature</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-globe-americas"></i>
+        </div>
+        <h4>Geography</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-history"></i>
+        </div>
+        <h4>History</h4>
+      </div>
     </div>
 
 

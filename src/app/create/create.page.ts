@@ -15,7 +15,7 @@ export class CreatePage implements OnInit {
   quizPrompt: string = '';
   quizPromptDraft: string = '';
   isCreating: boolean = false;
-  waitingMessage: string = "e.g. 'Algebra basics' or paste questions here...";
+  waitingMessage: string = "Generate 10 questions about e.g., Science, History, Movies, etc.";
   isLoadingQuizzes: boolean = false;
 
   private loadingMessages = [
@@ -76,6 +76,7 @@ createQuiz(): void {
 
 private stopLoadingAnimation(): void {
   this.isCreating = false;
+  this.quizPrompt = ''
 }
 
 private handleCreationSuccess(response: any): void {

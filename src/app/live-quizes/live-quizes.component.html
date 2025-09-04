@@ -1,46 +1,5 @@
 <div class="section {{ParentInjected && 'mb'}}">
-  <!-- Search bar -->
-  <div class="search-bar" *ngIf="!ParentInjected">
-    <i class="fas fa-search"></i>
-    <input type="text" placeholder="Search quizzes, topics...">
-  </div>
 
-  <!-- Categories -->
-  <div class="section-title" *ngIf="!ParentInjected">
-    <h2>Categories</h2>
-  </div>
-  <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
-    <div class="category-card active">
-      <div class="icon-wrapper">
-        <i class="fas fa-calculator"></i>
-      </div>
-      <h4>Math</h4>
-    </div>
-    <div class="category-card">
-      <div class="icon-wrapper">
-        <i class="fas fa-flask"></i>
-      </div>
-      <h4>Science</h4>
-    </div>
-    <div class="category-card">
-      <div class="icon-wrapper">
-        <i class="fas fa-book"></i>
-      </div>
-      <h4>Literature</h4>
-    </div>
-    <div class="category-card">
-      <div class="icon-wrapper">
-        <i class="fas fa-globe-americas"></i>
-      </div>
-      <h4>Geography</h4>
-    </div>
-    <div class="category-card">
-      <div class="icon-wrapper">
-        <i class="fas fa-history"></i>
-      </div>
-      <h4>History</h4>
-    </div>
-  </div>
 
   <!-- Featured Quizzes -->
   <div class="section-title">
@@ -48,6 +7,46 @@
     <a *ngIf="ParentInjected" (click)="loadInitialData(0)" routerLink="/live-quizes">View all <i
         class="fas fa-chevron-right"></i></a>
   </div>
+
+
+    <!-- Search bar -->
+    <div class="search-bar" *ngIf="!ParentInjected">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search quizzes, topics...">
+    </div>
+  
+    <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
+      <div class="category-card active">
+        <div class="icon-wrapper">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <h4>Math</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-flask"></i>
+        </div>
+        <h4>Science</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-book"></i>
+        </div>
+        <h4>Literature</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-globe-americas"></i>
+        </div>
+        <h4>Geography</h4>
+      </div>
+      <div class="category-card">
+        <div class="icon-wrapper">
+          <i class="fas fa-history"></i>
+        </div>
+        <h4>History</h4>
+      </div>
+    </div>
 
 
   <!-- Combined async state for quizzes -->
