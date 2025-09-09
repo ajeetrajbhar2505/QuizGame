@@ -6,6 +6,7 @@ import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.servic
 import { ComponentCanDeactivate } from '../quiz-guard.service';
 import { AuthData, SocketService } from '../socket.service';
 import { Location } from '@angular/common';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-ongoing',
@@ -21,14 +22,14 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   remainingTime: number = 0;
   timerInterval: any;
   isAdminUser: boolean = false;
-  isLoading: boolean = false
+  isLoading: boolean = false;
+  resultPopup: boolean = false;
   private loadingStates: boolean[] = [];
   isQuizActive: boolean = false;
   private routeChangeSubscription!: Subscription;
   private deactivateSubject: Subject<boolean> | null = null;
-  confirmationPopup: boolean = false
-
-  // State management for loading and actions
+  confirmationPopup: boolean = false;
+  private backButtonListener: any;
 
   // Quiz data subscription
   private quizSubscription!: Subscription;
@@ -37,23 +38,20 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
     private location: Location,
-    private router:Router,
+    private router: Router,
     private SocketService: SocketService
   ) {
     this.isQuizActive = true;
     this.SocketService.authDataSource.next(null);
-    // Replace current history state with home to prevent back navigation
-    this.location.replaceState('/home');
-
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.setupBackButtonHandler();
 
     this.route.queryParams.pipe(
       tap(() => this.isLoading = true),
       switchMap(params => this.quizService.getLiveQuiz(params['id'])),
       tap(quiz => {
-
         // Initialize loading states for each question
         this.quizSubject.next(quiz);
         this.isLoading = false;
@@ -63,7 +61,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
         // Start timer if quiz is in progress (not in admin preview mode)
         if (!this.isAdminUser || quiz.approvalStatus !== 'pending') {
-          this.startTimer(quiz.estimatedTime);
+          this.startTimer(45678678);
         }
       }),
       catchError(err => {
@@ -72,30 +70,53 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         return of(null);
       })
     ).subscribe();
-
-
-
   }
 
-  ngOnDestroy() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
-    if (this.quizSubscription) {
-      this.quizSubscription.unsubscribe();
-    }
-    if (this.routeChangeSubscription) {
-      this.routeChangeSubscription.unsubscribe();
-    }
-    if (this.deactivateSubject) {
-      this.deactivateSubject.complete();
-      this.deactivateSubject = null;
+  // Capacitor-specific back button handling
+  private async setupBackButtonHandler() {
+    if (typeof window !== 'undefined' && 'capacitor' in window) {
+      // Listen for hardware back button
+      this.backButtonListener = await App.addListener('backButton', ({ canGoBack }) => {
+        if (this.isQuizActive && !this.confirmationPopup) {
+          this.handleBackButton();
+        } else if (this.confirmationPopup) {
+          this.stayInQuiz(); // Close dialog if open
+        } else {
+          App.exitApp(); // Exit app if no quiz active
+        }
+      });
     }
   }
 
-  canDeactivate(): Observable<boolean> {
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: any) {
+      this.handleBackButton()
+  }
+
+  private async handleBackButton(): Promise<boolean> {
     if (!this.isQuizActive) {
-      return of(true);
+      return true;
+    }
+
+    return new Promise((resolve) => {
+      this.confirmationPopup = true;
+      this.deactivateSubject = new Subject<boolean>();
+
+      this.deactivateSubject.pipe(take(1)).subscribe((response) => {
+        this.confirmationPopup = false;
+        resolve(response);
+
+        if (response) {
+          this.cleanupQuiz();
+          this.router.navigate(['/home'], { replaceUrl: true });
+        }
+      });
+    });
+  }
+
+  canDeactivate(): boolean | Observable<boolean> {
+    if (!this.isQuizActive) {
+      return true;
     }
 
     this.confirmationPopup = true;
@@ -105,7 +126,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       map(response => {
         this.confirmationPopup = false;
         if (response) {
-          this.cleanupQuiz(); // Only cleanup if user chooses to leave
+          this.cleanupQuiz();
         }
         return response;
       })
@@ -114,19 +135,40 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   stayInQuiz() {
     if (this.deactivateSubject) {
-      this.confirmationPopup = false;
       this.deactivateSubject.next(false);
       this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
-    this.location.replaceState('/home');
+    this.confirmationPopup = false;
   }
 
   leaveQuiz() {
- 
+    if (this.deactivateSubject) {
+      this.deactivateSubject.next(true);
+      this.deactivateSubject.complete();
+      this.deactivateSubject = null;
+    }
+    this.confirmationPopup = false;
+    this.cleanupQuiz();
     this.router.navigate(['/home'], { replaceUrl: true });
+  }
 
-    // DON'T navigate here - let the router handle it!
+  ngOnDestroy() {
+    // Clean up Capacitor listener
+    if (this.backButtonListener) {
+      this.backButtonListener.remove();
+    }
+
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+    if (this.quizSubscription) {
+      this.quizSubscription.unsubscribe();
+    }
+    if (this.deactivateSubject) {
+      this.deactivateSubject.complete();
+      this.deactivateSubject = null;
+    }
   }
 
   private cleanupQuiz() {
@@ -155,7 +197,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.remainingTime--;
       } else {
         clearInterval(this.timerInterval);
-        this.isQuizActive = false
+        this.isQuizActive = false;
         this.submitQuiz();
       }
     }, 1000);
@@ -172,7 +214,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
       // save question response
-
     }
   }
 
@@ -182,7 +223,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       if (quiz && this.currentQuestionIndex < quiz.questions.length - 1) {
         this.currentQuestionIndex++;
         // save question response
-
       }
     });
   }
@@ -190,9 +230,8 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   // Option selection
   selectOption(optionIndex: number, quizId: string, questionId: string, answer: string) {
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
-    this.quizService.submitAnswer(quizId, questionId, answer).subscribe()
+    this.quizService.submitAnswer(quizId, questionId, answer).subscribe();
   }
-  
 
   isOptionSelected(optionIndex?: number): boolean {
     if (optionIndex !== undefined) {
@@ -202,29 +241,27 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       this.selectedOptions[this.currentQuestionIndex] !== null;
   }
 
-
   getQuestionLoadingState(index: number): boolean {
     return this.loadingStates[index] || false;
   }
 
   // Submit quiz
-   async submitQuiz() {
+  async submitQuiz() {
     try {
       // Convert observable to promise and get the latest quiz value
       const quiz = await this.quiz$.pipe(take(1)).toPromise();
-      
+
       if (this.deactivateSubject) {
         this.confirmationPopup = false;
         this.deactivateSubject.next(true); // Allow navigation
         this.deactivateSubject = null;
       }
-      
+
       if (quiz) {
         // Call your quiz submission logic here
-        this.quizService.submitQuiz(quiz._id).subscribe()
-        this.leaveQuiz()
-        this.cleanupQuiz()
-
+        this.quizService.submitQuiz(quiz._id).subscribe();
+        this.cleanupQuiz();
+        this.router.navigate(['/home'], { replaceUrl: true });
       } else {
         console.warn('No quiz available to submit');
       }
@@ -258,8 +295,6 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
   }
 
-
-
   isCorrectAnswer(questionIndex: number, option: string): boolean {
     let isCorrect = false;
 
@@ -270,6 +305,26 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
 
     return isCorrect;
+  }
+
+  // Modified submitQuiz to just close without API call
+  async closeQuizWithoutSubmit() {
+    try {
+      const quiz = await this.quiz$.pipe(take(1)).toPromise();
+
+      if (this.deactivateSubject) {
+        this.confirmationPopup = false;
+        this.deactivateSubject.next(true); // Allow navigation
+        this.deactivateSubject = null;
+      }
+
+      if (quiz) {
+        this.cleanupQuiz();
+        this.router.navigate(['/home'], { replaceUrl: true });
+      }
+    } catch (error) {
+      console.error('Error closing quiz:', error);
+    }
   }
 
   trackByQuestionId(index: number, question: QuizQuestion): string {

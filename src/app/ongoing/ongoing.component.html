@@ -144,4 +144,24 @@
     </div>
   </div>
 
+  <div class="dialog-backdrop" *ngIf="resultPopup" >
+    <div class="dialog-container">
+      <div class="card">
+        <div class="header">
+          <div class="image">
+            <img src="assets/winner-cup.svg" width="100px">
+          </div>
+          <div class="content">
+            <span class="title">Quiz completed successfully!</span>
+            <p class="message">You attempt <b>10 questions</b> and from that <b>8 answers</b> are correct.</p>
+          </div>
+          <div class="actions">
+            <button class="dialog-button  button-cancel" type="button">Verify Answers</button>
+            <button class="dialog-button button-delete" (click)="closeQuizWithoutSubmit()">Leave</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </ion-content>
