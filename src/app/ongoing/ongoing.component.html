@@ -2,7 +2,7 @@
   <div class="container" *ngIf="(quiz$ | async) as quiz; else loading">
     <div class="quiz-title">{{ quiz.title }}</div>
     <div class="quiz-description">{{ quiz.description }}</div>
-    
+
     <div class="quiz-meta">
       <span class="meta-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,23 +53,20 @@
       <div class="question-text">{{ currentQuestion?.question }}</div>
 
       <div class="options-list">
-        <div 
-          *ngFor="let option of currentQuestion?.options; let i = index; trackBy: trackByOption" 
-          class="option-item"
+        <div *ngFor="let option of currentQuestion?.options; let i = index; trackBy: trackByOption" class="option-item"
           [ngClass]="{
             'selected': isOptionSelected(i),
             'wrong': isOptionSelected(i) && isWrongAnswer(i, option),
             'correct': isCorrectAnswerToShow(option),
             'disabled': viewAnswer
-          }"
-          (click)="!resultPopup && selectOption(i, quiz._id, currentQuestion, option)">
-          
+          }" (click)="!resultPopup && selectOption(i, quiz._id, currentQuestion, option)">
+
           <div class="option-radio">
             <div class="radio-inner" *ngIf="isOptionSelected(i)"></div>
           </div>
-          
+
           <div class="option-text">{{ option }}</div>
-          
+
           <!-- Show feedback icons when viewing answers -->
           <div class="answer-feedback" *ngIf="viewAnswer">
             <i class="fas fa-check correct-icon" *ngIf="isCorrectAnswerToShow(option)"></i>
@@ -84,14 +81,14 @@
         <i class="fas fa-arrow-left"></i>
         Previous
       </button>
-      
+
       <ng-container *ngIf="currentQuestionIndex < quiz.questions.length - 1; else submitSection">
         <button class="action-btn next-btn" (click)="nextQuestion()" [disabled]="!isOptionSelected()">
           Next
           <i class="fas fa-arrow-right"></i>
         </button>
       </ng-container>
-      
+
       <ng-template #submitSection>
         <button (click)="submitQuiz()" [disabled]="!isOptionSelected()" class="action-btn submit-btn">
           Submit Quiz
@@ -127,7 +124,8 @@
     <div class="dialog-container" (click)="$event.stopPropagation()">
       <div class="dialog-header">
         <h2 class="dialog-title">Leave Quiz?</h2>
-        <p class="dialog-message">You have an active quiz! Are you sure you want to leave? If you leave this page, your quiz will be submitted automatically.</p>
+        <p class="dialog-message">You have an active quiz! Are you sure you want to leave? If you leave this page, your
+          quiz will be submitted automatically.</p>
       </div>
       <div class="dialog-actions">
         <button class="dialog-button button-cancel" (click)="stayInQuiz()">Stay</button>
@@ -146,8 +144,13 @@
               <img src="assets/winner-cup.svg" width="100px" alt="Quiz completed">
             </div>
             <div class="content">
+              <i class="fas fa-bolt"></i>&nbsp;
+              <span class="title"> {{calculatePoints(quiz)}} XP</span>
+            </div>
+            <div class="content">
               <span class="title">Quiz completed successfully!</span>
-              <p class="message">You attempted <b>{{ quiz.questions.length }} questions</b> and got <b>{{ correctAnswersCount }} answers</b> correct.</p>
+              <p class="message">You attempted <b>{{ quiz.questions.length }} questions</b> and got <b>{{
+                  correctAnswersCount }} answers</b> correct.</p>
             </div>
             <div class="actions">
               <button class="dialog-button button-cancel" (click)="viewAnswers()">Verify Answers</button>

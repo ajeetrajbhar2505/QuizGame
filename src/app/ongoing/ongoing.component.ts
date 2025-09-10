@@ -187,6 +187,14 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
     }, 1000);
   }
+  
+
+  pauseTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
 
   formatTime(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
@@ -237,6 +245,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.correctAnswersCount = this.calculateCorrectAnswers(quiz);
         if(!this.viewAnswer){
           this.quizService.submitQuiz(quiz._id).subscribe();
+          this.pauseTimer()
         }
         this.resultPopup = true;
       }
@@ -252,6 +261,23 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         selectedOptionIndex !== undefined &&
         question.correctAnswer === question.options[selectedOptionIndex])
         ? count + 1 : count;
+    }, 0);
+  }
+
+  calculatePoints(quiz: Quiz): number {
+    return quiz.questions.reduce((totalPoints, question, index) => {
+      const selectedOptionIndex = this.selectedOptions[index];
+      
+      // Check if an option was selected and if it's correct
+      if (selectedOptionIndex !== null && 
+          selectedOptionIndex !== undefined && 
+          question.correctAnswer === question.options[selectedOptionIndex]) {
+        
+        // Add the question's point value to the total
+        return totalPoints + (question.points || 1); // Use question.points or default to 1
+      }
+      
+      return totalPoints; // Return current total if answer is wrong or not selected
     }, 0);
   }
 
