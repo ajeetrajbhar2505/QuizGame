@@ -68,14 +68,16 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.quizId = params['id'];
         return this.quizService.getLiveQuiz(this.quizId);
       }),
+      map(quiz => {
+        // Apply shuffling based on quiz configuration or default settings
+        this.applyShuffling(quiz);
+        return quiz;
+      }),
       tap(quiz => {
         this.quizSubject.next(quiz);
         this.isLoading = false;
-
-        // Initialize selected options array
         this.selectedOptions = new Array(quiz.questions.length).fill(null);
 
-        // Start timer if quiz is in progress
         if (!this.isAdminUser || quiz.approvalStatus !== 'pending') {
           this.startTimer(quiz.estimatedTime);
         }
@@ -86,6 +88,54 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         return of(null);
       })
     ).subscribe();
+  }
+
+  private applyShuffling(quiz: Quiz): void {
+    // Check if shuffling is enabled (you can add these properties to your Quiz interface)
+    // const shuffleQuestions = quiz.shuffleQuestions !== undefined ? quiz.shuffleQuestions : true;
+    const shuffleQuestions = true;
+    // const shuffleOptions = quiz.shuffleOptions !== undefined ? quiz.shuffleOptions : true;
+    const shuffleOptions = true;
+
+    // Shuffle questions
+    if (shuffleQuestions) {
+      quiz.questions = this.shuffleArray(quiz.questions);
+    }
+
+    // Shuffle options for each question
+    if (shuffleOptions) {
+      quiz.questions.forEach(question => {
+        // Store original correct answer before shuffling
+        const correctAnswer = question.correctAnswer;
+
+        // Shuffle options
+        question.options = this.shuffleArray(question.options);
+
+        // Update correct answer reference (in case we need it later)
+        question.correctAnswer = correctAnswer;
+      });
+    }
+  }
+
+  // Improved shuffle function with better randomness
+  private shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    let currentIndex = shuffled.length;
+    let temporaryValue: T, randomIndex: number;
+
+    // While there remain elements to shuffle...
+    while (currentIndex !== 0) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      temporaryValue = shuffled[currentIndex];
+      shuffled[currentIndex] = shuffled[randomIndex];
+      shuffled[randomIndex] = temporaryValue;
+    }
+
+    return shuffled;
   }
 
   private async setupBackButtonHandler() {
@@ -187,7 +237,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
     }, 1000);
   }
-  
+
 
   pauseTimer(): void {
     if (this.timerInterval) {
@@ -243,7 +293,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       const quiz = this.quizSubject.getValue();
       if (quiz) {
         this.correctAnswersCount = this.calculateCorrectAnswers(quiz);
-        if(!this.viewAnswer){
+        if (!this.viewAnswer) {
           this.quizService.submitQuiz(quiz._id).subscribe();
           this.pauseTimer()
         }
@@ -267,16 +317,16 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   calculatePoints(quiz: Quiz): number {
     return quiz.questions.reduce((totalPoints, question, index) => {
       const selectedOptionIndex = this.selectedOptions[index];
-      
+
       // Check if an option was selected and if it's correct
-      if (selectedOptionIndex !== null && 
-          selectedOptionIndex !== undefined && 
-          question.correctAnswer === question.options[selectedOptionIndex]) {
-        
+      if (selectedOptionIndex !== null &&
+        selectedOptionIndex !== undefined &&
+        question.correctAnswer === question.options[selectedOptionIndex]) {
+
         // Add the question's point value to the total
         return totalPoints + (question.points || 1); // Use question.points or default to 1
       }
-      
+
       return totalPoints; // Return current total if answer is wrong or not selected
     }, 0);
   }

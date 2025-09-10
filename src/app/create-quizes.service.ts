@@ -41,6 +41,8 @@ export interface Quiz {
   host?:any,
   totalPoints:number,
   isParticipant:boolean,
+  shuffleQuestions?:boolean,
+  shuffleOptions?:boolean,
   userSubmissionStatus : userSubmissionStatus
 }
 
