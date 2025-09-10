@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, Subscription, of, Subject } from 'rxjs';
-import { switchMap, tap, catchError, map, take } from 'rxjs/operators';
+import { switchMap, tap, catchError, map, take, filter } from 'rxjs/operators';
 import { CreateQuizesService, Quiz, QuizQuestion } from '../create-quizes.service';
 import { ComponentCanDeactivate } from '../quiz-guard.service';
 import { AuthData, SocketService } from '../socket.service';
@@ -24,44 +24,60 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   isAdminUser: boolean = false;
   isLoading: boolean = false;
   resultPopup: boolean = false;
+  viewAnswer: boolean = false;
   private loadingStates: boolean[] = [];
   isQuizActive: boolean = false;
   private routeChangeSubscription!: Subscription;
   private deactivateSubject: Subject<boolean> | null = null;
   confirmationPopup: boolean = false;
   private backButtonListener: any;
+  correctAnswersCount: number = 0;
 
-  // Quiz data subscription
-  private quizSubscription!: Subscription;
+  // Computed properties
+  get currentQuestion(): QuizQuestion | undefined {
+    const quiz = this.quizSubject.getValue();
+    return quiz?.questions[this.currentQuestionIndex];
+  }
+
+  get progressPercentage(): number {
+    const quiz = this.quizSubject.getValue();
+    return quiz ? ((this.currentQuestionIndex + 1) / quiz.questions.length) * 100 : 0;
+  }
 
   constructor(
     private route: ActivatedRoute,
     private quizService: CreateQuizesService,
     private location: Location,
     private router: Router,
-    private SocketService: SocketService
+    private socketService: SocketService,
+    private cdr: ChangeDetectorRef
   ) {
     this.isQuizActive = true;
-    this.SocketService.authDataSource.next(null);
+    this.socketService.authDataSource.next(null);
   }
 
   async ngOnInit() {
     this.setupBackButtonHandler();
+    this.loadQuizData();
+  }
 
+  private loadQuizData(): void {
     this.route.queryParams.pipe(
       tap(() => this.isLoading = true),
-      switchMap(params => this.quizService.getLiveQuiz(params['id'])),
+      switchMap(params => {
+        this.quizId = params['id'];
+        return this.quizService.getLiveQuiz(this.quizId);
+      }),
       tap(quiz => {
-        // Initialize loading states for each question
         this.quizSubject.next(quiz);
         this.isLoading = false;
 
         // Initialize selected options array
         this.selectedOptions = new Array(quiz.questions.length).fill(null);
 
-        // Start timer if quiz is in progress (not in admin preview mode)
+        // Start timer if quiz is in progress
         if (!this.isAdminUser || quiz.approvalStatus !== 'pending') {
-          this.startTimer(45678678);
+          this.startTimer(quiz.estimatedTime);
         }
       }),
       catchError(err => {
@@ -72,17 +88,15 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     ).subscribe();
   }
 
-  // Capacitor-specific back button handling
   private async setupBackButtonHandler() {
     if (typeof window !== 'undefined' && 'capacitor' in window) {
-      // Listen for hardware back button
       this.backButtonListener = await App.addListener('backButton', ({ canGoBack }) => {
         if (this.isQuizActive && !this.confirmationPopup) {
           this.handleBackButton();
         } else if (this.confirmationPopup) {
-          this.stayInQuiz(); // Close dialog if open
+          this.stayInQuiz();
         } else {
-          App.exitApp(); // Exit app if no quiz active
+          App.exitApp();
         }
       });
     }
@@ -90,59 +104,44 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event: any) {
-      this.handleBackButton()
+    event.preventDefault();
+    this.handleBackButton();
   }
 
-  private async handleBackButton(): Promise<boolean> {
-    if (!this.isQuizActive) {
-      return true;
-    }
+  private async handleBackButton(): Promise<void> {
+    if (!this.isQuizActive) return;
 
-    return new Promise((resolve) => {
-      this.confirmationPopup = true;
-      this.deactivateSubject = new Subject<boolean>();
-
-      this.deactivateSubject.pipe(take(1)).subscribe((response) => {
-        this.confirmationPopup = false;
-        resolve(response);
-
-        if (response) {
-          this.cleanupQuiz();
-          this.router.navigate(['/home'], { replaceUrl: true });
-        }
-      });
-    });
+    this.confirmationPopup = true;
+    this.cdr.detectChanges();
   }
 
   canDeactivate(): boolean | Observable<boolean> {
-    if (!this.isQuizActive) {
-      return true;
-    }
+    if (!this.isQuizActive) return true;
 
     this.confirmationPopup = true;
     this.deactivateSubject = new Subject<boolean>();
 
     return this.deactivateSubject.asObservable().pipe(
+      take(1),
       map(response => {
         this.confirmationPopup = false;
-        if (response) {
-          this.cleanupQuiz();
-        }
+        if (response) this.cleanupQuiz();
         return response;
       })
     );
   }
 
-  stayInQuiz() {
+  stayInQuiz(): void {
     if (this.deactivateSubject) {
       this.deactivateSubject.next(false);
       this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
     this.confirmationPopup = false;
+    this.resultPopup = false;
   }
 
-  leaveQuiz() {
+  leaveQuiz(): void {
     if (this.deactivateSubject) {
       this.deactivateSubject.next(true);
       this.deactivateSubject.complete();
@@ -154,33 +153,20 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   }
 
   ngOnDestroy() {
-    // Clean up Capacitor listener
-    if (this.backButtonListener) {
-      this.backButtonListener.remove();
-    }
-
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
-    if (this.quizSubscription) {
-      this.quizSubscription.unsubscribe();
-    }
-    if (this.deactivateSubject) {
-      this.deactivateSubject.complete();
-      this.deactivateSubject = null;
-    }
+    if (this.backButtonListener) this.backButtonListener.remove();
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.cleanupQuiz();
   }
 
-  private cleanupQuiz() {
+  private cleanupQuiz(): void {
     this.isQuizActive = false;
-    let AuthData: AuthData = {
+    const authData: AuthData = {
       token: localStorage.getItem('token') || '',
       user: JSON.parse(localStorage.getItem('user') || '{}')
     };
-    this.SocketService.authDataSource.next(AuthData);
+    this.socketService.authDataSource.next(authData);
   }
 
-  // Handle browser events (closing tab, refreshing page)
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
     if (this.isQuizActive) {
@@ -188,8 +174,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
   }
 
-  // Timer implementation
-  startTimer(estimatedTime: number) {
+  startTimer(estimatedTime: number): void {
     this.remainingTime = estimatedTime;
 
     this.timerInterval = setInterval(() => {
@@ -209,28 +194,28 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   }
 
-  // Question navigation
-  previousQuestion() {
+  previousQuestion(): void {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
-      // save question response
     }
   }
 
-  nextQuestion() {
-    // Get the current quiz data from the observable
-    this.quizSubscription = this.quiz$.subscribe(quiz => {
-      if (quiz && this.currentQuestionIndex < quiz.questions.length - 1) {
-        this.currentQuestionIndex++;
-        // save question response
-      }
-    });
+  nextQuestion(): void {
+    const quiz = this.quizSubject.getValue();
+    if (quiz && this.currentQuestionIndex < quiz.questions.length - 1) {
+      this.currentQuestionIndex++;
+    }
   }
 
-  // Option selection
-  selectOption(optionIndex: number, quizId: string, questionId: string, answer: string) {
+  selectOption(optionIndex: number, quizId: string, question: QuizQuestion | any, answer: string): void {
+    if (!quizId) return;
+
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
-    this.quizService.submitAnswer(quizId, questionId, answer).subscribe();
+    this.quizService.submitAnswer(quizId, question._id, answer).subscribe(data => {
+      this.quiz$.subscribe((quiz: any) => {
+        quiz.questions[this.currentQuestionIndex].correctAnswer = data.correctAnswer;
+      })
+    });
   }
 
   isOptionSelected(optionIndex?: number): boolean {
@@ -245,86 +230,65 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     return this.loadingStates[index] || false;
   }
 
-  // Submit quiz
-  async submitQuiz() {
+  async submitQuiz(): Promise<void> {
     try {
-      // Convert observable to promise and get the latest quiz value
-      const quiz = await this.quiz$.pipe(take(1)).toPromise();
-
-      if (this.deactivateSubject) {
-        this.confirmationPopup = false;
-        this.deactivateSubject.next(true); // Allow navigation
-        this.deactivateSubject = null;
-      }
-
+      const quiz = this.quizSubject.getValue();
       if (quiz) {
-        // Call your quiz submission logic here
-        this.quizService.submitQuiz(quiz._id).subscribe();
-        this.cleanupQuiz();
-        this.router.navigate(['/home'], { replaceUrl: true });
-      } else {
-        console.warn('No quiz available to submit');
+        this.correctAnswersCount = this.calculateCorrectAnswers(quiz);
+        if(!this.viewAnswer){
+          this.quizService.submitQuiz(quiz._id).subscribe();
+        }
+        this.resultPopup = true;
       }
     } catch (error) {
       console.error('Error submitting quiz:', error);
     }
   }
 
-  calculateScore(quiz: Quiz): number {
-    let correctAnswers = 0;
-
-    quiz.questions.forEach((question, index) => {
+  calculateCorrectAnswers(quiz: Quiz): number {
+    return quiz.questions.reduce((count, question, index) => {
       const selectedOptionIndex = this.selectedOptions[index];
-      if (selectedOptionIndex !== null &&
+      return (selectedOptionIndex !== null &&
         selectedOptionIndex !== undefined &&
-        question.correctAnswer === question.options[selectedOptionIndex]) {
-        correctAnswers++;
-      }
-    });
-
-    return (correctAnswers / quiz.questions.length) * 100;
+        question.correctAnswer === question.options[selectedOptionIndex])
+        ? count + 1 : count;
+    }, 0);
   }
 
-  // Admin functionality from verify quiz
-  getDifficultyColor(difficulty: string): string {
-    switch (difficulty.toLowerCase()) {
-      case 'easy': return 'success';
-      case 'medium': return 'warning';
-      case 'hard': return 'danger';
-      default: return 'primary';
-    }
+  isCorrectAnswer(correctAnswer: string | undefined, option: string): boolean {
+    return correctAnswer === option;
   }
 
-  isCorrectAnswer(questionIndex: number, option: string): boolean {
-    let isCorrect = false;
-
-    this.quizSubscription = this.quiz$.subscribe(quiz => {
-      if (quiz && quiz.questions[questionIndex]) {
-        isCorrect = quiz.questions[questionIndex].correctAnswer === option;
-      }
-    });
-
-    return isCorrect;
+  viewAnswers(): void {
+    this.viewAnswer = true;
+    this.resultPopup = false;
   }
 
-  // Modified submitQuiz to just close without API call
-  async closeQuizWithoutSubmit() {
-    try {
-      const quiz = await this.quiz$.pipe(take(1)).toPromise();
+  async closeQuizWithoutSubmit(): Promise<void> {
+    this.cleanupQuiz();
+    this.router.navigate(['/home'], { replaceUrl: true });
+  }
 
-      if (this.deactivateSubject) {
-        this.confirmationPopup = false;
-        this.deactivateSubject.next(true); // Allow navigation
-        this.deactivateSubject = null;
-      }
+  // Helper method to check if an answer is wrong
+  isWrongAnswer(optionIndex: number, option: string): boolean {
+    if (!this.viewAnswer || !this.currentQuestion) return false;
 
-      if (quiz) {
-        this.cleanupQuiz();
-        this.router.navigate(['/home'], { replaceUrl: true });
-      }
-    } catch (error) {
-      console.error('Error closing quiz:', error);
-    }
+    const isSelected = this.isOptionSelected(optionIndex);
+    const isCorrect = this.currentQuestion.correctAnswer === option;
+
+    return isSelected && !isCorrect;
+  }
+
+  // Helper method to check if an answer should be shown as correct
+  isCorrectAnswerToShow(option: string): boolean {
+    if (!this.viewAnswer || !this.currentQuestion) return false;
+
+    return this.currentQuestion.correctAnswer === option;
+  }
+
+  // TrackBy function for better performance
+  trackByOption(index: number, option: string): string {
+    return option; // Use the option text as unique identifier
   }
 
   trackByQuestionId(index: number, question: QuizQuestion): string {

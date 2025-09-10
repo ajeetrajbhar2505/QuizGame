@@ -390,7 +390,8 @@ export class CreateQuizesService {
     );
   }
 
-  submitAnswer(quizId:string,questionId: string, answer: string): Observable<{
+  submitAnswer(quizId:string,questionId: string | any, answer: string): Observable<{
+    correctAnswer:string,
     isCorrect: boolean,
     points?: number,
     currentScore?: number,
@@ -405,7 +406,7 @@ export class CreateQuizesService {
       answer
     });
 
-    return this.socketService.fromEvent<{ result: any }>('quiz:answer:result').pipe(
+    return this.socketService.fromEvent<{ result: any }>('quiz:answer:success').pipe(
       map(data => data.result),
       tap(result => {
         return result

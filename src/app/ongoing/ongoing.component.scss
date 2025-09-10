@@ -42,7 +42,7 @@
   line-height: 1.5;
 }
 
-hr{
+hr {
   border-width: 1px;
   height: 30px;
 }
@@ -127,12 +127,22 @@ hr{
   ;
 }
 
-.option-item:hover {
-  background: #e6e9ff;
-}
-
 .option-item.selected {
   background-color: #3f51b5;
+  color: #fff;
+  pointer-events: none;
+  user-select: none;
+}
+
+.option-item.correct {
+  background-color: #7b7b7b;
+  color: #fff;
+  pointer-events: none;
+  user-select: none;
+}
+
+.option-item.wrong {
+  background-color: #dd2828b5;
   color: #fff;
   pointer-events: none;
   user-select: none;
@@ -152,12 +162,41 @@ hr{
   ;
 }
 
+.answer-feedback {
+  position: absolute;
+  right: 30px;
+}
+
+.disabled {
+  pointer-events: none;
+  user-select: none;
+}
+
 .option-item.selected .option-radio {
   border: 2px solid #fff;
   background-color: #3f51b5;
 }
 
+.option-item.correct .option-radio {
+  border: 2px solid #fff;
+  background-color: #7b7b7b;
+}
+
+.option-item.wrong .option-radio {
+  border: 2px solid #fff;
+  background-color: #dd2828b5;
+}
+
 .option-item.selected .option-radio::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+}
+
+.option-item.correct .option-radio::after {
   content: '';
   display: block;
   width: 10px;
@@ -176,7 +215,7 @@ hr{
   justify-content: space-between;
   position: sticky;
   bottom: 10px;
-  background: #ffffff;
+  background: transparent;
   border-radius: 16px;
   margin-top: 24px;
 }
@@ -243,7 +282,7 @@ hr{
     align-items: center;
     justify-content: center;
     gap: 8px;
-    
+
 
   }
 }
@@ -269,7 +308,7 @@ hr{
 
 
 
-        
+
 .dialog-backdrop {
   position: fixed;
   top: 0;
@@ -342,22 +381,34 @@ hr{
 }
 
 .button-delete:hover {
-  background-color: #f14b61;;;
+  background-color: #f14b61;
+  ;
+  ;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.9); }
-  to { transform: scale(1); }
+  from {
+    transform: scale(0.9);
+  }
+
+  to {
+    transform: scale(1);
+  }
 }
 
 
 
-/* From Uiverse.io by Yaya12085 */ 
+/* From Uiverse.io by Yaya12085 */
 .card {
   overflow: hidden;
   position: relative;
@@ -402,7 +453,7 @@ hr{
   height: 8rem;
   border-radius: 9999px;
   transition: .6s ease;
-  margin-bottom:30px;
+  margin-bottom: 30px;
 }
 
 .image svg {
@@ -435,7 +486,8 @@ hr{
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  button{
+
+  button {
     flex: 1;
   }
 }
