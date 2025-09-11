@@ -409,8 +409,8 @@ export class SocketService implements OnDestroy {
     }
   }
 
-  public handleGoogleCallback(code: string): void {
-    this.emit('auth:google:callback', code);
+  public handleGoogleCallback(code: string, state: string): void {
+    this.emit('auth:google:callback', code, state);
   }
 
   public initiateFacebookLogin(): void {
@@ -424,8 +424,8 @@ export class SocketService implements OnDestroy {
     }
   }
 
-  public handleFacebookCallback(code: string): void {
-    this.emit('auth:facebook:callback', code);
+  public handleFacebookCallback(code: string, state: string): void {
+    this.emit('auth:facebook:callback', code, state);
   }
 
   public sendOTP(email: string): void {
