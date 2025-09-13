@@ -269,11 +269,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (!quizId) return;
 
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
-    this.quizService.submitAnswer(quizId, question._id, answer).subscribe(data => {
-      this.quiz$.subscribe((quiz: any) => {
-        quiz.questions[this.currentQuestionIndex].correctAnswer = data.correctAnswer;
-      })
-    });
+    this.quizService.submitAnswer(quizId, question._id, answer).subscribe();
   }
 
   isOptionSelected(optionIndex?: number): boolean {
