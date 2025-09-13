@@ -171,12 +171,6 @@
           <ng-container *ngIf="quizParticipants$ | async as leaderboardUsers; else leaderboardLoading">
             <div *ngIf="leaderboardUsers.participants; else emptyLeaderboard">
               <div class="leaderboard-modal">
-                <div class="leaderboard-header-modal">
-                  <div class="header-rank">Rank</div>
-                  <div class="header-participant">Participant</div>
-                  <div class="header-status">Score</div>
-                </div>
-
                 <div class="leaderboard-item-modal"
                   *ngFor="let user of leaderboardUsers.participants; trackBy: trackByUserId; let i = index"
                   [class.top-participant]="i < 3">
