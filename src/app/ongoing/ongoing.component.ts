@@ -155,6 +155,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   @HostListener('window:popstate', ['$event'])
   onPopState(event: any) {
     event.preventDefault();
+    this.resultPopup = false
     this.handleBackButton();
   }
 
@@ -166,6 +167,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   }
 
   canDeactivate(): boolean | Observable<boolean> {
+    this.resultPopup = false
     if (!this.isQuizActive) return true;
 
     this.confirmationPopup = true;
