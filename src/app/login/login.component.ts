@@ -234,7 +234,6 @@ export class LoginPage implements OnInit, OnDestroy {
     this.authFailed = false;
     this.isLoading = true;
     try {
-      await this.otpModal.present();
       await this.socketService.login(this.loginForm.email);
     } catch (error: any) {
       this.handleAuthError(error.message);
