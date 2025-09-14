@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { LeaderboardUser, user } from '../dashboard.service';
+import { DashboardService, LeaderboardUser, user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthData, SocketService } from '../socket.service';
 import { map } from 'rxjs/operators';
@@ -19,14 +19,7 @@ export class QuizesPage implements OnInit, OnDestroy {
 
   isLoadingQuizzes: boolean = false;
   openModel: boolean = false;
-  currentUser: user = {
-    _id: "",
-    name: "",
-    email: "",
-    avatar: "",
-    role: "",
-    isVerified: false
-  };
+
 
   // Filter properties
   searchQuery: string = '';
@@ -45,17 +38,16 @@ export class QuizesPage implements OnInit, OnDestroy {
     private quizService: CreateQuizesService,
     protected router: Router,
     private sanitizer: DomSanitizer,
-    private SocketService: SocketService
+    private SocketService: SocketService,
+    private dashboardService:DashboardService
   ) {
-    const User: any = localStorage.getItem('user')
-    if (User) {
-      this.currentUser = JSON.parse(User)
-    }
-    if (this.currentUser.avatar) {
-      this.currentUser.avatar = this.makeSafeUrl(this.currentUser.avatar);
-    }
+ 
     this.publishedQuizes$ = this.quizService.getPublishedQuizes$
     this.filteredQuizzes$ = this.publishedQuizes$;
+  }
+
+  get currentUser(): user {
+    return this.dashboardService.getUser()
   }
 
   ngOnInit(): void {
