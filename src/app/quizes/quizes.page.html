@@ -94,35 +94,35 @@
         </div>
 
         <div class="quiz-actions">
-          <button *ngIf="currentUser.role == 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn approve-btn" (click)="verifyQuiz(quiz._id)">
+          <button *ngIf="currentUser.role == 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
             Revise
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn approve-btn" (click)="verifyQuiz(quiz._id)">
+          <button *ngIf="currentUser.role != 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
             Review
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                  stroke-linejoin="round" />
              </svg>
            </button>
-          <button *ngIf="currentUser.role != 'user' && !quiz.isLive && quiz.status == 'inactive'" class="action-btn reject-btn" (click)="BeginQuiz(quiz._id)">
+          <button *ngIf="currentUser.role != 'user' && !quiz.isLive && quiz.status == 'inactive'" class="action-btn approve-btn" (click)="BeginQuiz(quiz._id)">
             Begin 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'waiting'" class="action-btn reject-btn" (click)="startQuiz(quiz._id)">
+          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'waiting'" class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
             Start 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'in-progress'" class="action-btn reject-btn" (click)="completeQuizByHost(quiz._id)">
+          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'in-progress'" class="action-btn approve-btn" (click)="completeQuizByHost(quiz._id)">
             End 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -134,21 +134,7 @@
     </ng-container>
 
     <ng-template #noapublishedQuizzes>
-      <div class="ph-item" *ngIf="((filteredQuizzes$ | async) || []).length === 0">
-        <div class="ph-col-12">
-          <div class="ph-picture"></div>
-          <div class="ph-row">
-            <div class="ph-col-6 big"></div>
-            <div class="ph-col-4 big"></div>
-            <div class="ph-col-2 big"></div>
-            <div class="ph-col-4"></div>
-            <div class="ph-col-8 empty"></div>
-            <div class="ph-col-6"></div>
-            <div class="ph-col-6 empty"></div>
-            <div class="ph-col-12"></div>
-          </div>
-        </div>
-      </div>
+      <img src="assets/noQuizes.svg" alt="" srcset="" loading="eager">
     </ng-template>
   </ng-container>
 <!-- Coming Leaderboard content here using ng-content -->

@@ -108,15 +108,12 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 }
 
 .homeHeader {
-  padding: 20px 24px 24px;
+  padding: 15px 24px 20px;
   position: relative;
   z-index: 1;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
-  background: hsl(219.57deg 61.04% 15.1%);
-  color: #fff;
-  position: sticky;
-  top: 0;
+  background: #e9e8e3;
   width: 100%;
   z-index: 200;
 }
@@ -248,7 +245,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   border-radius: 30px;
   border: none;
   font-size: 15px;
-  border: 1px solid lightgray;
 }
 
 .search-bar input:focus {
@@ -373,7 +369,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid var(--white);
   margin-right: -8px;
 }
 
@@ -509,7 +504,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   align-items: center;
   padding: 14px 0;
   background: var(--white);
-  border-top: 1px solid var(--light-gray);
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -938,16 +932,21 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   transition: all 0.2s;
   font-size: 14px;
   display: flex;
+  gap: 5px;
   align-items: center;
 }
 
+.approve-btn{
+  background-color: #346a35;
+  color: #fff;
+}
 .reject-btn {
-  background-color: rgba(214, 48, 49, 0.1);
-  color: $danger;
+  background-color: #b5f2af;
 }
 
-.reject-btn:hover {
-  background-color: rgba(214, 48, 49, 0.2);
+.delete-btn{
+  background-color: #ef1563;
+  color: white;
 }
 
 .empty-state {

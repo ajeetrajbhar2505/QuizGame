@@ -71,21 +71,7 @@
         <div class="tab-content {{activeTab == 'quizzes'?'active':''}}">
           <!-- Loading State -->
           <ng-container *ngIf="vm.draftQuizzes.length === 0">
-              <div class="ph-item">
-                <div class="ph-col-12">
-                  <div class="ph-picture"></div>
-                  <div class="ph-row">
-                    <div class="ph-col-6 big"></div>
-                    <div class="ph-col-4 big"></div>
-                    <div class="ph-col-2 big"></div>
-                    <div class="ph-col-4"></div>
-                    <div class="ph-col-8 empty"></div>
-                    <div class="ph-col-6"></div>
-                    <div class="ph-col-6 empty"></div>
-                    <div class="ph-col-12"></div>
-                  </div>
-                </div>
-            </div>
+            <img src="assets/noQuizes.svg" alt="" srcset="">
           </ng-container>
   
           <!-- Quizzes List -->
@@ -138,7 +124,7 @@
               <ion-chip *ngIf="IsAdminTemplate(quiz)" class="difficulty-badge">
                 template
               </ion-chip>
-              <button class="action-btn approve-btn" *ngIf="quiz.approvalStatus != 'pending'">
+              <button class="action-btn" *ngIf="quiz.approvalStatus != 'pending'">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 6L6 18M6 6L18 18" stroke="currentColor"
                     *ngIf="quiz.approvalStatus == 'rejected'" stroke-width="2" stroke-linecap="round"
@@ -156,7 +142,7 @@
                     stroke-linejoin="round" />
                 </svg>
               </button>
-              <button class="action-btn reject-btn" *ngIf="quiz.approvalStatus != 'pending'"
+              <button class="action-btn delete-btn" *ngIf="quiz.approvalStatus != 'pending'"
                 (click)="deleteQuiz(quiz._id)">
                 Delete
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

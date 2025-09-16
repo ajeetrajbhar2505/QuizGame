@@ -2,19 +2,19 @@
   <!-- Search bar -->
 
   <!-- Featured Quizzes -->
-  <div class="section-title">
+  <div class="section-title" *ngIf="!ParentInjected">
     <h2>Live Quizzes</h2>
     <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
       class="fas fa-chevron-right"></i></a>
       </div>
 
-  <div class="search-bar" *ngIf="!ParentInjected">
+  <div class="search-bar">
     <i class="fas fa-search"></i>
     <input type="text" placeholder="Search quizzes, topics..." [(ngModel)]="searchQuery" (input)="filterQuizzes()">
   </div>
 
   <!-- Category Filter -->
-  <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
+  <div class="category-scroll skeleton-value">
     <div 
       *ngFor="let category of categories" 
       class="category-card" 
@@ -27,6 +27,13 @@
       <h4>{{category.name}}</h4>
     </div>
   </div>
+
+    <!-- Featured Quizzes -->
+    <div class="section-title" *ngIf="ParentInjected">
+      <h2>Live Quizzes</h2>
+      <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
+        class="fas fa-chevron-right"></i></a>
+        </div>
 
   <!-- Combined async state for quizzes -->
   <ng-container *ngIf="(filteredQuizzes$ | async) as quizzes;">
@@ -130,22 +137,7 @@
     </ng-container>
 
     <ng-template #noactiveQuizzes>
-      
-      <div class="ph-item" *ngIf="((filteredQuizzes$ | async) || []).length === 0">
-        <div class="ph-col-12">
-          <div class="ph-picture"></div>
-          <div class="ph-row">
-            <div class="ph-col-6 big"></div>
-            <div class="ph-col-4 big"></div>
-            <div class="ph-col-2 big"></div>
-            <div class="ph-col-4"></div>
-            <div class="ph-col-8 empty"></div>
-            <div class="ph-col-6"></div>
-            <div class="ph-col-6 empty"></div>
-            <div class="ph-col-12"></div>
-          </div>
-        </div>
-      </div>
+      <img src="assets/noQuizes.svg" alt="" srcset="" loading="eager">
     </ng-template>
   </ng-container>
 
