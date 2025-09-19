@@ -97,7 +97,6 @@ export class QuizesPage implements OnInit, OnDestroy {
       map(quizzes => this.applyFilters(quizzes))
     ).subscribe(filtered => {
       // This will trigger the async pipe update
-      console.log(filtered);
       this.filteredQuizzes$ = of(filtered);
     });
   }
