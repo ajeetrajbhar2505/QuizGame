@@ -6,6 +6,7 @@ import { DashboardService, LeaderboardUser, user } from '../dashboard.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthData, SocketService } from '../socket.service';
 import { map } from 'rxjs/operators';
+import { searchQueryModel } from '../live-quizes/live-quizes.component';
 
 
 @Component({
@@ -20,6 +21,13 @@ export class QuizesPage implements OnInit, OnDestroy {
   isLoadingQuizzes: boolean = false;
   openModel: boolean = false;
 
+  @Input() set searchQueryData(data: searchQueryModel) {
+    if (data.searchQuery || data.selectedCategory) {
+      this.searchQuery = data.searchQuery
+      this.selectedCategory = data.selectedCategory
+      this.filterQuizzes()
+    }
+  }
 
   // Filter properties
   searchQuery: string = '';
@@ -39,9 +47,9 @@ export class QuizesPage implements OnInit, OnDestroy {
     protected router: Router,
     private sanitizer: DomSanitizer,
     private SocketService: SocketService,
-    private dashboardService:DashboardService
+    private dashboardService: DashboardService
   ) {
- 
+
     this.publishedQuizes$ = this.quizService.getPublishedQuizes$
     this.filteredQuizzes$ = this.publishedQuizes$;
   }
@@ -52,7 +60,6 @@ export class QuizesPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadInitialData();
-    this.setupFiltering();
     this.quizService.isQuizesRefreshed.subscribe(data => {
       if (data) {
         this.loadInitialData();
@@ -60,22 +67,14 @@ export class QuizesPage implements OnInit, OnDestroy {
     });
   }
 
-  // Setup filtering observable
-  private setupFiltering(): void {
-    this.filteredQuizzes$ = this.publishedQuizes$.pipe(
-      map(quizzes => {
-        return this.applyFilters(quizzes);
-      })
-    );
-  }
+
 
   // Apply both search and category filters
   private applyFilters(quizzes: Quiz[]): Quiz[] {
-    let filtered = quizzes;
 
     // Apply category filter
-    if (this.selectedCategory !== 'all') {
-      filtered = filtered.filter(quiz =>
+    if (this.selectedCategory && this.selectedCategory !== 'all') {
+      return quizzes.filter(quiz =>
         quiz.category?.toLowerCase() === this.selectedCategory.toLowerCase()
       );
     }
@@ -83,14 +82,13 @@ export class QuizesPage implements OnInit, OnDestroy {
     // Apply search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(quiz =>
-        quiz.title.toLowerCase().includes(query) ||
-        quiz.description.toLowerCase().includes(query) ||
-        (quiz.category)
+      return quizzes.filter(quiz =>
+        quiz.title.toLowerCase().includes(query) 
       );
     }
 
-    return filtered;
+    return quizzes
+
   }
 
   // Filter quizzes based on current criteria
@@ -99,6 +97,7 @@ export class QuizesPage implements OnInit, OnDestroy {
       map(quizzes => this.applyFilters(quizzes))
     ).subscribe(filtered => {
       // This will trigger the async pipe update
+      console.log(filtered);
       this.filteredQuizzes$ = of(filtered);
     });
   }
@@ -186,7 +185,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     await this.quizService.completeQuizByHost(quizId).toPromise();
   }
 
-   
+
   verifyQuiz(quizId: string): void {
     this.router.navigate(['/verify-quiz'], {
       queryParams: { id: quizId }

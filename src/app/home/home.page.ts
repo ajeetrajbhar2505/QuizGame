@@ -4,7 +4,7 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subject, combineLatest, forkJoin, map, takeUntil } from 'rxjs';
 import { NotificationService } from '../notification.service';
-import { SocketService } from '../socket.service';
+import { searchQueryModel } from '../live-quizes/live-quizes.component';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +13,10 @@ import { SocketService } from '../socket.service';
 })
 export class HomePage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-
+  searchQueryData: searchQueryModel = {
+    searchQuery: '',
+    selectedCategory: ''
+  }
   constructor(
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
@@ -36,7 +39,9 @@ export class HomePage implements OnInit, OnDestroy {
     return this.dashboardService.getUser()
   }
 
-
+  filterQuizesEvent(searchQueryData: searchQueryModel) {
+    this.searchQueryData = searchQueryData
+  }
 
   async loadInitialData() {
     await forkJoin([

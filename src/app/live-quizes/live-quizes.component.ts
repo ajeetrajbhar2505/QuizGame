@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -7,6 +7,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthData, SocketService } from '../socket.service';
 import { map } from 'rxjs/operators';
 
+export interface searchQueryModel {
+  searchQuery: string,
+  selectedCategory: string
+}
 
 @Component({
   selector: 'app-live-quizes',
@@ -24,6 +28,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
   // Filter properties
   searchQuery: string = '';
   selectedCategory: string = 'all';
+  @Output() filterQuizes: EventEmitter<searchQueryModel> = new EventEmitter<searchQueryModel>()
   filteredQuizzes$: Observable<Quiz[]>;
   categories = [
     { id: 'all', name: 'All', icon: 'fas fa-layer-group' },
@@ -39,7 +44,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     protected router: Router,
     private sanitizer: DomSanitizer,
     private SocketService: SocketService,
-    private dashboardService:DashboardService
+    private dashboardService: DashboardService
   ) {
     this.liveQuizes$ = this.quizService.liveQuizes$
     this.quizParticipants$ = this.quizService.getParticipants$
@@ -73,11 +78,10 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
 
   // Apply both search and category filters
   private applyFilters(quizzes: Quiz[]): Quiz[] {
-    let filtered = quizzes;
 
     // Apply category filter
-    if (this.selectedCategory !== 'all') {
-      filtered = filtered.filter(quiz =>
+    if (this.selectedCategory && this.selectedCategory !== 'all') {
+      return quizzes.filter(quiz =>
         quiz.category?.toLowerCase() === this.selectedCategory.toLowerCase()
       );
     }
@@ -85,18 +89,20 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     // Apply search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(quiz =>
-        quiz.title.toLowerCase().includes(query) ||
-        quiz.description.toLowerCase().includes(query) ||
-        (quiz.category)
+      return quizzes.filter(quiz =>
+        quiz.title.toLowerCase().includes(query) 
       );
     }
 
-    return filtered;
+    return quizzes
+
   }
 
   // Filter quizzes based on current criteria
   filterQuizzes(): void {
+
+    this.filterQuizes.emit({ searchQuery: this.searchQuery, selectedCategory: this.selectedCategory })
+    
     this.liveQuizes$.pipe(
       map(quizzes => this.applyFilters(quizzes))
     ).subscribe(filtered => {
