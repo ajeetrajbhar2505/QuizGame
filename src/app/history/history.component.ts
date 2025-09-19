@@ -82,11 +82,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   // Apply both search and category filters
   private applyFilters(quizzes: Quiz[]): Quiz[] {
-    let filtered = quizzes;
 
     // Apply category filter
-    if (this.selectedCategory !== 'all') {
-      filtered = filtered.filter(quiz =>
+    if (this.selectedCategory && this.selectedCategory !== 'all') {
+      return quizzes.filter(quiz =>
         quiz.category?.toLowerCase() === this.selectedCategory.toLowerCase()
       );
     }
@@ -94,14 +93,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
     // Apply search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(quiz =>
-        quiz.title.toLowerCase().includes(query) ||
-        quiz.description.toLowerCase().includes(query) ||
-        (quiz.category)
+      return quizzes.filter(quiz =>
+        quiz.title.toLowerCase().includes(query) 
       );
     }
 
-    return filtered;
+    return quizzes
+
   }
 
   // Filter quizzes based on current criteria

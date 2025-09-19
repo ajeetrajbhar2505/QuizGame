@@ -59,7 +59,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
 }
 
 * {
-  font-family: Montserrat,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji"
 }
 
 
@@ -893,6 +893,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   margin-bottom: 16px;
   line-height: 1.5;
 }
+
 .quiz-header .quiz-meta {
   margin: unset;
 }
@@ -936,15 +937,12 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   align-items: center;
 }
 
-.approve-btn{
+.approve-btn {
   background-color: #346a35;
   color: #fff;
 }
-.reject-btn {
-  background-color: #b5f2af;
-}
 
-.delete-btn{
+.delete-btn {
   background-color: #ef1563;
   color: white;
 }
@@ -957,7 +955,8 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   background-color: $card-bg;
   border-radius: 16px;
   margin-top: 20px;
-ion-icon{
+
+  ion-icon {
     font-size: 30px;
   }
 }
@@ -973,7 +972,7 @@ ion-icon{
   background: unset !important;
 }
 
-.ph-item > *{
+.ph-item>* {
   margin-top: 15px !important;
 }
 
