@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { SocketService } from './socket.service';
 import { NotificationService } from './notification.service';
 import { Observable } from 'rxjs';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -37,6 +38,12 @@ export class AppComponent implements OnInit {
         this.notifications$ = count
       })
     }
+  }
+
+  async showSplash() {
+    await SplashScreen.show({
+      autoHide: true
+    })
   }
 
   navigateTopage(page: string) {
