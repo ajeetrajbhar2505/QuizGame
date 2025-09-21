@@ -90,7 +90,6 @@ export class AlertPage implements OnInit {
   }
 
   navigateToactionUrl(actionUrl:String){
-   this.router.navigate([actionUrl])
   }
 
   async viewNotification(notification: Notification) {

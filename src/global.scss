@@ -253,11 +253,11 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 
 .category-scroll {
   display: flex;
-  margin-bottom: 28px;
   overflow-x: auto;
   padding-bottom: 8px;
   scrollbar-width: none;
 }
+
 
 .category-scroll::-webkit-scrollbar {
   display: none;
