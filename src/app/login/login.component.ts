@@ -83,7 +83,6 @@ export class LoginPage implements OnInit, OnDestroy {
   private listenForSocialUrls(): void {
     this.subscriptions.push(
       this.socketService.url$.subscribe(({ url }) => {
-        console.log('Received social login URL:', url);
         // Handle the URL - it will be automatically opened by the SocketService
         // You can add additional logic here if needed
       })
@@ -94,7 +93,6 @@ export class LoginPage implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.socketService.connectionState.subscribe(state => {
         this.connectionState = state;
-        console.log('Connection state changed:', state);
       })
     );
 
@@ -354,7 +352,6 @@ export class LoginPage implements OnInit, OnDestroy {
     try {
       await this.modalController.dismiss();
     } catch (error) {
-      console.error('Error closing modal:', error);
     }
   }
 

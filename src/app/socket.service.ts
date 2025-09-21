@@ -466,7 +466,6 @@ export class SocketService implements OnDestroy {
 
   openAuthUrl(data: { url: string }): void {
     try {
-      console.log('Opening URL:', data.url);
       if (!this.platform.is('cordova')) {
         window.open(data.url, '_blank');
         return;
