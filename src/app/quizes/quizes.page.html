@@ -11,10 +11,11 @@
   <div class="search-bar" *ngIf="!ParentInjected">
     <i class="fas fa-search"></i>
     <input type="text" placeholder="Search quizzes, topics..." [(ngModel)]="searchQuery" (input)="filterQuizzes()">
+    <i class="fas fa-close" *ngIf="searchQuery" (click)="searchQuery = '';filterQuizzes()"></i>
   </div>
 
   <!-- Category Filter -->
-  <div class="category-scroll skeleton-value" *ngIf="!ParentInjected">
+  <div class="category-scroll skeleton-value mb-28" *ngIf="!ParentInjected">
     <div 
       *ngFor="let category of categories" 
       class="category-card" 

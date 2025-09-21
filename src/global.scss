@@ -55,7 +55,7 @@
 ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   --backdrop-opacity: 0.5;
   padding: 10px;
-  background-color: #e9e8e3;
+  background-color: #ededed;
 }
 
 * {
@@ -104,7 +104,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: #e9e8e3;
+  background-color: #ededed;
 }
 
 .homeHeader {
@@ -113,7 +113,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   z-index: 1;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
-  background: #e9e8e3;
+  background: #ededed;
   width: 100%;
   z-index: 200;
 }
@@ -202,7 +202,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   padding: 24px;
   flex: 1;
   overflow-y: auto;
-  background: #e9e8e3;
+  background: #ededed;
   margin-bottom: 50px;
 }
 
@@ -228,12 +228,20 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 
 .search-bar {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
 }
 
-.search-bar i {
+.search-bar .fa-search{
   position: absolute;
   left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray);
+}
+
+.search-bar .fa-close{
+  position: absolute;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--gray);
@@ -242,7 +250,7 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .search-bar input {
   width: 100%;
   padding: 16px 20px 16px 50px;
-  border-radius: 30px;
+  border-radius: 15px;
   border: none;
   font-size: 15px;
 }
@@ -272,6 +280,10 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   transition: var(--transition);
   cursor: pointer;
   flex-shrink: 0;
+}
+.category-card:nth-child(1){
+  min-width: unset !important;
+  margin-right: 15px;
 }
 
 .category-card.active {
@@ -348,8 +360,8 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 
 .quiz-card h3 {
   font-size: 16px;
-  margin-bottom: 8px;
   color: var(--dark);
+  margin: unset;
 }
 
 .quiz-card .meta {
@@ -874,11 +886,9 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .quiz-title {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 8px;
   color: $text;
   display: flex;
   align-items: center;
-  gap: 6px;
 }
 
 .quiz-title svg {
@@ -890,8 +900,9 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
 .quiz-description {
   font-size: 14px;
   color: $text-light;
-  margin-bottom: 16px;
   line-height: 1.5;
+  margin: unset;
+  margin-top: 5px;
 }
 
 .quiz-header .quiz-meta {
@@ -998,7 +1009,6 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
   cursor: pointer;
   transition: all 0.3s;
   z-index: 10;

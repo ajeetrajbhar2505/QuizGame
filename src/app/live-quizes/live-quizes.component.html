@@ -11,6 +11,7 @@
   <div class="search-bar">
     <i class="fas fa-search"></i>
     <input type="text" placeholder="Search quizzes, topics..." [(ngModel)]="searchQuery" (input)="filterQuizzes()">
+    <i class="fas fa-close" *ngIf="searchQuery" (click)="searchQuery = '';filterQuizzes()"></i>
   </div>
 
   <!-- Category Filter -->
