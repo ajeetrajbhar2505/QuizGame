@@ -45,7 +45,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   async loadInitialData() {
     await forkJoin([
-      this.dashboardService.getLeaderboardUser(3),
+      this.dashboardService.getLeaderboardUser(),
       this.quizService.getActiveQuizes(),
       this.quizService.getPublishedQuiz(),
       this.quizService.getSubmittedQuizes(),

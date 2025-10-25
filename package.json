@@ -38,6 +38,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@ionic/angular": "^8.6.2",
     "capacitor-admob-ads": "^5.0.0",
+    "http-server": "^14.1.1",
     "ionicons": "^7.0.0",
     "placeholder-loading": "^0.7.0",
     "rxjs": "~7.8.0",

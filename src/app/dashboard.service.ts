@@ -72,7 +72,7 @@ export class DashboardService {
 
   get limit(): number {
     let isLimitRoute = ['/home'].includes(this.router.url);
-    return isLimitRoute ? 3 : 0;
+    return isLimitRoute ? 5 : 0;
   }
 
 

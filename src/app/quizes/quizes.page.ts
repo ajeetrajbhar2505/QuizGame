@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ import { searchQueryModel } from '../live-quizes/live-quizes.component';
 export class QuizesPage implements OnInit, OnDestroy {
   @Input() publishedQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false;
+  @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter<boolean>()
 
   isLoadingQuizzes: boolean = false;
   openModel: boolean = false;
@@ -83,7 +84,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       return quizzes.filter(quiz =>
-        quiz.title.toLowerCase().includes(query) 
+        quiz.title.toLowerCase().includes(query)
       );
     }
 
@@ -107,6 +108,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     this.filterQuizzes();
   }
   async loadInitialData() {
+    this.handleRefresh.emit(true)
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
