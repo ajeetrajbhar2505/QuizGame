@@ -1,33 +1,34 @@
 <ion-content class="ion-padding" [fullscreen]="true">
   <div *ngIf="(quiz$ | async) as quiz; else loading" class="quiz-preview-container">
-    <!-- Quiz Header -->
-    <div class="quiz-header">
-   
-      <div class="quiz-meta">
-        <span class="meta-item">
-          <ion-icon name="time-outline"></ion-icon>
-          {{ (quiz.estimatedTime / 60) | number : '1.2-2' }} min
-        </span>
-        <span class="meta-item">
-          <ion-icon name="help-circle-outline"></ion-icon>
-          {{ quiz.totalQuestions }} questions
-        </span>
-        <div class="quiz-meta">
-          <span class="meta-item">
-            <i class="fas fa-bolt"></i>
-            {{quiz.totalPoints}} XP
-          </span>
-        </div>
 
-      </div>
-      
-    </div>
 
     <!-- Quiz Title & Description -->
     <div class="quiz-title">{{ quiz.title }}  <ion-chip style="width: 110px;" [color]="getDifficultyColor(quiz.difficulty)" class="difficulty-badge">
       {{ quiz.difficulty | titlecase }}
     </ion-chip></div>
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+   
+          <div class="quiz-meta">
+            <span class="meta-item">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ (quiz.estimatedTime / 60) | number : '1.2-2' }} min
+            </span>
+            <span class="meta-item">
+              <ion-icon name="help-circle-outline"></ion-icon>
+              {{ quiz.totalQuestions }} questions
+            </span>
+            <div class="quiz-meta">
+              <span class="meta-item">
+                <i class="fas fa-bolt"></i>
+                {{quiz.totalPoints}} XP
+              </span>
+            </div>
+    
+          </div>
     <div class="quiz-description">{{ quiz.description }}</div>
+          
+        </div>
 
     <!-- Questions Preview -->
     <div class="section-title">Questions Preview</div>
