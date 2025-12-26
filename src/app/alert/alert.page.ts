@@ -7,6 +7,7 @@ import { NotificationType } from '../notification-type.enum';
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.page.html',
+  standalone : false,
   styleUrls: ['./alert.page.scss'],
 })
 export class AlertPage implements OnInit {

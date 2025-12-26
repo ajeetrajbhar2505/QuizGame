@@ -11,6 +11,7 @@ import { App } from '@capacitor/app';
 @Component({
   selector: 'app-ongoing',
   templateUrl: './ongoing.component.html',
+  standalone : false,
   styleUrls: ['./ongoing.component.scss'],
 })
 export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactivate {

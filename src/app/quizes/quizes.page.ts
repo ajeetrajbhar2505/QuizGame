@@ -12,6 +12,7 @@ import { searchQueryModel } from '../live-quizes/live-quizes.component';
 @Component({
   selector: 'app-quizes',
   templateUrl: './quizes.page.html',
+  standalone : false,
   styleUrls: ['./quizes.page.scss'],
 })
 export class QuizesPage implements OnInit, OnDestroy {

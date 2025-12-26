@@ -3,6 +3,7 @@ import { LoaderService } from '../loader.service';
 
 @Component({
   selector: 'app-user-setup',
+  standalone : false,
   templateUrl: './user-setup.page.html',
   styleUrls: ['./user-setup.page.scss'],
 })

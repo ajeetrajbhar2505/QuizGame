@@ -4,10 +4,12 @@ import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { ToasterService } from '../toaster.service';
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { switchMap, tap, catchError, map } from 'rxjs/operators';
+import { IonIcon, IonContent } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-verify-quiz',
   templateUrl: './verify-quiz.component.html',
+  standalone : false,
   styleUrls: ['./verify-quiz.component.scss']
 })
 export class VerifyQuizComponent implements OnInit {

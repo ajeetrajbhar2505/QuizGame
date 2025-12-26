@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
+  standalone : false,
   styleUrls: ['./history.component.scss'],
 })
 export class HistoryComponent implements OnInit, OnDestroy {

@@ -9,6 +9,7 @@ import { searchQueryModel } from '../live-quizes/live-quizes.component';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
+  standalone : false,
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {

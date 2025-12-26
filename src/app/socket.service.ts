@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, ReplaySubject, of, fromEvent, Subject } fr
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { ToasterService } from './toaster.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/types/http';
 import { ModalController, Platform } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 

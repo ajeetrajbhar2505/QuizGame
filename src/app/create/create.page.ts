@@ -9,6 +9,7 @@ import { NotificationType } from '../notification-type.enum';
 @Component({
   selector: 'app-create',
   templateUrl: './create.page.html',
+  standalone : false,
   styleUrls: ['./create.page.scss'],
 })
 export class CreatePage implements OnInit {

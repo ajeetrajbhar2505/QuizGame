@@ -15,6 +15,7 @@ export interface searchQueryModel {
 @Component({
   selector: 'app-live-quizes',
   templateUrl: './live-quizes.component.html',
+  standalone : false,
   styleUrls: ['./live-quizes.component.scss'],
 })
 export class LiveQuizesComponent implements OnInit, OnDestroy {

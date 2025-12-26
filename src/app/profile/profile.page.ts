@@ -10,6 +10,7 @@ import { map, takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
+  standalone : false,
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, OnDestroy {
