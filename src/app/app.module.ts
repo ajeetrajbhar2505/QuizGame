@@ -12,7 +12,7 @@ import { LoginPage } from './login/login.component';
 import { GoogleadsService } from './googleads.service';
 import { FormsModule } from '@angular/forms';
 import { HomePage } from './home/home.page';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/types/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { WebService } from './web.service';
 import { LoaderService } from './loader.service';
 import { SocketService } from './socket.service';
