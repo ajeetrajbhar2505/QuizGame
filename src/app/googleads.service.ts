@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AdmobAds, BannerPosition, BannerSize } from 'capacitor-admob-ads'
+import { 
+  AdMob, 
+  BannerAdOptions, 
+  BannerAdSize, 
+  BannerAdPosition, 
+  AdOptions, 
+  RewardAdOptions 
+} from '@capacitor-community/admob';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -7,70 +14,65 @@ import { environment } from 'src/environments/environment';
 })
 export class GoogleadsService {
 
-  constructor() { 
-  }
+  constructor() {}
 
   async loadBannerAds(): Promise<boolean> {
-    // return true
     try {
-      await  AdmobAds.showBannerAd({
+      const options: BannerAdOptions = {
         adId: environment.BannerAdId,
-        isTesting: true,
-        adSize: BannerSize.BANNER,
-        adPosition: BannerPosition.BOTTOM
-      })
-
+        adSize: BannerAdSize.BANNER,
+        position: BannerAdPosition.BOTTOM_CENTER,
+        margin: 0,
+        isTesting: true // Set to false in production
+      };
+      await AdMob.showBanner(options);
       return true;
-    } catch (err:any) {
+    } catch (err) {
       return false;
     }
   }
 
   async loadInterstitialAd(): Promise<boolean> {
     try {
-      await AdmobAds.loadInterstitialAd({
+      const options: AdOptions = {
         adId: environment.InterstitialAdsId,
         isTesting: true,
-      });
+      };
+      await AdMob.prepareInterstitial(options);
       return true;
-    } catch (err:any) {
+    } catch (err) {
       return false;
     }
   }
 
   async showInterstitialAds(): Promise<boolean> {
-    // return true
     try {
-      await AdmobAds.showInterstitialAd();
-      return true
-    } catch (err:any) {
-      return false
+      await AdMob.showInterstitial();
+      return true;
+    } catch (err) {
+      return false;
     }
   }
 
   async loadRewardedVideoAd(): Promise<boolean> {
-    // return true
     try {
-      await AdmobAds.loadRewardedVideoAd({
+      const options: RewardAdOptions = {
         adId: environment.RewardedVideoAddId,
         isTesting: true,
-      });
+      };
+      await AdMob.prepareRewardVideoAd(options);
       return true;
-    } catch (err: any) {
+    } catch (err) {
       return false;
     }
   }
-  
+
   async showloadRewardedVideoAds(): Promise<boolean> {
-    // return true
     try {
-      await AdmobAds.showRewardedVideoAd();
+      await AdMob.showRewardVideoAd();
       return true;
-    } catch (err: any) {
+    } catch (err) {
       return false;
     }
   }
-
-  
-
 }
