@@ -170,7 +170,7 @@
         </p>
 
         <div class="otp-inputs">
-          <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
+          <ng-otp-input (onInputChange)="onOtpChange($event)" [config]="config"></ng-otp-input>
         </div>
 
         <button class="btn btn-email center" [disabled]="loginForm.otp == ''" (click)="verifyOTP()">

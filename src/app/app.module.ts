@@ -31,12 +31,13 @@ import { UsersComponent } from './users/users.component';
 import { LiveQuizesComponent } from './live-quizes/live-quizes.component';
 import { OngoingComponent } from './ongoing/ongoing.component';
 import { HistoryComponent } from './history/history.component';
+import { NgOtpInputModule } from 'ng-otp-input';
 
 library.add(fas);
 
 @NgModule({
   declarations: [AppComponent,LoaderComponent,LoginPage,HomePage,CreatePage,DiscoverPage,ProfilePage,AlertPage,UserSetupPage,CategoriesPage,QuizesPage,VerifyQuizComponent,UsersComponent,LiveQuizesComponent,OngoingComponent,HistoryComponent],
-  imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
+  imports: [CommonModule,BrowserModule,FormsModule,IonicModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule,NgOtpInputModule],
   providers: [
     GoogleadsService,
     LoaderService,

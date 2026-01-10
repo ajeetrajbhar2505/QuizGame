@@ -35,6 +35,15 @@ export class LoginPage implements OnInit, OnDestroy {
     otp: ''
   };
 
+  config = {
+  length: 5, 
+  inputStyles: {
+    'width': '43px', 
+    'height': '43px', 
+    'font-size': '24px' 
+  }
+};
+
   otpDetails?: OtpDetails;
   errorModalStatus = '';
   errorMessage = `
@@ -328,13 +337,14 @@ export class LoginPage implements OnInit, OnDestroy {
     this.showOtpModal = false;
   }
 
-  private resetForm(): void {
-    this.loginForm.email = "";
-    this.loginForm.otp = "";
-    this.toasterService.dismiss();
-    this.continuewith = false;
-    this.isLoading = false;
-  }
+private resetForm(): void {
+  this.showOtpModal = false; 
+  this.loginForm.email = "";
+  this.loginForm.otp = "";
+  this.continuewith = false;
+  this.isLoading = false;
+  this.cdr.detectChanges();
+}
 
   private async handleSuccessfulLogin(data: any): Promise<void> {
     await this.closeModal();
@@ -382,6 +392,10 @@ export class LoginPage implements OnInit, OnDestroy {
       }
     }, 0);
   }
+  onOtpChange(value: any) {
+    this.loginForm.otp = value;
+  }
+
 
   scrollToShowContent() {
     try {
