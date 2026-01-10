@@ -86,6 +86,7 @@ ion-modal.modal-default:not(.overlay-hidden)~ion-modal.modal-default {
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+
 $primary: #6C5CE7;
 $primary-light: #A29BFE;
 $success: #00B894;
@@ -1052,4 +1053,8 @@ $neumorph: 8px 8px 15px rgba(0, 0, 0, 0.05),
   100% {
     transform: rotate(360deg);
   }
+}
+
+ion-modal>.ion-page{
+  background-color: #fff;
 }

@@ -82,7 +82,8 @@
   .options-title {
     font-size: 14px;
     color: ($text-light);
-    margin: 45px 0 15px;
+    // margin: -25px 0 -25px;
+    // margin: 45px 0 15px;
     text-align: center;
     position: relative;
   }
@@ -113,8 +114,9 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 45px;
-    margin-top: 45px;
+  }
+  .login{
+    margin-top: 10px;
   }
 
   .btn {
@@ -123,7 +125,8 @@
     justify-content: space-between;
     padding: 16px 25px;
     border-radius: 12px;
-    background-color: white;
+    color: white;
+    background-color: #4183f2;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
@@ -136,9 +139,13 @@
     input,
     input:focus,
     input:hover {
+      background: #4183f2;
       width: 100%;
       border: unset;
       outline: unset;
+    }
+    ::placeholder{
+      color: #ffffff87;
     }
   }
 
@@ -166,11 +173,11 @@
   }
 
   .btn-google i {
-    color: #DB4437;
+    color: #fff;
   }
 
   .btn-facebook i {
-    color: #1877F2;
+    color: #fff;
   }
 
   .center {
@@ -182,12 +189,12 @@
   }
 
   .btn-email i {
-    color: ($primary);
+    color: #fff;
   }
 
   .arrow {
     font-size: 16px;
-    color: ($text-light);
+    color: white;
     transition: transform 0.3s ease;
     z-index: 2;
   }
@@ -198,7 +205,6 @@
 
   .btn:hover .arrow {
     transform: translateX(3px);
-    color: ($primary);
   }
 
   .terms {
@@ -235,7 +241,7 @@
     flex-shrink: 0;
     width: 18px;
     height: 18px;
-    accent-color: ($primary);
+    accent-color: #4183f2;
     margin-top: 2px;
     cursor: pointer;
   }

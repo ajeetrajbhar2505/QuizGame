@@ -48,7 +48,7 @@ export class LoginPage implements OnInit, OnDestroy {
   // State flags
   continuewith = false;
   isLoading = false;
-  googleProgress = false;
+  googleProgress = true;
   facebookProgress = false;
   authFailed = false;
   otpSuccess = false;
