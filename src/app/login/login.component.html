@@ -4,33 +4,30 @@
     <div class="logo">
       <img src="assets/AppLogo.png" alt="App Logo">
     </div>
-  
+
     <!-- Heading -->
     <h1>Join Our Quiz App<br>Community</h1>
-    
+
     <!-- Subtitle -->
     <p class="subtitle">
-      Join thousands of players who test their knowledge daily. Track your progress, earn badges, and climb the leaderboards!
+      Join thousands of players who test their knowledge daily. Track your progress, earn badges, and climb the
+      leaderboards!
     </p>
-  
+
     <div class="features" *ngIf="false">
       <span class="feature">1000+ Questions</span>
       <span class="feature">Daily Challenges</span>
       <span class="feature">Global Leaderboard</span>
     </div>
-  
+
     <!-- Options title -->
-         <!-- Login options -->
+    <!-- Login options -->
     <div class="methods">
       <button class="btn btn-email" (click)="focusInput()">
         <div class="btn-content">
           <i class="fas fa-envelope"></i>
           <span *ngIf="!continuewith">Sign in with Email</span>
-          <input
-            id="input"
-            *ngIf="continuewith"
-            type="email"
-            [(ngModel)]="loginForm.email"
+          <input id="input" *ngIf="continuewith" type="email" [(ngModel)]="loginForm.email"
             placeholder="name@gmail.com">
         </div>
         <div *ngIf="!continuewith" class="arrow">&rarr;</div>
@@ -38,7 +35,7 @@
       </button>
     </div>
 
-        <button class="btn btn-email login center" [disabled]="isLoading" (click)="login()" *ngIf="continuewith">
+    <button class="btn btn-email login center" [disabled]="isLoading" (click)="login()" *ngIf="continuewith">
       Continue
       <ion-icon *ngIf="!isLoading" name="arrow-forward" slot="end"></ion-icon>
       <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
@@ -46,7 +43,7 @@
 
 
     <p class="options-title">Quick access with</p>
-  
+
     <!-- Login options -->
     <div class="methods">
       <button class="btn btn-google" (click)="continuewith = false; loginWithGoogle()">
@@ -56,7 +53,7 @@
         </div>
         <div class="arrow">&rarr;</div>
       </button>
-      
+
       <button class="btn btn-facebook" (click)="continuewith = false; loginWithFacebook()">
         <div class="btn-content">
           <i class="fab fa-facebook-f"></i>
@@ -64,17 +61,18 @@
         </div>
         <div class="arrow">&rarr;</div>
       </button>
-  
+
     </div>
 
 
 
     <!-- Terms and Privacy -->
     <div class="terms">
-      By joining, you agree to our <a href="#">Quiz Rules</a>, <a href="#">Terms</a>, and confirm that you are at least 13 years old.
+      By joining, you agree to our <a href="#">Quiz Rules</a>, <a href="#">Terms</a>, and confirm that you are at least
+      13 years old.
       Your progress will be securely saved to your account.
     </div>
-    
+
     <!-- Powered by -->
     <div class="powered">
       <ion-icon name="newspaper-outline"></ion-icon>
@@ -145,7 +143,7 @@
   </ion-modal>
 
   <!-- OTP Verification -->
-  <ion-modal #OTPmodal trigger="open-verifyModel" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ion-modal #OTPmodal trigger="open-verifyModel" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>
 
       <div class="verification-container" *ngIf="otpSuccess">
@@ -175,18 +173,19 @@
           <input [(ngModel)]="loginForm.otp" type="text" class="otp-input">
         </div>
 
-        <button class="btn btn-email center"
-                [disabled]="loginForm.otp == ''"
-                (click)="verifyOTP()">
+        <button class="btn btn-email center" [disabled]="loginForm.otp == ''" (click)="verifyOTP()">
           Verify
           <ion-icon *ngIf="!isLoading" name="arrow-forward" slot="end"></ion-icon>
           <ion-spinner *ngIf="isLoading" class="spinner" slot="end"></ion-spinner>
         </button>
 
+
         <p class="resend-text" *ngIf="!canResendOtp">
           Resend OTP in
-          <a (click)="resendOtp()" class="resend-link">{{ formattedTimer }}</a>
+          <!-- Use formattedTimer here -->
+          <a class="resend-link">{{ formattedTimer }}</a>
         </p>
+
 
         <p class="resend-text" *ngIf="canResendOtp">
           Didn't receive the code?

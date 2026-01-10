@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subject, Subscription, timer } from 'rxjs';
@@ -20,7 +20,7 @@ interface OtpDetails {
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  standalone : false,
+  standalone: false,
   styleUrls: ['./login.component.scss'],
 })
 export class LoginPage implements OnInit, OnDestroy {
@@ -48,7 +48,7 @@ export class LoginPage implements OnInit, OnDestroy {
   // State flags
   continuewith = false;
   isLoading = false;
-  googleProgress = true;
+  googleProgress = false;
   facebookProgress = false;
   authFailed = false;
   otpSuccess = false;
@@ -69,7 +69,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private modalController: ModalController,
     private toasterService: ToasterService,
     private dashboardService: DashboardService,
-    private createQuizesService: CreateQuizesService
+    private createQuizesService: CreateQuizesService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -147,7 +148,6 @@ export class LoginPage implements OnInit, OnDestroy {
 
     // this.toasterService.presentToast('OTP sent successfully!', 3000, 'bottom', 'success');
     this.loginSuccess = true;
-    this.startOtpTimer();
     this.otpDetails = otpDetails;
     this.showOtpModal = true;
     this.isLoading = false;
@@ -155,6 +155,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
     try {
       await this.otpModal.present();
+      this.startOtpTimer();
       const { data } = await this.otpModal.onDidDismiss();
 
       if (!data) {
@@ -288,9 +289,11 @@ export class LoginPage implements OnInit, OnDestroy {
 
     this.timerSubscription = timer(0, 1000).subscribe(() => {
       this.otpTimer--;
+      this.cdr.detectChanges();
       if (this.otpTimer <= 0) {
         this.stopOtpTimer();
         this.canResendOtp = true;
+        this.cdr.detectChanges();
       }
     });
   }
