@@ -38,8 +38,8 @@ export class LoginPage implements OnInit, OnDestroy {
   config = {
   length: 5, 
   inputStyles: {
-    'width': '43px', 
-    'height': '43px', 
+    'width': '50px', 
+    'height': '50px', 
     'font-size': '24px' 
   }
 };
@@ -103,6 +103,7 @@ export class LoginPage implements OnInit, OnDestroy {
   private setupSocketListeners(): void {
     this.subscriptions.push(
       this.socketService.connectionState.subscribe(state => {
+        this.cdr.detectChanges()
         this.connectionState = state;
       })
     );

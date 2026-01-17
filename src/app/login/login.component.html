@@ -75,7 +75,8 @@
 
     <!-- Powered by -->
     <div class="powered">
-      <ion-icon name="newspaper-outline"></ion-icon>
+      {{connectionState | titlecase}}
+      <ion-icon [class]="connectionState" name="newspaper-outline"></ion-icon>
       Powered by <span>Ajit Rajbhar</span>
     </div>
   </div>
