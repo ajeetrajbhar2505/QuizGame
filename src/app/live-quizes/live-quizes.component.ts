@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ export interface searchQueryModel {
 @Component({
   selector: 'app-live-quizes',
   templateUrl: './live-quizes.component.html',
+  changeDetection : ChangeDetectionStrategy.OnPush,
   standalone : false,
   styleUrls: ['./live-quizes.component.scss'],
 })
@@ -45,7 +46,8 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     protected router: Router,
     private sanitizer: DomSanitizer,
     private SocketService: SocketService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private cdr:ChangeDetectorRef
   ) {
     this.liveQuizes$ = this.quizService.liveQuizes$
     this.quizParticipants$ = this.quizService.getParticipants$
@@ -121,6 +123,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
+      this.cdr.detectChanges()
     }, 2000);
     await this.quizService.getActiveQuizes().toPromise();
   }

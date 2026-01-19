@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { Subject, Subscription, timer } from 'rxjs';
@@ -21,6 +21,7 @@ interface OtpDetails {
   selector: 'app-login',
   templateUrl: './login.component.html',
   standalone: false,
+  changeDetection : ChangeDetectionStrategy.OnPush,
   styleUrls: ['./login.component.scss'],
 })
 export class LoginPage implements OnInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -9,6 +9,7 @@ import { searchQueryModel } from '../live-quizes/live-quizes.component';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
+  changeDetection : ChangeDetectionStrategy.OnPush,
   standalone : false,
   styleUrls: ['home.page.scss'],
 })

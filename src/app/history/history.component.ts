@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
+  changeDetection : ChangeDetectionStrategy.OnPush,
   standalone : false,
   styleUrls: ['./history.component.scss'],
 })
@@ -119,7 +120,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.filterQuizzes();
   }
   async loadInitialData() {
-    this.isLoadingQuizzes = true;
+       this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
     }, 2000);

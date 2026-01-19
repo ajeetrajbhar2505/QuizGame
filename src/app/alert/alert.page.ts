@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonItemSliding } from '@ionic/angular';
 import { Notification, NotificationService } from '../notification.service';
@@ -7,7 +7,8 @@ import { NotificationType } from '../notification-type.enum';
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.page.html',
-  standalone : false,
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./alert.page.scss'],
 })
 export class AlertPage implements OnInit {
@@ -15,10 +16,10 @@ export class AlertPage implements OnInit {
   unreadNotifications: Notification[] = [];
   readNotifications: Notification[] = [];
   segmentValue: 'unread' | 'all' = 'unread';
-  isLoadingNotification:boolean = false
+  isLoadingNotification: boolean = false
   constructor(
     private notificationService: NotificationService,
-    private router: Router,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   async ngOnInit() {
@@ -29,11 +30,11 @@ export class AlertPage implements OnInit {
   IsToday_sDateWithTimezone(date: Date | string, timeZone?: string): boolean {
     const inputDate = typeof date === 'string' ? new Date(date) : date;
     const today = new Date();
-    
+
     // Convert both dates to the same timezone (or local time if no timezone specified)
     const inputDateStr = inputDate.toLocaleDateString('en-CA', { timeZone });
     const todayStr = today.toLocaleDateString('en-CA', { timeZone });
-    
+
     return inputDateStr === todayStr;
   }
 
@@ -42,6 +43,7 @@ export class AlertPage implements OnInit {
       this.isLoadingNotification = true;
       setTimeout(() => {
         this.isLoadingNotification = false;
+      this.cdr.detectChanges()
       }, 2000);
       this.loading = true;
       this.notificationService.notifications$.subscribe((allNotifications: Notification[]) => {
@@ -60,7 +62,7 @@ export class AlertPage implements OnInit {
     const type: NotificationType = notification.type;
     const isRead: boolean = notification.isRead;
 
-    const icons:any = {
+    const icons: any = {
       [NotificationType.QUIZ_INVITATION]: isRead ? 'mail-open' : 'mail-unread',
       [NotificationType.QUIZ_START]: isRead ? 'play-circle-outline' : 'mail-unread',
       [NotificationType.QUESTION_READY]: isRead ? 'help-circle-outline' : 'mail-unread',
@@ -69,14 +71,14 @@ export class AlertPage implements OnInit {
       [NotificationType.NEW_LEADER]: isRead ? 'trophy-outline' : 'mail-unread',
       [NotificationType.ACHIEVEMENT_UNLOCKED]: isRead ? 'ribbon-outline' : 'mail-unread',
       [NotificationType.ADMIN_ANNOUNCEMENT]: isRead ? 'megaphone-outline' : 'mail-unread',
-      [NotificationType.SYSTEM_ALERT]: isRead ? 'warning-outline': 'mail-unread'
+      [NotificationType.SYSTEM_ALERT]: isRead ? 'warning-outline' : 'mail-unread'
     };
 
     return icons[type] || 'notifications';
   }
 
   getNotificationColor(type: NotificationType): string {
-    const colors:any = {
+    const colors: any = {
       [NotificationType.QUIZ_INVITATION]: 'primary',
       [NotificationType.QUIZ_START]: 'success',
       [NotificationType.QUESTION_READY]: 'warning',
@@ -90,7 +92,7 @@ export class AlertPage implements OnInit {
     return colors[type] || 'medium';
   }
 
-  navigateToactionUrl(actionUrl:String){
+  navigateToactionUrl(actionUrl: String) {
   }
 
   async viewNotification(notification: Notification) {
