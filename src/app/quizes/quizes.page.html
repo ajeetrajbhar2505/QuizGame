@@ -5,8 +5,8 @@
   <div class="section-title">
     <h2>Upcoming Quizzes</h2>
     <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/quizes">View all <i
-      class="fas fa-chevron-right"></i></a>
-      </div>
+        class="fas fa-chevron-right"></i></a>
+  </div>
 
   <div class="search-bar" *ngIf="!ParentInjected">
     <i class="fas fa-search"></i>
@@ -16,12 +16,8 @@
 
   <!-- Category Filter -->
   <div class="category-scroll skeleton-value mb-28" *ngIf="!ParentInjected">
-    <div 
-      *ngFor="let category of categories" 
-      class="category-card" 
-      [class.active]="selectedCategory === category.id"
-      (click)="selectCategory(category.id)"
-    >
+    <div *ngFor="let category of categories" class="category-card" [class.active]="selectedCategory === category.id"
+      (click)="selectCategory(category.id)">
       <div class="icon-wrapper">
         <i [class]="category.icon"></i>
       </div>
@@ -30,6 +26,24 @@
   </div>
 
   <!-- Combined async state for quizzes -->
+  <ng-container *ngIf="isLoadingQuizzes">
+    <div class="ph-item">
+      <div class="ph-col-12">
+        <div class="ph-picture"></div>
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+          <div class="ph-col-4"></div>
+          <div class="ph-col-8 empty"></div>
+          <div class="ph-col-6"></div>
+          <div class="ph-col-6 empty"></div>
+          <div class="ph-col-12"></div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <ng-container *ngIf="(filteredQuizzes$ | async) as quizzes;">
     <ng-container *ngIf="quizzes.length > 0; else noapublishedQuizzes">
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
@@ -81,36 +95,41 @@
         </div>
 
         <div class="quiz-actions">
-          <button *ngIf="currentUser.role == 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
+          <button *ngIf="currentUser.role == 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')"
+            class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
             Revise
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')" class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
+          <button *ngIf="currentUser.role != 'user' && (quiz.status == 'waiting' || quiz.status == 'inactive')"
+            class="action-btn reject-btn" (click)="verifyQuiz(quiz._id)">
             Review
-             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round" />
-             </svg>
-           </button>
-          <button *ngIf="currentUser.role != 'user' && !quiz.isLive && quiz.status == 'inactive'" class="action-btn approve-btn" (click)="BeginQuiz(quiz._id)">
-            Begin 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'waiting'" class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
-            Start 
+          <button *ngIf="currentUser.role != 'user' && !quiz.isLive && quiz.status == 'inactive'"
+            class="action-btn approve-btn" (click)="BeginQuiz(quiz._id)">
+            Begin
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
           </button>
-          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'in-progress'" class="action-btn approve-btn" (click)="completeQuizByHost(quiz._id)">
-            End 
+          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'waiting'"
+            class="action-btn approve-btn" (click)="startQuiz(quiz._id)">
+            Start
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button *ngIf="currentUser.role != 'user' && quiz.isLive && quiz.status == 'in-progress'"
+            class="action-btn approve-btn" (click)="completeQuizByHost(quiz._id)">
+            End
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
@@ -124,16 +143,15 @@
       <img src="assets/noQuizes.svg" alt="" srcset="" loading="eager">
     </ng-template>
   </ng-container>
-<!-- Coming Leaderboard content here using ng-content -->
-<ng-content></ng-content>
+  <!-- Coming Leaderboard content here using ng-content -->
+  <ng-content></ng-content>
 
 </div>
 
 <!-- Refresh Button -->
-<div class="floating-action" (click)="loadInitialData()">
-  <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-    stroke-linejoin="round">
+<div class="floating-action" (click)="loadInitialData()" *ngIf="showRefresher">
+  <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M23 4v6h-6" />
     <path d="M1 20v-6h6" />
     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />

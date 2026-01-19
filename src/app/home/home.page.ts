@@ -2,19 +2,20 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { DashboardService, user } from '../dashboard.service';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Subject, combineLatest, forkJoin, map, takeUntil } from 'rxjs';
+import { Subject, forkJoin, map, takeUntil } from 'rxjs';
 import { NotificationService } from '../notification.service';
 import { searchQueryModel } from '../live-quizes/live-quizes.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  changeDetection : ChangeDetectionStrategy.OnPush,
-  standalone : false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  showLiveRefresher: boolean = true
   searchQueryData: searchQueryModel = {
     searchQuery: '',
     selectedCategory: ''
@@ -23,7 +24,7 @@ export class HomePage implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private quizService: CreateQuizesService,
     private sanitizer: DomSanitizer,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService
   ) {
 
   }
@@ -77,6 +78,17 @@ export class HomePage implements OnInit, OnDestroy {
   handleRefresh(event: any) {
     this.loadInitialData()
   }
+
+
+  onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    if (scrollTop < 210) {
+      this.showLiveRefresher = true;
+    } else {
+      this.showLiveRefresher = false;
+    }
+  }
+
 
 
   ngOnDestroy(): void {

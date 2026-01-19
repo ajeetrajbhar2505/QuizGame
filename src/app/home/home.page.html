@@ -1,4 +1,5 @@
-<ion-content [fullscreen]="true">
+
+<ion-content [fullscreen]="true" (ionScroll)="onScroll($event)" scrollEvents="true">
   <!-- Header with user greeting and stats -->
   <div class="homeHeader">
     <div class="homeHeader-content">
@@ -14,8 +15,8 @@
   
 
   <!-- Main content section -->
-    <app-live-quizes (filterQuizes)="filterQuizesEvent($event)" [ParentInjected]="true"></app-live-quizes>
-    <app-quizes [searchQueryData]="searchQueryData" [ParentInjected]="true" (handleRefresh)="handleRefresh($event)">
+    <app-live-quizes (filterQuizes)="filterQuizesEvent($event)" [showRefresher]="showLiveRefresher" [ParentInjected]="true"></app-live-quizes>
+    <app-quizes [searchQueryData]="searchQueryData" [showRefresher]="!showLiveRefresher" [ParentInjected]="true" (handleRefresh)="handleRefresh($event)">
       <!-- Leaderboard using ng-content -->
       <app-users [ParentInjected]="true"></app-users>
     </app-quizes>

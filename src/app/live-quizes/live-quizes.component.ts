@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -15,14 +15,15 @@ export interface searchQueryModel {
 @Component({
   selector: 'app-live-quizes',
   templateUrl: './live-quizes.component.html',
-  changeDetection : ChangeDetectionStrategy.OnPush,
-  standalone : false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
   styleUrls: ['./live-quizes.component.scss'],
 })
 export class LiveQuizesComponent implements OnInit, OnDestroy {
   @Input() liveQuizes$: Observable<Quiz[]>;
   @Input() quizParticipants$: Observable<Quiz | null>;
-  @Input() ParentInjected: boolean = false;
+  @Input() ParentInjected: boolean = true;
+  @Input() showRefresher: boolean = true;
 
   isLoadingQuizzes: boolean = false;
   openModel: boolean = false;
@@ -47,7 +48,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private SocketService: SocketService,
     private dashboardService: DashboardService,
-    private cdr:ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {
     this.liveQuizes$ = this.quizService.liveQuizes$
     this.quizParticipants$ = this.quizService.getParticipants$
@@ -93,7 +94,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       return quizzes.filter(quiz =>
-        quiz.title.toLowerCase().includes(query) 
+        quiz.title.toLowerCase().includes(query)
       );
     }
 
@@ -105,7 +106,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
   filterQuizzes(): void {
 
     this.filterQuizes.emit({ searchQuery: this.searchQuery, selectedCategory: this.selectedCategory })
-    
+
     this.liveQuizes$.pipe(
       map(quizzes => this.applyFilters(quizzes))
     ).subscribe(filtered => {
@@ -183,6 +184,7 @@ export class LiveQuizesComponent implements OnInit, OnDestroy {
   trackByUserId(index: number, user: LeaderboardUser): string {
     return user.userId;
   }
+
 
   async ngOnDestroy() {
     await this.quizService.getActiveQuizes(3).toPromise();

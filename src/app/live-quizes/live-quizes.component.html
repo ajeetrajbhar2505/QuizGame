@@ -5,8 +5,8 @@
   <div class="section-title" *ngIf="!ParentInjected">
     <h2>Live Quizzes</h2>
     <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
-      class="fas fa-chevron-right"></i></a>
-      </div>
+        class="fas fa-chevron-right"></i></a>
+  </div>
 
   <div class="search-bar">
     <i class="fas fa-search"></i>
@@ -16,12 +16,8 @@
 
   <!-- Category Filter -->
   <div class="category-scroll skeleton-value {{!ParentInjected && 'mb-28'}}">
-    <div 
-      *ngFor="let category of categories" 
-      class="category-card" 
-      [class.active]="selectedCategory === category.id"
-      (click)="selectCategory(category.id)"
-    >
+    <div *ngFor="let category of categories" class="category-card" [class.active]="selectedCategory === category.id"
+      (click)="selectCategory(category.id)">
       <div class="icon-wrapper">
         <i [class]="category.icon"></i>
       </div>
@@ -29,14 +25,33 @@
     </div>
   </div>
 
-    <!-- Featured Quizzes -->
-    <div class="section-title" *ngIf="ParentInjected">
-      <h2>Live Quizzes</h2>
-      <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
+  <!-- Featured Quizzes -->
+  <div class="section-title" *ngIf="ParentInjected">
+    <h2>Live Quizzes</h2>
+    <a *ngIf="ParentInjected" (click)="loadInitialData()" routerLink="/live-quizes">View all <i
         class="fas fa-chevron-right"></i></a>
-        </div>
+  </div>
 
   <!-- Combined async state for quizzes -->
+
+  <ng-container *ngIf="isLoadingQuizzes">
+    <div class="ph-item">
+      <div class="ph-col-12">
+        <div class="ph-picture"></div>
+        <div class="ph-row">
+          <div class="ph-col-6 big"></div>
+          <div class="ph-col-4 big"></div>
+          <div class="ph-col-2 big"></div>
+          <div class="ph-col-4"></div>
+          <div class="ph-col-8 empty"></div>
+          <div class="ph-col-6"></div>
+          <div class="ph-col-6 empty"></div>
+          <div class="ph-col-12"></div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <ng-container *ngIf="(filteredQuizzes$ | async) as quizzes;">
     <ng-container *ngIf="quizzes.length > 0; else noactiveQuizzes">
       <div *ngFor="let quiz of quizzes; trackBy: trackByQuizId" class="quiz-card">
@@ -130,7 +145,7 @@
               <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
-          </button>          <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
+          </button> <ion-chip *ngIf="quiz.userSubmissionStatus.isSubmitted" color="success" class="difficulty-badge">
             {{ quiz.userSubmissionStatus.status| titlecase }}
           </ion-chip>
         </div>
@@ -175,7 +190,7 @@
                     </div>
                   </div>
 
-                               
+
                   <div class="status-modal">
                     <!-- Submitted -->
                     <svg width="24" height="24" *ngIf="user.isSubmitted" viewBox="0 0 24 24" fill="none">
@@ -183,7 +198,7 @@
                       <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                     </svg>
-      
+
                     <!-- Pending -->
                     <svg width="24" height="24" *ngIf="!user.isSubmitted" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="9" fill="#F59E0B" />
@@ -240,10 +255,9 @@
 </div>
 
 <!-- Refresh Button -->
-<div class="floating-action" (click)="loadInitialData()" *ngIf="!ParentInjected">
-  <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-    stroke-linejoin="round">
+<div class="floating-action" (click)="loadInitialData()" *ngIf="ParentInjected">
+  <svg [class.loading]="isLoadingQuizzes" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M23 4v6h-6" />
     <path d="M1 20v-6h6" />
     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />

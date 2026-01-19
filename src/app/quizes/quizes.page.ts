@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -12,13 +12,14 @@ import { searchQueryModel } from '../live-quizes/live-quizes.component';
 @Component({
   selector: 'app-quizes',
   templateUrl: './quizes.page.html',
-  standalone : false,
-  changeDetection : ChangeDetectionStrategy.OnPush,
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./quizes.page.scss'],
 })
 export class QuizesPage implements OnInit, OnDestroy {
   @Input() publishedQuizes$: Observable<Quiz[]>;
   @Input() ParentInjected: boolean = false;
+  @Input() showRefresher: boolean = true;
   @Output() handleRefresh: EventEmitter<boolean> = new EventEmitter<boolean>()
 
   isLoadingQuizzes: boolean = false;
@@ -51,7 +52,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private SocketService: SocketService,
     private dashboardService: DashboardService,
-    private cdr:ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {
 
     this.publishedQuizes$ = this.quizService.getPublishedQuizes$
@@ -111,7 +112,7 @@ export class QuizesPage implements OnInit, OnDestroy {
     this.filterQuizzes();
   }
   async loadInitialData() {
-       this.isLoadingQuizzes = true;
+    this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
       this.cdr.detectChanges()
