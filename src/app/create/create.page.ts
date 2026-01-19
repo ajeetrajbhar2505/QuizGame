@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, combineLatest, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToasterService } from '../toaster.service';
-import { NotificationService } from '../notification.service';
-import { NotificationType } from '../notification-type.enum';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-create',
@@ -15,7 +14,8 @@ import { NotificationType } from '../notification-type.enum';
 export class CreatePage implements OnInit {
   quizPrompt: string = '';
   quizPromptDraft: string = '';
-  isCreating: boolean = false;
+  isCreating: boolean = false;;
+  uploadingFile: boolean = false;;
   waitingMessage: string = "Generate 10 questions about e.g., Science, History, Movies, etc.";
   isLoadingQuizzes: boolean = false;
 
@@ -37,7 +37,7 @@ export class CreatePage implements OnInit {
     private quizService: CreateQuizesService,
     private toasterService: ToasterService,
     private router: Router,
-    private notificationService:NotificationService
+    private cdr:ChangeDetectorRef
   ) {
     this.viewModel$ = combineLatest([
       this.quizService.getCurrentDraft$,
@@ -146,6 +146,7 @@ private showSuccessMessage(message: string): void {
     this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
+      this.cdr.detectChanges()
     }, 2000);
    await this.quizService.getAllQuiz().toPromise()
   }
@@ -164,6 +165,26 @@ private showSuccessMessage(message: string): void {
       }
     });
   }
+
+    uploadExcel(event: any) {
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+
+    reader.onload = (e: any) => {
+      const workbook = XLSX.read(e.target.result, { type: 'binary' });
+
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      // Convert to array (rows & columns)
+      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      console.log(data);
+    };
+  }
+
 
   trackByQuizId(index: number, quiz: Quiz): string {
     return quiz._id;

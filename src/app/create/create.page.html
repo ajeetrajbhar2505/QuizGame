@@ -2,7 +2,9 @@
   <div class="phone-section {{((viewModel$|async)?.draftQuizzes || []).length > 2 ?'mb-50':''}}">
     <!-- Quiz Input Section -->
     <div class="input-container">
-      <label for="quiz-input" class="input-label">Create your own custom quiz in seconds! Simply provide a topic and number of questions you want in this, and our system will generate a personalized quiz with a variety of questions. Perfect for learning, testing knowledge, or just having fun!</label>
+      <label for="quiz-input" class="input-label">Create your own custom quiz in seconds! Simply provide a topic and
+        number of questions you want in this, and our system will generate a personalized quiz with a variety of
+        questions. Perfect for learning, testing knowledge, or just having fun!</label>
       <textarea [readOnly]="isCreating" id="quiz-input" [(ngModel)]="quizPrompt" class="big-input"
         [placeholder]="waitingMessage"></textarea>
       <button class="action-btn reject-btn cancel" *ngIf="isCreating" slot="right" (click)="cancelQuizGeneration()">
@@ -60,8 +62,59 @@
         </style>
         <circle class="spinner__path" cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3" />
       </svg>
-      Generate Quiz
+      {{isCreating?'Generating Quiz':'Generate Quiz'}}
     </button>
+
+    <p class="options-title" *ngIf="false">Quick quiz with excel</p>
+
+    <input type="file" *ngIf="false" (change)="uploadExcel($event)" id="uploadExcel" accept=".xlsx, .xls" />
+    <label *ngIf="false" class="generate-btn"  for="uploadExcel">
+      <svg *ngIf="!uploadingFile" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2M12 16.5V7.5M16.5 12L7.5 12"
+          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <svg *ngIf="uploadingFile" class="spinner" width="20" height="20" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg">
+        <style>
+          .spinner {
+            animation: rotate 1s linear infinite;
+          }
+
+          @keyframes rotate {
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+
+          .spinner__path {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            animation: dash 1.5s ease-in-out infinite;
+          }
+
+          @keyframes dash {
+            0% {
+              stroke-dasharray: 1, 150;
+              stroke-dashoffset: 0;
+            }
+
+            50% {
+              stroke-dasharray: 90, 150;
+              stroke-dashoffset: -35;
+            }
+
+            100% {
+              stroke-dasharray: 90, 150;
+              stroke-dashoffset: -124;
+            }
+          }
+        </style>
+        <circle class="spinner__path" cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3" />
+      </svg>
+      {{uploadingFile?'Uploading':'Upload Quiz'}}
+    </label>
 
     <!-- Generated Quizzes Section -->
     <ng-container *ngIf="viewModel$ | async as vm">

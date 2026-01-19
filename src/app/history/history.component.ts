@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CreateQuizesService, Quiz } from '../create-quizes.service';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -47,7 +47,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
     private quizService: CreateQuizesService,
     protected router: Router,
     private sanitizer: DomSanitizer,
-    private SocketService: SocketService
+    private SocketService: SocketService,
+    private cdr:ChangeDetectorRef
   ) {
     const User: any = localStorage.getItem('user')
     if (User) {
@@ -123,6 +124,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
        this.isLoadingQuizzes = true;
     setTimeout(() => {
       this.isLoadingQuizzes = false;
+      this.cdr.detectChanges()
     }, 2000);
     await this.quizService.getSubmittedQuizes().toPromise();
   }

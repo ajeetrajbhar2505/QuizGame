@@ -16,9 +16,9 @@
     }
 
 
-.mb-50 {
-    margin-bottom: 50px;
-  }
+    .mb-50 {
+        margin-bottom: 50px;
+    }
 
     .header {
         display: flex;
@@ -114,11 +114,17 @@
         cursor: pointer;
         width: 100%;
         transition: all 0.3s;
-        margin-bottom: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
+    }
+
+    .generate-btn:nth-child(4) {
+        margin-bottom: 24px;
+    }
+    #uploadExcel{
+        display: none;
     }
 
     .generate-btn:hover {
@@ -154,4 +160,35 @@
         right: -7px;
         border-radius: unset;
         border-bottom-left-radius: 22px;
+    }
+
+    .options-title {
+        font-size: 14px;
+        color: ($text-light);
+        // margin: -25px 0 -25px;
+        // margin: 45px 0 15px;
+        text-align: center;
+        position: relative;
+    }
+
+    .options-title::before,
+    .options-title::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 30%;
+        height: 1px;
+        background: lightgray;
+
+        @media (max-width: 414px) {
+            width: 22%;
+        }
+    }
+
+    .options-title::before {
+        left: 0;
+    }
+
+    .options-title::after {
+        right: 0;
     }

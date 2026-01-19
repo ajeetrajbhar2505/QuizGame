@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { IonItemSliding } from '@ionic/angular';
 import { Notification, NotificationService } from '../notification.service';
 import { NotificationType } from '../notification-type.enum';
 
@@ -43,7 +41,7 @@ export class AlertPage implements OnInit {
       this.isLoadingNotification = true;
       setTimeout(() => {
         this.isLoadingNotification = false;
-      this.cdr.detectChanges()
+        this.cdr.detectChanges()
       }, 2000);
       this.loading = true;
       this.notificationService.notifications$.subscribe((allNotifications: Notification[]) => {
