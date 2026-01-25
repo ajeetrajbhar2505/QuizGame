@@ -70,22 +70,6 @@ export class NotificationService implements OnDestroy {
       this.getUnreadNotificationsCount().subscribe()
     });
 
-    // Error handlers
-    this.socketService.socket.on('notification:get:error', (data: { error: string }) => {
-      this.toastr.error(data.error);
-    });
-
-    this.socketService.socket.on('notification:send:error', (data: { error: string }) => {
-      this.toastr.error(data.error);
-    });
-
-    this.socketService.socket.on('notification:read:error', (data: { error: string }) => {
-      this.toastr.error(data.error);
-    });
-
-    this.socketService.socket.on('notification:broadcast:error', (data: { error: string }) => {
-      this.toastr.error(data.error);
-    });
   }
 
   private showToastNotification(notification: Notification): void {

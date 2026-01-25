@@ -129,48 +129,6 @@ export class CreateQuizesService {
       this.removeQuizFromState(quizId);
     });
 
-    // error listners
-    this.socketService.socket.on('quiz:create:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:refreshQuestion:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:published:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:all:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:active:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:get:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:delete:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:publish:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:waiting:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:join:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:start:error', (data) => {
-      this.toastr.success(data.error)
-    });
-    this.socketService.socket.on('quiz:submit:error', (data) => {
-      this.toastr.success(data.error)
-    });
-
-    this.socketService.socket.on('quiz:answer:error', (data) => {
-      this.toastr.success(data.error)
-    });
-
     this.socketService.socket.on('refreshpage', (data) => {
       this.refreshedQuizes$.next(true)
     });

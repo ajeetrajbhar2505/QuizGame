@@ -1,5 +1,6 @@
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
+import { provideZoneChangeDetection } from '@angular/core';
 
 // Create and show loading element before bootstrapping
 const loadingElement = document.createElement('div');

@@ -7,6 +7,7 @@ import { ToasterService } from './toaster.service';
 import { HttpClient } from '@angular/common/http';
 import { ModalController, Platform } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { ErrorTypes } from './error-types.enum';
 
 export interface AuthData {
   token: string;
@@ -44,6 +45,7 @@ export class SocketService implements OnDestroy {
   public socket!: Socket;
   public authDataSource = new ReplaySubject<AuthData | null>(1);
   private loginDataSource = new ReplaySubject<AuthData | null>(1);
+  private loginErrorSource = new BehaviorSubject(false);
   private otpDataSource = new ReplaySubject<AuthData | null>(1);
   private authErrorSource = new ReplaySubject<any | null>(1);
   private connectionState$ = new BehaviorSubject<ConnectionState>('disconnected');
@@ -51,6 +53,7 @@ export class SocketService implements OnDestroy {
   private urlSubject = new ReplaySubject<{ url: string }>(1); // New subject for URL events
 
   public readonly authData$ = this.authDataSource.asObservable();
+  public readonly loginError$ = this.loginErrorSource.asObservable();
   public readonly loginData$ = this.loginDataSource.asObservable();
   public readonly otpSuccess$ = this.otpDataSource.asObservable();
   public readonly connectionState = this.connectionState$.asObservable();
@@ -90,6 +93,7 @@ export class SocketService implements OnDestroy {
 
       this.setupConnectionMonitoring();
       this.registerAuthEvents();
+      this.registerErrorEvents()
       this.registerUrlEvents(); // Register URL-specific events
     } catch (error) {
       console.error('Socket initialization error:', error);
@@ -180,6 +184,7 @@ export class SocketService implements OnDestroy {
   private registerAuthEvents(): void {
     const authEvents = {
       'auth:login:success': this.handleLoginSuccess.bind(this),
+      'auth:login:error': this.handleLoginError.bind(this),
       'auth:register:success': this.handleAuthSuccess.bind(this),
       'auth:google:success': this.handleAuthSuccess.bind(this),
       'auth:facebook:success': this.handleAuthSuccess.bind(this),
@@ -197,6 +202,15 @@ export class SocketService implements OnDestroy {
     });
   }
 
+  private registerErrorEvents(): void {
+  // Loop through all ErrorEvents and register them
+  Object.values(ErrorTypes).forEach((eventKey:any) => {
+    this.socket.on(eventKey, (errorData: any) => {
+      this.handleAuthError(errorData)
+    });
+  });
+}
+
   handleAuthError(error: any) {
     this.authErrorSource.next(error.message);
   }
@@ -208,6 +222,9 @@ export class SocketService implements OnDestroy {
 
   private handleLoginSuccess(data: AuthData): void {
     this.loginDataSource.next(data);
+  }
+    private handleLoginError(error: any): void {
+    this.loginErrorSource.next(error.message);
   }
 
   private handleOtpSuccess(data: AuthData): void {

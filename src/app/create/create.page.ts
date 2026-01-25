@@ -127,6 +127,7 @@ private showSuccessMessage(message: string): void {
       }
       
       this.quizPrompt = this.loadingMessages[counter % this.loadingMessages.length];
+      this.cdr.detectChanges()
       counter++;
     }, 3000);
   }

@@ -11,7 +11,7 @@ import { App } from '@capacitor/app';
 @Component({
   selector: 'app-ongoing',
   templateUrl: './ongoing.component.html',
-  standalone : false,
+  standalone: false,
   styleUrls: ['./ongoing.component.scss'],
 })
 export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
@@ -55,11 +55,21 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   ) {
     this.isQuizActive = true;
     this.socketService.authDataSource.next(null);
+    this.checkRemainingTimes()
   }
 
   async ngOnInit() {
     this.setupBackButtonHandler();
     this.loadQuizData();
+    localStorage.setItem('remainingTime', JSON.stringify(this.remainingTime))
+
+  }
+
+  checkRemainingTimes() {
+    if (localStorage.getItem('remainingTime')) {
+      let a: any = localStorage.getItem('remainingTime')
+      this.remainingTime = JSON.parse(a)
+    }
   }
 
   private loadQuizData(): void {
@@ -80,7 +90,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.selectedOptions = new Array(quiz.questions.length).fill(null);
 
         if (!this.isAdminUser || quiz.approvalStatus !== 'pending') {
-          this.startTimer(quiz.estimatedTime);
+          this.startTimer(this.remainingTime > 0 ? this.remainingTime : quiz.estimatedTime);
         }
       }),
       catchError(err => {
@@ -200,6 +210,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       this.deactivateSubject.complete();
       this.deactivateSubject = null;
     }
+    this.submitQuiz()
     this.confirmationPopup = false;
     this.cleanupQuiz();
     this.router.navigate(['/home'], { replaceUrl: true });
@@ -223,6 +234,7 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any): void {
     if (this.isQuizActive) {
+      localStorage.setItem('remainingTime', JSON.stringify(this.remainingTime))
       $event.returnValue = 'You have an active quiz. Are you sure you want to leave?';
     }
   }
@@ -233,10 +245,12 @@ export class OngoingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.timerInterval = setInterval(() => {
       if (this.remainingTime > 0) {
         this.remainingTime--;
+        this.cdr.detectChanges()
       } else {
         clearInterval(this.timerInterval);
         this.isQuizActive = false;
         this.submitQuiz();
+        this.cdr.detectChanges()
       }
     }, 1000);
   }
